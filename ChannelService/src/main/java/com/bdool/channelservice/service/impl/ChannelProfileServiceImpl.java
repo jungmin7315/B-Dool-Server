@@ -2,7 +2,6 @@ package com.bdool.channelservice.service.impl;
 
 import com.bdool.channelservice.model.domain.ChannelProfileModel;
 import com.bdool.channelservice.model.entity.ChannelProfileEntity;
-import com.bdool.channelservice.model.entity.ChannelProfileId;
 import com.bdool.channelservice.model.repository.ChannelProfileRepository;
 import com.bdool.channelservice.service.ChannelProfileService;
 import lombok.RequiredArgsConstructor;
