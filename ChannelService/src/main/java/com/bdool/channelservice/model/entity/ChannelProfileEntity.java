@@ -14,9 +14,15 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Table(name = "channelProfile")
 public class ChannelProfileEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long chaneelProfileId;
 
-    @EmbeddedId
-    private ChannelProfileId id = new ChannelProfileId();
+    @Column(name = "profileId")
+    private Long profileId;
+
+    @Column(name = "channelId")
+    private Long channelId;
 
     @Column(name = "joinedAt", nullable = false, updatable = false)
     private Timestamp joinedAt;

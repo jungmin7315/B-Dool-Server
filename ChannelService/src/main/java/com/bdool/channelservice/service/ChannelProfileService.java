@@ -12,11 +12,11 @@ import java.util.Optional;
 public interface ChannelProfileService{
     ChannelProfileEntity save(ChannelProfileModel channelProfile);
     List<ChannelProfileEntity> findAll();
-    Optional<ChannelProfileEntity> findById(ChannelProfileId id);
+    Optional<ChannelProfileEntity> findById(Long id);
 
-    boolean existsById(ChannelProfileId id);
+    boolean existsById(Long id);
 
     long count();
 
-    void deleteById(ChannelProfileId id);
+    void deleteById(Long id);
 }

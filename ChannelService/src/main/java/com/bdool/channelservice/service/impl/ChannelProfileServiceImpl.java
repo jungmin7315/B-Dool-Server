@@ -21,13 +21,9 @@ public class ChannelProfileServiceImpl implements ChannelProfileService {
     @Override
     public ChannelProfileEntity save(ChannelProfileModel channelProfile) {
 
-        ChannelProfileId id = ChannelProfileId.builder()
-                .channelId(channelProfile.getChannelId())
-                .profileId(channelProfile.getProfileId())
-                .build();
-
         ChannelProfileEntity entity = ChannelProfileEntity.builder()
-                .id(id)
+                .profileId(channelProfile.getProfileId())
+                .channelId(channelProfile.getChannelId())
                 .joinedAt(channelProfile.getJoinedAt())
                 .build();
 
@@ -40,12 +36,12 @@ public class ChannelProfileServiceImpl implements ChannelProfileService {
     }
 
     @Override
-    public Optional<ChannelProfileEntity> findById(ChannelProfileId id) {
+    public Optional<ChannelProfileEntity> findById(Long id) {
         return channelProfileRepository.findById(id);
     }
 
     @Override
-    public boolean existsById(ChannelProfileId id) {
+    public boolean existsById(Long id) {
         return channelProfileRepository.existsById(id);
     }
 
@@ -55,7 +51,7 @@ public class ChannelProfileServiceImpl implements ChannelProfileService {
     }
 
     @Override
-    public void deleteById(ChannelProfileId id) {
+    public void deleteById(Long id) {
         channelProfileRepository.deleteById(id);
     }
 }
