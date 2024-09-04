@@ -1,12 +1,3 @@
 spring:
   application:
     name: ChannelService
-  datasource:
-    url: jdbc:mysql://localhost:3306/bdooldb
-    password: 1234
-    username: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
