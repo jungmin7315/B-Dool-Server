@@ -19,14 +19,11 @@ public class ChannelProfileServiceImpl implements ChannelProfileService {
 
     @Override
     public ChannelProfileEntity save(ChannelProfileModel channelProfile) {
-
-        ChannelProfileEntity entity = ChannelProfileEntity.builder()
+        return channelProfileRepository.save(ChannelProfileEntity.builder()
                 .profileId(channelProfile.getProfileId())
                 .channelId(channelProfile.getChannelId())
                 .joinedAt(channelProfile.getJoinedAt())
-                .build();
-
-        return channelProfileRepository.save(entity);
+                .build());
     }
 
     @Override

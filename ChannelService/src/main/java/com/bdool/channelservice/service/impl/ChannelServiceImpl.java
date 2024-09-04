@@ -18,14 +18,13 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ChannelEntity save(ChannelModel channel) {
-        ChannelEntity entity = ChannelEntity.builder()
+        return channelRepository.save(ChannelEntity.builder()
                 .channelId(channel.getChannelId())
                 .channelName(channel.getChannelName())
                 .isPrivate(channel.isPrivate())
                 .workspaceId(channel.getWorkspaceId())
                 .profileId(channel.getProfileId())
-                .build();
-        return channelRepository.save(entity);
+                .build());
     }
 
     @Override

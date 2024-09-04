@@ -18,13 +18,12 @@ public class ChannelFavoriteServiceImpl implements ChannelFavoriteService {
 
     @Override
     public ChannelFavoriteEntity save(ChannelFavoriteModel channelFavorite) {
-        ChannelFavoriteEntity entity = ChannelFavoriteEntity.builder()
+        return channelFavoriteRepository.save(ChannelFavoriteEntity.builder()
                 .favoriteId(channelFavorite.getFavoriteId())
                 .channelId(channelFavorite.getChannelId())
                 .profileId(channelFavorite.getProfileId())
                 .favoritedAt(channelFavorite.getFavoritedAt())
-                .build();
-        return channelFavoriteRepository.save(entity);
+                .build());
     }
 
     @Override
