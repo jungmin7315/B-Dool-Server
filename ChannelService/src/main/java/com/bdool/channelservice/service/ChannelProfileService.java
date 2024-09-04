@@ -2,7 +2,6 @@ package com.bdool.channelservice.service;
 
 import com.bdool.channelservice.model.domain.ChannelProfileModel;
 import com.bdool.channelservice.model.entity.ChannelProfileEntity;
-import com.bdool.channelservice.model.entity.ChannelProfileId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
