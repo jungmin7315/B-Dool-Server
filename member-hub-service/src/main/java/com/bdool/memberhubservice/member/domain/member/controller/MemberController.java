@@ -25,10 +25,9 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<Member> getMemberById(@PathVariable Long memberId) {
-        return memberService.findById(memberId)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<Optional<Member>> getMemberById(@PathVariable Long memberId) {
+        return ResponseEntity.ok(memberService.findById(memberId));
+
     }
 
     @GetMapping("/")
