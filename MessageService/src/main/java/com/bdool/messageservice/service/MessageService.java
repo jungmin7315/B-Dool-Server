@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface MessageService {
     MessageEntity save(MessageModel message);
     List<MessageEntity> findAll();
+    List<MessageEntity> findAllByChannelId(Long channelId);
     Optional<MessageEntity> findById(UUID messageId);
 
     boolean existsById(UUID messageId);
