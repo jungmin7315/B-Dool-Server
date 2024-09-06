@@ -5,11 +5,11 @@ import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/members")
@@ -27,7 +27,6 @@ public class MemberController {
     @GetMapping("/{memberId}")
     public ResponseEntity<Optional<Member>> getMemberById(@PathVariable Long memberId) {
         return ResponseEntity.ok(memberService.findById(memberId));
-
     }
 
     @GetMapping("/")
@@ -48,6 +47,6 @@ public class MemberController {
     @DeleteMapping("/{memberId}")
     public ResponseEntity<Void> deleteMemberById(@PathVariable Long memberId) {
         memberService.deleteById(memberId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
