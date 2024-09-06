@@ -1,37 +1,31 @@
 package com.bdool.chatservice.model.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "member")
+@Document(collection = "member")
 public class MemberEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "memberId", updatable = false, nullable = false)
-    private UUID memberId;
 
-    @Column(name = "channelId")
+    @Id
+    private UUID memberId;  // MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+
     private UUID channelId;
 
-    @Column(name = "profileId")
     private UUID profileId;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "favorited")
     private boolean favorited;
 
-    @Column(name = "joinedAt")
     private LocalDateTime joinedAt;
 }

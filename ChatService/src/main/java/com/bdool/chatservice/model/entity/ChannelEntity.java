@@ -1,49 +1,38 @@
 package com.bdool.chatservice.model.entity;
 
 import com.bdool.chatservice.model.Enum.ChannelType;
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "channel")
+@Document(collection = "channel")
 public class ChannelEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "channelId", updatable = false, nullable = false)
-    private UUID channelId;
 
-    @Column(name = "workspacesId", nullable = false)
+    @Id
+    private UUID channelId; // MongoDB에서는 @GeneratedValue를 사용하지 않고, 수동으로 UUID를 생성할 수 있습니다.
+
     private Long workspacesId;
 
-    @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Column(name = "isPrivate", nullable = false)
     private Boolean isPrivate;
 
-    @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "profileId", nullable = false)
     private UUID profileId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "channelType", nullable = false)
-    private ChannelType channelType;
-
+    private ChannelType channelType; // MongoDB에서는 @Enumerated 대신 일반 필드로 처리됩니다.
 }

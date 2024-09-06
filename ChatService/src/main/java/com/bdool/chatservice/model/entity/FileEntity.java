@@ -1,48 +1,38 @@
 package com.bdool.chatservice.model.entity;
 
 import com.bdool.chatservice.model.Enum.FileKind;
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "file")
+@Document(collection = "file")
 public class FileEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "file_id", nullable = false, updatable = false)
-    private UUID fileId;
 
-    @Column(name = "fname", length = 255, nullable = false)
+    @Id
+    private UUID fileId;  // MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+
     private String fname;
 
-    @Column(name = "path", length = 255, nullable = false)
     private String path;
 
-    @Column(name = "size", nullable = false)
     private Integer size;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "kind", nullable = false)
-    private FileKind kind;
+    private FileKind kind;  // MongoDB에서는 @Enumerated 없이 Enum 값 저장이 가능합니다.
 
-    @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
-    @Column(name = "profile_id")
     private UUID profileId;
 
-    @Column(name = "channel_id")
     private UUID channelId;
 
-    @Column(name = "workspaces_id")
     private UUID workspacesId;
 }

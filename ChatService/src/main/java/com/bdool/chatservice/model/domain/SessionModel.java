@@ -1,9 +1,6 @@
 package com.bdool.chatservice.model.domain;
 
 import com.bdool.chatservice.model.Enum.SessionType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 

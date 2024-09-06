@@ -1,6 +1,5 @@
 package com.bdool.chatservice.model.domain;
 
-import com.bdool.chatservice.model.entity.MessageEntity;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -22,5 +21,5 @@ public class MessageModel {
 
     private Boolean isDeleted = false;
 
-    private MessageEntity parentMessage;
+    private UUID parentMessage;
 }
