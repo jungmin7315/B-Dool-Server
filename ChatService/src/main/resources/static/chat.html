@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+</head>
+<body>
+<div>
+    <textarea id="chatLog" rows="10" cols="50" readonly></textarea>
+    <br>
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    const ws = new WebSocket("ws://localhost:8080/ws/chat");
+
+    ws.onmessage = function(event) {
+        const chatLog = document.getElementById("chatLog");
+        const message = JSON.parse(event.data);
+        chatLog.value += message.memberId + ": " + message.content + "\n";
+    };
+
+    function sendMessage() {
+        const messageInput = document.getElementById("messageInput");
+        const message = {
+            // 실제 UUID 형식의 값 사용
+            memberId: "123e4567-e89b-12d3-a456-426614174000",
+            content: messageInput.value,
+            parentMessageId: null
+        };
+        ws.send(JSON.stringify(message));
+        messageInput.value = "";  // 입력 후 초기화
+    }
+</script>
+</body>
+</html>

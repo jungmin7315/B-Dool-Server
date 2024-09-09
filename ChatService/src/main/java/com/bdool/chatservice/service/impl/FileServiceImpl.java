@@ -20,6 +20,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileEntity save(FileModel file) {
         return fileRepository.save(FileEntity.builder()
+                .fileId(file.getFileId() == null ? UUID.randomUUID() : file.getFileId())
                 .fname(file.getFname())
                 .path(file.getPath())
                 .size(file.getSize())

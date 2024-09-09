@@ -7,6 +7,7 @@ import com.bdool.chatservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,9 +21,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberEntity save(MemberModel member) {
         return memberRepository.save(MemberEntity.builder()
+                .memberId(member.getMemberId() == null ? UUID.randomUUID() : member.getMemberId())
                 .name(member.getName())
                 .favorited(member.isFavorited())
-                .joinedAt(member.getJoinedAt())
+                .joinedAt(LocalDateTime.now())
                 .channelId(member.getChannelId())
                 .profileId(member.getProfileId())
                 .build());

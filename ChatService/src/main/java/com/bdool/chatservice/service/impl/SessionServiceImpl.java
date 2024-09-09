@@ -19,7 +19,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionEntity save(SessionModel session) {
+
         return sessionRepository.save(SessionEntity.builder()
+                .sessionId((session.getSessionId() == null ? UUID.randomUUID() : session.getSessionId()))
                 .sessionType(session.getSessionType())
                 .startAt(session.getStartAt())
                 .endAt(session.getEndAt())

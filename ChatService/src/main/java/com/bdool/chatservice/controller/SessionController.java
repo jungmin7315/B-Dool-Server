@@ -17,7 +17,7 @@ public class SessionController {
 
     private final SessionService sessionService;
 
-    @PostMapping("")
+    @PostMapping(value = "")
     public ResponseEntity<?> save(@RequestBody SessionModel session) {
         return ResponseEntity.ok(sessionService.save(session));
     }

@@ -21,5 +21,5 @@ public class MessageModel {
 
     private Boolean isDeleted = false;
 
-    private UUID parentMessage;
+    private UUID parentMessageId;
 }

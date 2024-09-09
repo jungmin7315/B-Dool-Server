@@ -20,6 +20,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelEntity save(ChannelModel channel) {
         return channelRepository.save(ChannelEntity.builder()
+                .channelId(channel.getChannelId() == null ? UUID.randomUUID(): channel.getChannelId())
                 .name(channel.getName())
                 .description(channel.getDescription())
                 .isPrivate(channel.getIsPrivate())
