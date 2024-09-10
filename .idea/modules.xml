@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/B-Dool-Server.iml" filepath="$PROJECT_DIR$/.idea/B-Dool-Server.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-hub-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/member-hub-service.test.iml" />
     </modules>
   </component>
 </project>

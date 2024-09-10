@@ -47,4 +47,15 @@ public class VerificationController {
         verificationService.deleteById(verificationId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/send-verification-code")
+    public ResponseEntity<Boolean> sendVerificationCode(@RequestParam String email) {
+        return ResponseEntity.ok(verificationService.sendVerificationCode(email));
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<Boolean> verifyCode(@RequestParam String email,
+                                              @RequestParam String verificationCode) {
+        return ResponseEntity.ok(verificationService.verifyCode(email, verificationCode));
+    }
 }

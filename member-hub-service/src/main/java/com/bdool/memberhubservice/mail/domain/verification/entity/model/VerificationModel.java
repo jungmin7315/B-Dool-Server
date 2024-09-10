@@ -4,4 +4,6 @@ import lombok.Data;
 
 @Data
 public class VerificationModel {
+    private String email;
+    private String verificationCode;
 }

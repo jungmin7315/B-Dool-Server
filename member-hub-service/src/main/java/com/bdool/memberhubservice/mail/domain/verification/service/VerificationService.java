@@ -19,4 +19,8 @@ public interface VerificationService {
     boolean existsById(Long verificationId);
 
     void deleteById(Long verificationId);
+
+    boolean sendVerificationCode(String mail);
+
+    boolean verifyCode(String email, String verificationCode);
 }
