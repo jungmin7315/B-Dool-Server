@@ -9,7 +9,6 @@ import com.bdool.memberhubservice.mail.domain.verification.service.MailSenderSer
 import com.bdool.memberhubservice.mail.domain.verification.service.VerificationService;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
-import com.bdool.memberhubservice.member.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

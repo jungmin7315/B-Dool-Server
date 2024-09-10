@@ -19,13 +19,13 @@ public class ProfileServiceImpl implements ProfileService {
     private final MemberService memberService;
 
     @Override
-    public Profile save(ProfileModel memberModel) {
+    public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
         Profile profile = Profile.builder()
-                .name(memberModel.getName())
-                .nickname(memberModel.getNickname())
-                .profilePictureUrl(memberModel.getProfilePictureUrl())
-                .memberId(memberModel.getMemberId())
-                .isWorkspaceCreator(false)
+                .name(profileModel.getName())
+                .nickname(profileModel.getNickname())
+                .profilePictureUrl(profileModel.getProfilePictureUrl())
+                .memberId(memberId)
+                .isWorkspaceCreator(isWorkspaceCreator)
                 .build();
         return profileRepository.save(profile);
     }

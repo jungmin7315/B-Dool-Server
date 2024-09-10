@@ -17,9 +17,11 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping("/")
-    public ResponseEntity<Profile> createProfile(@RequestBody ProfileModel profileModel) {
-        return ResponseEntity.ok(profileService.save(profileModel));
+    @PostMapping("/{memberId}")
+    public ResponseEntity<Profile> createProfile(@PathVariable Long memberId,
+                                                 @RequestBody ProfileModel profileModel,
+                                                 boolean isWorkspaceCreator) {
+        return ResponseEntity.ok(profileService.save(profileModel, memberId,isWorkspaceCreator));
     }
 
     @GetMapping("/{profileId}")
