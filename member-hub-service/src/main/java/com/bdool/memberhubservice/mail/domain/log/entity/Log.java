@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.mail.domain.domain.log.entity;
+package com.bdool.memberhubservice.mail.domain.log.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
