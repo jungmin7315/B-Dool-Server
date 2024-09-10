@@ -15,6 +15,7 @@ public class MailSenderServiceImpl implements MailSenderService {
     @Override
     public void send(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("gusdn0413@naver.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);

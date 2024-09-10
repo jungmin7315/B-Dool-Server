@@ -7,6 +7,9 @@ import com.bdool.memberhubservice.mail.domain.verification.entity.model.Verifica
 import com.bdool.memberhubservice.mail.domain.verification.repository.VerificationRepository;
 import com.bdool.memberhubservice.mail.domain.verification.service.MailSenderService;
 import com.bdool.memberhubservice.mail.domain.verification.service.VerificationService;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
+import com.bdool.memberhubservice.member.domain.member.service.MemberService;
+import com.bdool.memberhubservice.member.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class VerificationServiceImpl implements VerificationService {
     private final VerificationRepository verificationRepository;
     private final LogService logService;
     private final MailSenderService mailService;
+    private final MemberService memberService;
     private final String SUBJECT = "인증 코드";
 
     @Override
@@ -26,6 +30,7 @@ public class VerificationServiceImpl implements VerificationService {
         Verification verification = Verification.builder()
                 .verificationCode(verificationModel.getVerificationCode())
                 .email(verificationModel.getEmail())
+                .createdAt(new Date())
                 .expiredAt(calculateExpirationDate())
                 .build();
         return verificationRepository.save(verification);
@@ -80,10 +85,23 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Override
     public boolean verifyCode(String email, String verificationCode) {
-        return verificationRepository.findByEmail(email)
-                .filter(verification -> !verification.getExpiredAt().before(new Date()))
-                .map(verification -> verification.getVerificationCode().equals(verificationCode))
-                .orElse(false);
+        Optional<Verification> verificationOpt = verificationRepository.findByEmail(email);
+
+        if (verificationOpt.isPresent()) {
+            Verification verification = verificationOpt.get();
+            boolean isCodeValid = verification.getVerificationCode().equals(verificationCode);
+            boolean isNotExpired = !verification.getExpiredAt().before(new Date());
+
+            if (isCodeValid && isNotExpired) {
+                if (!memberService.existsByEmail(email)) {
+                    MemberModel memberModel = new MemberModel();
+                    memberModel.setEmail(email);
+                    memberService.save(memberModel);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     private String generateVerificationCode() {

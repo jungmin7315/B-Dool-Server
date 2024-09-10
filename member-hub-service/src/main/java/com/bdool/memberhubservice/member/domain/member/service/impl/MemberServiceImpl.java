@@ -46,7 +46,17 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    @Override
     public void deleteById(Long memberId) {
         memberRepository.deleteById(memberId);
+    }
+
+    @Override
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 }

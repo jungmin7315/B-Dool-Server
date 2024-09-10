@@ -18,5 +18,9 @@ public interface MemberService {
 
     boolean existsById(Long memberId);
 
+    boolean existsByEmail(String email);
+
     void deleteById(Long memberId);
+
+    Optional<Member> findByEmail(String email);
 }
