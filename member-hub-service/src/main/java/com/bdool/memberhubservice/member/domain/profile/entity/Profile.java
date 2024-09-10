@@ -26,9 +26,9 @@ public class Profile {
     private Boolean isOnline; // 온라인/오프라인 표시
     private Boolean isWorkspaceCreator;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    //    @ManyToOne
+//    @JoinColumn(name = "member_id", nullable = false)
+    private Long memberId;
 
     private String email;
 
