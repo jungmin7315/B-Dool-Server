@@ -19,11 +19,8 @@ public class AuthServiceImpl implements AuthService {
     private final CustomUserDetailService customUserDetailService;
 
     @Override
-    public LoginResponse login(String email, String token) {
-        if (token != null && email.equals(jwtUtil.extractEmail(token))) {
-            return new LoginResponse(true, jwtUtil.generateToken(email));
-        }
-        return new LoginResponse(false, null);
+    public Boolean login(String token) {
+        return token != null;
     }
 
     @Override
