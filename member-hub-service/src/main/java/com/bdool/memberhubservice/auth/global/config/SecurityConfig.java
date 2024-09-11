@@ -1,10 +1,8 @@
-package com.bdool.memberhubservice.global.config;
+package com.bdool.memberhubservice.auth.global.config;
 
-import com.bdool.memberhubservice.global.filter.JwtAuthenticationFilter;
-import com.bdool.memberhubservice.global.util.JwtUtil;
-import com.bdool.memberhubservice.member.domain.auth.handler.OAuth2LoginSuccessHandler;
-import com.bdool.memberhubservice.member.domain.auth.service.CustomOauth2UserService;
-import com.bdool.memberhubservice.member.domain.auth.service.CustomUserDetailService;
+import com.bdool.memberhubservice.auth.handler.OAuth2LoginSuccessHandler;
+import com.bdool.memberhubservice.auth.global.filter.JwtAuthenticationFilter;
+import com.bdool.memberhubservice.auth.service.CustomOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +28,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 권한 설정
                 .authorizeHttpRequests(autz -> autz
-                        .requestMatchers("/**","api/auth/**", "/login", "/oauth2/**", "/api/verification/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/verification/**").permitAll()
                         .anyRequest().authenticated()  // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2

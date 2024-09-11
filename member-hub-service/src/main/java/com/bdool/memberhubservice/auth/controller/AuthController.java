@@ -1,6 +1,6 @@
-package com.bdool.memberhubservice.member.domain.auth.controller;
+package com.bdool.memberhubservice.auth.controller;
 
-import com.bdool.memberhubservice.member.domain.auth.service.AuthService;
+import com.bdool.memberhubservice.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +12,14 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestHeader(value = "Authorization", required = false) String token) {
-        return ResponseEntity.ok(authService.login(token));
-    }
-
     @PostMapping("/token")
     public ResponseEntity<String> generateToken(@RequestParam String email) {
         return ResponseEntity.ok(authService.issueToken(email));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshTokens(
+            @RequestHeader(value = "Authorization", required = false) String accessToken) {
+        return ResponseEntity.ok(authService.refreshTokens(accessToken));
     }
 }

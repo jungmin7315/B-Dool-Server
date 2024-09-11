@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.member.domain.auth.service;
+package com.bdool.memberhubservice.auth.service;
 
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;

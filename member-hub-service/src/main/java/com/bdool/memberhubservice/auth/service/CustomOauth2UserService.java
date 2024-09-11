@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.member.domain.auth.service;
+package com.bdool.memberhubservice.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
