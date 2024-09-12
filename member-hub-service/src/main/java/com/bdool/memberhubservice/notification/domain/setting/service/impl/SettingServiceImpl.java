@@ -8,13 +8,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SettingServiceImpl implements SettingService {
 
     private final SettingRepository settingRepository;
+
+    @Override
+    public Setting save(Long profileId, NotificationType type, boolean enabled) {
+        Setting setting = Setting.builder()
+                .profileId(profileId)
+                .type(type)
+                .enabled(enabled)
+                .build();
+        return settingRepository.save(setting);
+    }
 
     @Override
     public Setting updateSetting(Long profileId, NotificationType type, boolean enabled) {
