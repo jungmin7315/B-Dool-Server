@@ -22,7 +22,7 @@ public class Notification {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    private String type;
+    private NotificationType type;
 
     private Long profileId;
 }

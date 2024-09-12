@@ -1,5 +1,6 @@
 package com.bdool.memberhubservice.notification.domain.setting.entity;
 
+import com.bdool.memberhubservice.notification.domain.notification.entity.NotificationType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,11 @@ public class Setting {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String type;
+    private NotificationType type;
     private boolean enabled;
     private Long profileId;
+
+    public void updateEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
