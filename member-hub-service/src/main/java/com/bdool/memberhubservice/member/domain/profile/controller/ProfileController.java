@@ -2,6 +2,7 @@ package com.bdool.memberhubservice.member.domain.profile.controller;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ProfileController {
     public ResponseEntity<Profile> createProfile(@PathVariable Long memberId,
                                                  @RequestBody ProfileModel profileModel,
                                                  boolean isWorkspaceCreator) {
-        return ResponseEntity.ok(profileService.save(profileModel, memberId,isWorkspaceCreator));
+        return ResponseEntity.ok(profileService.save(profileModel, memberId, isWorkspaceCreator));
     }
 
     @GetMapping("/{profileId}")
@@ -48,5 +49,21 @@ public class ProfileController {
     public ResponseEntity<Void> deleteProfileById(@PathVariable Long profileId) {
         profileService.deleteById(profileId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{profileId}")
+    public ResponseEntity<Profile> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+        Profile updatedProfile = profileService.update(profileId, profileUpdateRequest);
+        return ResponseEntity.ok(updatedProfile);
+    }
+
+    @PatchMapping("/{profileId}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable Long profileId, @RequestParam String status) {
+        return ResponseEntity.ok(profileService.updateStatus(profileId, status));
+    }
+
+    @PatchMapping("/{profileId}/online")
+    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam boolean isOnline) {
+        return ResponseEntity.ok(profileService.updateOnline(profileId, isOnline));
     }
 }
