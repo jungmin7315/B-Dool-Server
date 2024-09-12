@@ -18,6 +18,7 @@ public class Notification {
     private Long id;
 
     private String content;
+    private Boolean isRead;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;

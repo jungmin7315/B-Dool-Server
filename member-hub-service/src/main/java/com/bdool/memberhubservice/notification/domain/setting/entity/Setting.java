@@ -16,6 +16,7 @@ public class Setting {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private NotificationType type;
     private boolean enabled;
     private Long profileId;
