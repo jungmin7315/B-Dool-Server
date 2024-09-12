@@ -17,17 +17,18 @@ import java.util.UUID;
 public class MessageEntity {
 
     @Id
-    private UUID messageId;  // MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+    private UUID messageId;
 
-    private UUID memberId;
+    private UUID channelId;
 
     private String content;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime sendDate;
 
     private Boolean isEdited;
 
     private Boolean isDeleted;
 
     private UUID parentMessageId;
+    private UUID memberId;
 }

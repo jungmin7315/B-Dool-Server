@@ -3,25 +3,26 @@ package com.bdool.chatservice.service;
 import com.bdool.chatservice.model.domain.MessageModel;
 import com.bdool.chatservice.model.entity.MessageEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public interface MessageService {
-    Mono<MessageEntity> save(MessageModel message);
+    MessageEntity save(MessageModel message);
 
-    Mono<MessageEntity> update(UUID messageId, MessageModel message);
+    MessageEntity update(UUID messageId, MessageModel message);
 
-    Flux<MessageEntity> findAll();
+    List<MessageEntity> findAll();
 
-    Mono<MessageEntity> findById(UUID messageId);
+    List<MessageEntity> findByChannelId(UUID channelId);
 
-    Mono<Boolean> existsById(UUID messageId);
+    MessageEntity findById(UUID messageId);
 
-    Mono<Long> count();
+    Boolean existsById(UUID messageId);
 
-    Mono<Void> deleteById(UUID messageId);
+    Long count();
+
+    void deleteById(UUID messageId);
 }

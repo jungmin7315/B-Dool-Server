@@ -7,6 +7,7 @@ import com.bdool.chatservice.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,8 +26,8 @@ public class ChannelServiceImpl implements ChannelService {
                 .description(channel.getDescription())
                 .isPrivate(channel.getIsPrivate())
                 .channelType(channel.getChannelType())
-                .createdAt(channel.getCreatedAt())
-                .updatedAt(channel.getUpdatedAt())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .profileId(channel.getProfileId())
                 .workspacesId(channel.getWorkspacesId())
                 .build());
@@ -39,7 +40,7 @@ public class ChannelServiceImpl implements ChannelService {
             existingChannel.setDescription(channel.getDescription());
             existingChannel.setIsPrivate(channel.getIsPrivate());
             existingChannel.setChannelType(channel.getChannelType());
-            existingChannel.setUpdatedAt(channel.getUpdatedAt());
+            existingChannel.setUpdatedAt(LocalDateTime.now());
             existingChannel.setProfileId(channel.getProfileId());
             existingChannel.setWorkspacesId(channel.getWorkspacesId());
 
@@ -50,6 +51,11 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public List<ChannelEntity> findAll() {
         return channelRepository.findAll();
+    }
+
+    @Override
+    public List<ChannelEntity> findAllByWorkspacesId(UUID uuid) {
+        return channelRepository.findAllByWorkspacesId(uuid);
     }
 
     @Override

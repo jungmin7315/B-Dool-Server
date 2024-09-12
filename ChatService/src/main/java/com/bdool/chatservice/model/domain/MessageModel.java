@@ -11,15 +11,16 @@ import java.util.UUID;
 public class MessageModel {
     private UUID messageId;
 
-    private UUID memberId;
+    private UUID channelId;
 
     private String content;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime sendDate;
 
-    private Boolean isEdited = false;
+    private Boolean isEdited;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     private UUID parentMessageId;
+    private UUID memberId;
 }

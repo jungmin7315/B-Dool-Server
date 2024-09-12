@@ -29,10 +29,19 @@ public class ChannelController {
         return ResponseEntity.ok(channelService.update(channelId, channel));  // 200 OK
     }
 
-    // 채널 전체 목록 조회
+
     @GetMapping("")
     public ResponseEntity<?> findAll() {
         List<ChannelEntity> channels = channelService.findAll();
+        if (channels.isEmpty()) {
+            return ResponseEntity.noContent().build();  // 204 No Content
+        }
+        return ResponseEntity.ok(channels);  // 200 OK
+    }
+    // 워크스페이스에 해당 하는 채널 전체 목록 조회
+    @GetMapping("/All/{workspaceId}")
+    public ResponseEntity<?> findAllByWorkspacesId(@PathVariable UUID workspaceId) {
+        List<ChannelEntity> channels = channelService.findAllByWorkspacesId(workspaceId);
         if (channels.isEmpty()) {
             return ResponseEntity.noContent().build();  // 204 No Content
         }

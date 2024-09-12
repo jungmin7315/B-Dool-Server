@@ -20,7 +20,7 @@ public class ChannelEntity {
     @Id
     private UUID channelId; // MongoDB에서는 @GeneratedValue를 사용하지 않고, 수동으로 UUID를 생성할 수 있습니다.
 
-    private Long workspacesId;
+    private UUID workspacesId;
 
     private String name;
 
