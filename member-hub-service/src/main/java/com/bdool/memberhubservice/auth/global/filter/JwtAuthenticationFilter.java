@@ -43,11 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 // 인증 정보 설정
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                // Access Token이 유효하지 않거나 만료된 경우 Refresh Token을 사용하여 새로운 Access Token 발급
+                // Access Token이 유효하지 않거나 만료된 경우 Refresh Token 검증
                 String refreshToken = redisTemplate.opsForValue().get(email);
                 if (refreshToken != null && jwtUtil.validateRefreshToken(refreshToken)) {
                     var userDetails = customUserDetailService.loadUserByUsername(email);

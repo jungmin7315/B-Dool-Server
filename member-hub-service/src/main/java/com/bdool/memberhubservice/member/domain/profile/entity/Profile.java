@@ -1,6 +1,5 @@
 package com.bdool.memberhubservice.member.domain.profile.entity;
 
-import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,8 +25,6 @@ public class Profile {
     private Boolean isOnline; // 온라인/오프라인 표시
     private Boolean isWorkspaceCreator;
 
-    //    @ManyToOne
-//    @JoinColumn(name = "member_id", nullable = false)
     private Long memberId;
 
     private String email;
@@ -49,6 +46,21 @@ public class Profile {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = new Date();
+    }
+
+    public void updateProfile(String nickname, String position, String profilePictureUrl) {
+        this.nickname = nickname;
+        this.position = position;
+        this.profilePictureUrl = profilePictureUrl;
+        this.updatedAt = new Date();  // 업데이트 시간 갱신
+    }
+
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+
+    public void updateOnline(boolean isOnline) {
+        this.isOnline = isOnline;
     }
 }
 
