@@ -67,6 +67,7 @@ public class ProfileServiceImpl implements ProfileService {
         findProfile.updateProfile(profileUpdateRequest.getNickname(),
                 profileUpdateRequest.getPosition(),
                 profileUpdateRequest.getProfilePictureUrl());
+        profileRepository.save(findProfile);
         return findProfile;
     }
 
@@ -75,6 +76,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile findProfile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateStatus(status);
+        profileRepository.save(findProfile);
         return findProfile.getStatus();
     }
 
@@ -83,6 +85,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile findProfile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateOnline(isOnline);
+        profileRepository.save(findProfile);
         return findProfile.getIsOnline();
     }
 }
