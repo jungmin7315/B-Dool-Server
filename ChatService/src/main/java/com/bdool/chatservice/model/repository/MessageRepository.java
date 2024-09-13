@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MessageRepository extends MongoRepository<MessageEntity, UUID> {
-    List<MessageEntity> findByChannelIdOrderBySendDateDesc(UUID channelId);
+    List<MessageEntity> findByChannelIdOrderBySendDateAsc(UUID channelId);
     MessageEntity findMessageEntityBy(UUID id);
 }
 

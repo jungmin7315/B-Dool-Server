@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.*;
 @RequiredArgsConstructor
 public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final StompHandler stompHandler;
+//    private final StompHandler stompHandler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -26,7 +26,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/queue","/topic");
-        registry.setApplicationDestinationPrefixes("/publish");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     // 클라이언트 인바운드 채널을 구성하는 메서드

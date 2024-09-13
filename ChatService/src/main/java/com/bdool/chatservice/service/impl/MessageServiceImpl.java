@@ -18,7 +18,7 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
 
-    // 메시지를 저장하는 방식 (비동기 아님)
+    // 메시지를 저장하는 방식
     @Override
     public MessageEntity save(MessageModel message) {
         MessageEntity messageEntity = MessageEntity.builder()
@@ -35,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.save(messageEntity);
     }
 
-    // 메시지 업데이트 (비동기 아님)
+    // 메시지 업데이트
     @Override
     public MessageEntity update(UUID messageId, MessageModel messageModel) {
         Optional<MessageEntity> existingMessageOptional = messageRepository.findById(messageId);
@@ -50,18 +50,19 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    // 모든 메시지 찾기 (비동기 아님)
+    // 모든 메시지 찾
     @Override
     public List<MessageEntity> findAll() {
         return messageRepository.findAll();
     }
 
+    // 채널 ID 기준 모든 메시지 찾기
     @Override
     public List<MessageEntity> findByChannelId(UUID channelId) {
-        return messageRepository.findByChannelIdOrderBySendDateDesc(channelId);
+        return messageRepository.findByChannelIdOrderBySendDateAsc(channelId);
     }
 
-    // ID로 메시지 찾기 (비동기 아님)
+    // ID로 메시지 찾기
     @Override
     public MessageEntity findById(UUID messageId) {
         return messageRepository.findById(messageId)

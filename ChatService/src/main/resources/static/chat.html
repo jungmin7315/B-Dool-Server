@@ -80,7 +80,7 @@
         }
 
         if (channelId && stompClient && stompClient.connected) {
-            stompClient.send(`/publish/message/${channelId}`, {}, JSON.stringify({
+            stompClient.send(`/app/message/${channelId}`, {}, JSON.stringify({
                 content: messageInput,
                 channelId: channelId,
                 memberId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b"  // 실제 memberId로 설정
