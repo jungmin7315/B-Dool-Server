@@ -15,6 +15,8 @@ public class BotResponse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    @Column(name = "response_text", columnDefinition = "TEXT")
     private String responseText;
     private String modelUsed;
 }
