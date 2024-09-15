@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface ProfileService {
     Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator);
 
+    Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator);
+
     Optional<Profile> findById(Long profileId);
 
     List<Profile> findAll();

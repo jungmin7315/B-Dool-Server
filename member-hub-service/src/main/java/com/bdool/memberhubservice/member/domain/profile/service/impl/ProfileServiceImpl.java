@@ -23,12 +23,28 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
         Member member = memberService.findById(memberId)
-                .orElseThrow(()->new IllegalArgumentException("member not found"));
+                .orElseThrow(() -> new IllegalArgumentException("member not found"));
         Profile profile = Profile.builder()
                 .name(profileModel.getName())
                 .nickname(profileModel.getNickname())
                 .profilePictureUrl(profileModel.getProfilePictureUrl())
                 .memberId(member.getId())
+                .isWorkspaceCreator(isWorkspaceCreator)
+                .email(member.getEmail())
+                .build();
+        return profileRepository.save(profile);
+    }
+
+    @Override
+    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator) {
+        Member member = memberService.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("member not found"));
+        Profile profile = Profile.builder()
+                .name(profileModel.getName())
+                .nickname(profileModel.getNickname())
+                .profilePictureUrl(profileModel.getProfilePictureUrl())
+                .memberId(member.getId())
+                .workspaceId(workspaceId)
                 .isWorkspaceCreator(isWorkspaceCreator)
                 .email(member.getEmail())
                 .build();

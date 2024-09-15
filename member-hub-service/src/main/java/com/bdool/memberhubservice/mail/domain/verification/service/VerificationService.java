@@ -10,16 +10,6 @@ public interface VerificationService {
 
     Verification save(VerificationModel verificationModel);
 
-    Optional<Verification> findById(Long verificationId);
-
-    List<Verification> findAll();
-
-    long count();
-
-    boolean existsById(Long verificationId);
-
-    void deleteById(Long verificationId);
-
     boolean sendVerificationCode(String mail);
 
     boolean verifyCode(String email, String verificationCode);

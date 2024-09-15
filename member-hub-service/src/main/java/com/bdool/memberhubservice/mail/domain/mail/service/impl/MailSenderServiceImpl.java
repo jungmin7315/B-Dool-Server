@@ -1,6 +1,6 @@
-package com.bdool.memberhubservice.mail.domain.verification.service.impl;
+package com.bdool.memberhubservice.mail.domain.mail.service.impl;
 
-import com.bdool.memberhubservice.mail.domain.verification.service.MailSenderService;
+import com.bdool.memberhubservice.mail.domain.mail.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
