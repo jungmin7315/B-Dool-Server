@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 권한 설정
                 .authorizeHttpRequests(autz -> autz
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/verification/**").permitAll()
+                        .requestMatchers("/api/auth/**","/login").permitAll()
+                        .requestMatchers("/api/mail/**").permitAll()
                         .anyRequest().authenticated()  // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
