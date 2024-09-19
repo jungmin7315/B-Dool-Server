@@ -19,6 +19,8 @@ public class ChatHistory {
     private Long id;
     private Long workspaceId;
     private Long profileId;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String question;
 
     @ManyToOne

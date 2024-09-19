@@ -26,28 +26,12 @@ public class OpenAiChatServiceImpl implements OpenAiChatService {
 
     @Override
     public String getChatGPTResponse(String question) {
-        // HTTP 요청 헤더 설정
-        // HTTP 요청 헤더 설정
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        // 요청 본문 설정 (Chat 모델에 맞는 형식)
-        Map<String, Object> body = new HashMap<>();
-        body.put("model", "gpt-3.5-turbo");
-
-        // messages 배열에 사용자 질문 추가
-        Map<String, String> userMessage = new HashMap<>();
-        userMessage.put("role", "user");  // 역할은 'user'로 설정
-        userMessage.put("content", question);  // 질문 내용 설정
-
-        // messages 배열로 추가
-        List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(userMessage);
-        body.put("messages", messages);  // 필수 파라미터인 messages 추가
-
-        // HTTP 요청 생성
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> entity = getMapHttpEntity(question, headers);
 
         // API 호출
         ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, Map.class);
@@ -56,5 +40,28 @@ public class OpenAiChatServiceImpl implements OpenAiChatService {
         List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
         Map<String, Object> messageResponse = (Map<String, Object>) choices.get(0).get("message");
         return (String) messageResponse.get("content");
+    }
+
+    private static HttpEntity<Map<String, Object>> getMapHttpEntity(String question, HttpHeaders headers) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("model", "gpt-3.5-turbo");
+
+        // 시스템 메시지 추가
+        Map<String, String> systemMessage = new HashMap<>();
+        systemMessage.put("role", "system");
+        systemMessage.put("content", "질문을 한국어로 정확하게 번역하고 번역한 내용만 답변해주세요.");
+
+        // 사용자 메시지 (질문)
+        Map<String, String> userMessage = new HashMap<>();
+        userMessage.put("role", "user");
+        userMessage.put("content", question); // 질문 내용
+
+        List<Map<String, String>> messages = new ArrayList<>();
+        messages.add(systemMessage);  // 시스템 메시지 먼저 추가
+        messages.add(userMessage);    // 그 다음 사용자 질문 추가
+
+        body.put("messages", messages);
+
+        return new HttpEntity<>(body, headers);
     }
 }
