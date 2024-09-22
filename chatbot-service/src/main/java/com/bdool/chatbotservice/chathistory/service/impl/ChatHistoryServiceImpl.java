@@ -22,15 +22,26 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
     private final String modelUsed = "gpt-3.5";
 
     @Override
-    public String processChat(Long workspaceId, Long profileId, Map<String,String> requestBody) {
+    public String processChat(Long workspaceId, Long profileId, Map<String, String> requestBody) {
+        return processChatInternal(workspaceId, profileId, requestBody, false);
+    }
+
+    @Override
+    public String processTranslate(Long workspaceId, Long profileId, Map<String, String> requestBody) {
+        return processChatInternal(workspaceId, profileId, requestBody, true);
+    }
+
+    private String processChatInternal(Long workspaceId, Long profileId, Map<String, String> requestBody, boolean isTranslation) {
         String question = requestBody.get("question");
+
         return botResponseService.findCachedResponse(question)
                 .map(cachedResponse -> {
                     saveChatHistory(workspaceId, profileId, question, cachedResponse);
                     return cachedResponse.getResponseText();
                 })
                 .orElseGet(() -> {
-                    String aiResponse = openAiChatService.getChatGPTResponse(question);
+                    String aiResponse = isTranslation ? openAiChatService.getChatGPTTranslate(question)
+                            : openAiChatService.getChatGPTResponse(question);
                     BotResponse botResponse = botResponseService.saveResponse(aiResponse, modelUsed);
                     saveChatHistory(workspaceId, profileId, question, botResponse);
                     return botResponse.getResponseText();
