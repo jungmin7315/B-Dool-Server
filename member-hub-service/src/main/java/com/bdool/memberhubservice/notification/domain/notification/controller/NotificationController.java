@@ -21,6 +21,7 @@ public class NotificationController {
     public ResponseEntity<Notification> createNotification(@RequestBody NotificationModel notificationModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.createNotification(notificationModel));
     }
+
     @GetMapping("/unread/{profileId}")
     public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable Long profileId) {
         List<Notification> unreadNotifications = notificationService.findByProfileIdAndReadFalse(profileId);
