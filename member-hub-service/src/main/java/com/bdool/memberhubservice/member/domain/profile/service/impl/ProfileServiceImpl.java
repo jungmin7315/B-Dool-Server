@@ -7,9 +7,12 @@ import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileMode
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
+import com.bdool.memberhubservice.notification.domain.notification.entity.NotificationType;
+import com.bdool.memberhubservice.notification.domain.setting.service.NotificationTargetSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
+    private final NotificationTargetSettingService settingService;
 
     @Override
     public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
@@ -32,23 +36,9 @@ public class ProfileServiceImpl implements ProfileService {
                 .isWorkspaceCreator(isWorkspaceCreator)
                 .email(member.getEmail())
                 .build();
-        return profileRepository.save(profile);
-    }
-
-    @Override
-    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator) {
-        Member member = memberService.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("member not found"));
-        Profile profile = Profile.builder()
-                .name(profileModel.getName())
-                .nickname(profileModel.getNickname())
-                .profilePictureUrl(profileModel.getProfilePictureUrl())
-                .memberId(member.getId())
-                .workspaceId(workspaceId)
-                .isWorkspaceCreator(isWorkspaceCreator)
-                .email(member.getEmail())
-                .build();
-        return profileRepository.save(profile);
+        profileRepository.save(profile);
+        initializeDefaultSettings(profile.getId());
+        return profile;
     }
 
     @Override
@@ -103,5 +93,18 @@ public class ProfileServiceImpl implements ProfileService {
         findProfile.updateOnline(isOnline);
         profileRepository.save(findProfile);
         return findProfile.getIsOnline();
+    }
+
+    private void initializeDefaultSettings(Long profileId) {
+        List<NotificationType> notificationTypes = Arrays.asList(
+                NotificationType.CHATTING,
+                NotificationType.EVENT,
+                NotificationType.SYSTEM,
+                NotificationType.OTHER
+        );
+
+        for (NotificationType type : notificationTypes) {
+            settingService.save(profileId, type, true);
+        }
     }
 }
