@@ -1,14 +1,10 @@
 package com.bdool.memberhubservice.notification.domain.notification.entity.model;
 
 import com.bdool.memberhubservice.notification.domain.notification.entity.NotificationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.bdool.memberhubservice.notification.domain.setting.entity.NotificationTargetType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -19,4 +15,7 @@ public class NotificationModel {
     private NotificationType notificationType;
     private String message;
     private String metadata;
+
+    private NotificationTargetType targetType;
+    private Long targetId;
 }
