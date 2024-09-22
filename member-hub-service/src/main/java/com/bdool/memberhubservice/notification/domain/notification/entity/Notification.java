@@ -42,9 +42,12 @@ public class Notification {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.expiresAt == null) {
+            this.expiresAt = createdAt.plusDays(30); // 기본적으로 30일 후에 만료되도록 설정
+        }
     }
 
-    public void markAsRead(boolean read) {
-        this.isRead = read;
+    public void markAsRead() {
+        this.isRead = true;
     }
 }

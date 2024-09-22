@@ -8,7 +8,7 @@ import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpda
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import com.bdool.memberhubservice.notification.domain.notification.entity.NotificationType;
-import com.bdool.memberhubservice.notification.domain.setting.service.SettingService;
+import com.bdool.memberhubservice.notification.domain.setting.service.NotificationTargetSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
-    private final SettingService settingService;
+    private final NotificationTargetSettingService settingService;
 
     @Override
     public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
