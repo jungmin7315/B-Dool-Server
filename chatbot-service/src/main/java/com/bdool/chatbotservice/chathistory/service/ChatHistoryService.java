@@ -9,5 +9,7 @@ public interface ChatHistoryService {
 
     String processChat(Long workspaceId, Long profileId, Map<String,String> requestBody);
 
+    String processTranslate(Long workspaceId, Long profileId, Map<String, String> requestBody);
+
     List<ChatHistory> getChatHistory(Long workspaceId, Long profileId);
 }
