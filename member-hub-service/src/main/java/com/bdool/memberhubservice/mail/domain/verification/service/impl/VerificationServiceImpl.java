@@ -5,7 +5,7 @@ import com.bdool.memberhubservice.mail.domain.log.service.LogService;
 import com.bdool.memberhubservice.mail.domain.verification.entity.Verification;
 import com.bdool.memberhubservice.mail.domain.verification.entity.model.VerificationModel;
 import com.bdool.memberhubservice.mail.domain.verification.repository.VerificationRepository;
-import com.bdool.memberhubservice.mail.domain.verification.service.MailSenderService;
+import com.bdool.memberhubservice.mail.domain.mail.service.MailSenderService;
 import com.bdool.memberhubservice.mail.domain.verification.service.VerificationService;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
@@ -33,31 +33,6 @@ public class VerificationServiceImpl implements VerificationService {
                 .expiredAt(calculateExpirationDate())
                 .build();
         return verificationRepository.save(verification);
-    }
-
-    @Override
-    public Optional<Verification> findById(Long verificationId) {
-        return verificationRepository.findById(verificationId);
-    }
-
-    @Override
-    public List<Verification> findAll() {
-        return verificationRepository.findAll();
-    }
-
-    @Override
-    public long count() {
-        return verificationRepository.count();
-    }
-
-    @Override
-    public boolean existsById(Long verificationId) {
-        return verificationRepository.existsById(verificationId);
-    }
-
-    @Override
-    public void deleteById(Long verificationId) {
-        verificationRepository.deleteById(verificationId);
     }
 
     @Override

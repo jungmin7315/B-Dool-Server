@@ -23,4 +23,6 @@ public interface MemberService {
     void deleteById(Long memberId);
 
     Optional<Member> findByEmail(String email);
+
+    Long findIdByEmail(String receiverEmail);
 }

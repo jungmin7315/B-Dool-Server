@@ -25,6 +25,14 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.save(profileModel, memberId, isWorkspaceCreator));
     }
 
+    @PostMapping("/{memberId}&&{workspaceId}/invited")
+    public ResponseEntity<Profile> createProfileByInvitation(@PathVariable Long memberId,
+                                                             @PathVariable Long workspaceId,
+                                                             @RequestBody ProfileModel profileModel,
+                                                             boolean isWorkspaceCreator) {
+        return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId, isWorkspaceCreator));
+    }
+
     @GetMapping("/{profileId}")
     public ResponseEntity<Optional<Profile>> getProfileById(@PathVariable Long profileId) {
         return ResponseEntity.ok(profileService.findById(profileId));
