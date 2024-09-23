@@ -15,7 +15,7 @@ public class ProfileSSEController {
     private final ProfileSSEService sseService;
 
     @GetMapping("/subscribe")
-    public SseEmitter subscribeToProfileChanges() {
+    public SseEmitter subscribe() {
         return sseService.createSseEmitter();
     }
 }
