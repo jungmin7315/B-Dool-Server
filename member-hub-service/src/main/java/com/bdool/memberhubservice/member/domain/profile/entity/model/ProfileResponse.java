@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileResponse {
-
     private Long id;
     private String nickname;
     private Boolean isOnline;
