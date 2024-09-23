@@ -28,10 +28,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 권한 설정
                 .authorizeHttpRequests(autz -> autz
-                        .requestMatchers("/api/auth/**","/login").permitAll()
-                        .requestMatchers("/api/mail/**").permitAll()
-                        .anyRequest().authenticated()  // 나머지 요청은 인증 필요
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/verification/**").permitAll()
+                        .requestMatchers("/api/profiles/**").permitAll()
+                        .requestMatchers("/api/sse/**").permitAll()
+                        .anyRequest().authenticated()// 나머지 요청은 인증 필요
+
                 )
+                .csrf(AbstractHttpConfigurer::disable)
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")  // 로그인 페이지 설정
                         .userInfoEndpoint(userInfo -> userInfo
