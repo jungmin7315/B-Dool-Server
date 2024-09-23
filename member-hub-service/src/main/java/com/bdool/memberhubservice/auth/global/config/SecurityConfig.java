@@ -30,8 +30,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(autz -> autz
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/verification/**").permitAll()
-                        .anyRequest().authenticated()  // 나머지 요청은 인증 필요
+                        .requestMatchers("/api/profiles/**").permitAll()
+                        .requestMatchers("/api/sse/**").permitAll()
+                        .anyRequest().authenticated()// 나머지 요청은 인증 필요
+
                 )
+                .csrf(AbstractHttpConfigurer::disable)
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")  // 로그인 페이지 설정
                         .userInfoEndpoint(userInfo -> userInfo
@@ -40,6 +44,7 @@ public class SecurityConfig {
                 )
                 // JWT 필터 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

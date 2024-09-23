@@ -2,6 +2,7 @@ package com.bdool.memberhubservice.member.domain.profile.controller;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileResponse;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/profiles")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -21,7 +23,7 @@ public class ProfileController {
     @PostMapping("/{memberId}")
     public ResponseEntity<Profile> createProfile(@PathVariable Long memberId,
                                                  @RequestBody ProfileModel profileModel,
-                                                 boolean isWorkspaceCreator) {
+                                                 Boolean isWorkspaceCreator) {
         return ResponseEntity.ok(profileService.save(profileModel, memberId, isWorkspaceCreator));
     }
 
@@ -30,9 +32,9 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findById(profileId));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Profile>> getAllProfile() {
-        return ResponseEntity.ok(profileService.findAll());
+    @GetMapping("/workspace/{workspaceId}")
+    public ResponseEntity<List<ProfileResponse>> getProfilesByWorkspaceId(@PathVariable Long workspaceId) {
+        return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
     }
 
     @GetMapping("/count")
@@ -63,7 +65,7 @@ public class ProfileController {
     }
 
     @PatchMapping("/{profileId}/online")
-    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam boolean isOnline) {
+    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam Boolean isOnline) {
         return ResponseEntity.ok(profileService.updateOnline(profileId, isOnline));
     }
 }
