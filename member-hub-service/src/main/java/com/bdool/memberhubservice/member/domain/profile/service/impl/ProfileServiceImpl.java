@@ -5,7 +5,6 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
-import com.bdool.memberhubservice.member.domain.profile.repository.querydsl.ProfileQueryDslRepositoryCustom;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
