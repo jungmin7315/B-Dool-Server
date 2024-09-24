@@ -5,7 +5,6 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
-import com.bdool.memberhubservice.member.domain.profile.repository.querydsl.ProfileQueryDslRepositoryCustom;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
     private final ProfileSSEService sseService;
-    private final NotificationTargetSettingService settingService;
 
     @Override
 
@@ -38,7 +36,6 @@ public class ProfileServiceImpl implements ProfileService {
                 .isOnline(false)
                 .build();
         profileRepository.save(profile);
-        initializeDefaultSettings(profile.getId());
         return profile;
     }
 
@@ -125,18 +122,5 @@ public class ProfileServiceImpl implements ProfileService {
         sseService.notifyOnlineChange(profileOnlineResponse);
 
         return findProfile.getIsOnline();
-    }
-
-    private void initializeDefaultSettings(Long profileId) {
-        List<NotificationType> notificationTypes = Arrays.asList(
-                NotificationType.CHATTING,
-                NotificationType.EVENT,
-                NotificationType.SYSTEM,
-                NotificationType.OTHER
-        );
-
-        for (NotificationType type : notificationTypes) {
-            settingService.save(profileId, type, true);
-        }
     }
 }
