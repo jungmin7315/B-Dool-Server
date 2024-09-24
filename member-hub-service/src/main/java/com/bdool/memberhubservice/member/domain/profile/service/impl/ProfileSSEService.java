@@ -14,40 +14,44 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ProfileSSEService {
 
+    // SseEmitter를 관리하는 ConcurrentHashMap (Thread-safe)
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
+    // 클라이언트가 SSE 구독 요청을 하면 호출
     public SseEmitter createSseEmitter() {
-        SseEmitter emitter = new SseEmitter(300_000L);  // 5분 타임아웃
+        SseEmitter emitter = new SseEmitter(0L);  // 타임아웃을 무한대로 설정
         Long emitterId = System.currentTimeMillis();
-        emitters.put(emitterId, emitter);
+        emitters.put(emitterId, emitter);  // emitters에 새 구독자 추가
 
-        // SSE 연결 완료 시
+        // SSE 연결이 정상적으로 종료될 때
         emitter.onCompletion(() -> {
-            emitters.remove(emitterId);
+            emitters.remove(emitterId);  // 완료되면 emitters에서 제거
             System.out.println("SSE connection completed: " + emitterId);
         });
 
-        // SSE 연결 타임아웃 시
+        // SSE 연결이 타임아웃될 때
         emitter.onTimeout(() -> {
-            emitters.remove(emitterId);
+            emitters.remove(emitterId);  // 타임아웃 발생 시 emitters에서 제거
             System.out.println("SSE connection timed out: " + emitterId);
-            emitter.complete();  // 타임아웃이 발생했을 때는 완료 처리
+            emitter.complete();  // 타임아웃이 발생하면 완료 처리
         });
 
-        // SSE 에러 발생 시
+        // SSE 연결 중 에러가 발생할 때
         emitter.onError(e -> {
-            emitters.remove(emitterId);
+            emitters.remove(emitterId);  // 에러 발생 시 emitters에서 제거
             System.err.println("SSE connection error: " + emitterId + ", error: " + e.getMessage());
-            emitter.completeWithError(e);  // 에러 발생 시 완료 처리
+            emitter.completeWithError(e);  // 에러가 발생하면 완료 처리
         });
 
-        return emitter;
+        return emitter;  // SseEmitter 반환
     }
 
+    // 닉네임 변경 이벤트를 모든 구독자에게 전송
     public void notifyNicknameChange(ProfileNicknameResponse profileNicknameResponse) {
         sendEventToAllEmitters("nickname-change", profileNicknameResponse);
     }
 
+    // 온라인 상태 변경 이벤트를 모든 구독자에게 전송
     public void notifyOnlineChange(ProfileOnlineResponse profileOnlineResponse) {
         sendEventToAllEmitters("online-status-change", profileOnlineResponse);
     }
@@ -59,9 +63,10 @@ public class ProfileSSEService {
                         .name(eventName)
                         .data(data));
             } catch (IOException e) {
-                emitter.completeWithError(e);  // 에러 발생 시 연결을 종료
-                emitters.remove(id);
+                // Broken pipe 또는 기타 IO 예외가 발생한 경우
                 System.err.println("Error sending event: " + e.getMessage());
+                emitter.completeWithError(e);  // 에러 발생 시 해당 Emitter 종료
+                emitters.remove(id);  // Emitter를 emitters 맵에서 제거
             }
         });
     }
