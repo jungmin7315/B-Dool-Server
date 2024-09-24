@@ -48,6 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .isWorkspaceCreator(isWorkspaceCreator)
                 .email(member.getEmail())
                 .build();
+
         return profileRepository.save(profile);
     }
 

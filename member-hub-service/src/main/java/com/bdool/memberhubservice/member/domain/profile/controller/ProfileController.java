@@ -30,7 +30,7 @@ public class ProfileController {
                                                              @PathVariable Long workspaceId,
                                                              @RequestBody ProfileModel profileModel,
                                                              boolean isWorkspaceCreator) {
-        return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId, isWorkspaceCreator));
+        return ResponseEntity.ok(profileService.saveByInvitation(profileModel,  memberId, workspaceId, isWorkspaceCreator));
     }
 
     @GetMapping("/{profileId}")
