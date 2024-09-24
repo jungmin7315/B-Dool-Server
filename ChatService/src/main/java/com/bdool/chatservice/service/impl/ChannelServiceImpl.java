@@ -1,9 +1,11 @@
 package com.bdool.chatservice.service.impl;
 
+import com.bdool.chatservice.exception.ChannelNotFoundException;
 import com.bdool.chatservice.model.domain.ChannelModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.service.ChannelService;
+import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,9 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ChannelEntity save(ChannelModel channel) {
+        UUID channelId = UUIDUtil.getOrCreateUUID(channel.getChannelId());
         return channelRepository.save(ChannelEntity.builder()
-                .channelId(channel.getChannelId() == null ? UUID.randomUUID(): channel.getChannelId())
+                .channelId(channelId)
                 .name(channel.getName())
                 .description(channel.getDescription())
                 .isPrivate(channel.getIsPrivate())
@@ -35,7 +38,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public ChannelEntity update(UUID channelId, ChannelModel channel) {
-        return channelRepository.findById(channelId).map(existingChannel -> {
+        return channelRepository.findById(channelId)
+                .map(existingChannel -> {
             existingChannel.setName(channel.getName());
             existingChannel.setDescription(channel.getDescription());
             existingChannel.setIsPrivate(channel.getIsPrivate());
@@ -45,7 +49,7 @@ public class ChannelServiceImpl implements ChannelService {
             existingChannel.setWorkspacesId(channel.getWorkspacesId());
 
             return channelRepository.save(existingChannel);
-        }).orElseThrow(() -> new RuntimeException("Channel not found with ID: " + channelId));
+        }).orElseThrow(() -> new ChannelNotFoundException("Channel not found with ID: " + channelId));
     }
 
     @Override

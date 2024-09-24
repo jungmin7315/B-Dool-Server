@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,49 +34,53 @@ public class MessageController {
     }
 
     @GetMapping("/{channelId}")
-    public ResponseEntity<List<MessageEntity>> findAllChannelId(@PathVariable UUID channelId){
-        return ResponseEntity.ok(messageService.findByChannelId(channelId));
+    public ResponseEntity<List<MessageEntity>> findAllChannelId(
+            @PathVariable UUID channelId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "30") int size) {
+        return ResponseEntity.ok(messageService.findByChannelId(channelId, page, size));
     }
 
-//    // 메시지 업데이트
-//    @PutMapping("/{messageId}")
-//    public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
-//        MessageEntity updatedMessage = messageService.update(messageId, message);
-//        return ResponseEntity.ok(updatedMessage);
-//    }
-//
-//    // 모든 메시지 찾기
-//    @GetMapping("")
-//    public ResponseEntity<List<MessageEntity>> findAll() {
-//        List<MessageEntity> messages = messageService.findAll();
-//        return ResponseEntity.ok(messages);
-//    }
-//
-//    // ID로 메시지 찾기
-//    @GetMapping("/{messageId}")
-//    public ResponseEntity<MessageEntity> findById(@PathVariable UUID messageId) {
-//        MessageEntity message = messageService.findById(messageId);
-//        return ResponseEntity.ok(message);
-//    }
-//
-//    // ID로 메시지가 존재하는지 확인
-//    @GetMapping("/exists/{messageId}")
-//    public ResponseEntity<Boolean> existsById(@PathVariable UUID messageId) {
-//        boolean exists = messageService.existsById(messageId);
-//        return ResponseEntity.ok(exists);
-//    }
-//
-//    // 메시지 개수 카운트
-//    @GetMapping("/count")
-//    public ResponseEntity<Long> count() {
-//        long count = messageService.count();
-//        return ResponseEntity.ok(count);
-//    }
-//
-//    // ID로 메시지 삭제
-//    @DeleteMapping("/{messageId}")
-//    public ResponseEntity<Void> deleteById(@PathVariable UUID messageId) {
-//        messageService.deleteById(messageId);
-//        return ResponseEntity.noContent().build();  // 삭제 후 204 응답
-//    }
+
+    // 메시지 업데이트
+    @PutMapping("/{messageId}")
+    public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
+        MessageEntity updatedMessage = messageService.update(messageId, message);
+        return ResponseEntity.ok(updatedMessage);
+    }
+
+    // 모든 메시지 찾기
+    @GetMapping("")
+    public ResponseEntity<List<MessageEntity>> findAll() {
+        List<MessageEntity> messages = messageService.findAll();
+        return ResponseEntity.ok(messages);
+    }
+
+    // ID로 메시지 찾기
+    @GetMapping("/find/{messageId}")
+    public ResponseEntity<MessageEntity> findById(@PathVariable UUID messageId) {
+        MessageEntity message = messageService.findById(messageId);
+        return ResponseEntity.ok(message);
+    }
+
+    // ID로 메시지가 존재하는지 확인
+    @GetMapping("/exists/{messageId}")
+    public ResponseEntity<Boolean> existsById(@PathVariable UUID messageId) {
+        boolean exists = messageService.existsById(messageId);
+        return ResponseEntity.ok(exists);
+    }
+
+    // 메시지 개수 카운트
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        long count = messageService.count();
+        return ResponseEntity.ok(count);
+    }
+
+    // ID로 메시지 삭제
+    @DeleteMapping("/{messageId}")
+    public ResponseEntity<Void> deleteById(@PathVariable UUID messageId) {
+        messageService.deleteById(messageId);
+        return ResponseEntity.noContent().build();  // 삭제 후 204 응답
+    }
 }

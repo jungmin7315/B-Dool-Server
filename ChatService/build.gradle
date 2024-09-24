@@ -18,6 +18,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.903'
+    implementation 'com.amazonaws:aws-java-sdk-core:1.11.903'
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'

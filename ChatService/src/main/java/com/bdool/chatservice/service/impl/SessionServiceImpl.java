@@ -1,9 +1,11 @@
 package com.bdool.chatservice.service.impl;
 
+import com.bdool.chatservice.exception.SessionNotFoundException;
 import com.bdool.chatservice.model.domain.SessionModel;
 import com.bdool.chatservice.model.entity.SessionEntity;
 import com.bdool.chatservice.model.repository.SessionRepository;
 import com.bdool.chatservice.service.SessionService;
+import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,10 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionEntity save(SessionModel session) {
+        UUID sessionId = UUIDUtil.getOrCreateUUID(session.getSessionId());
 
         return sessionRepository.save(SessionEntity.builder()
-                .sessionId((session.getSessionId() == null ? UUID.randomUUID() : session.getSessionId()))
+                .sessionId(sessionId)
                 .sessionType(session.getSessionType())
                 .startAt(session.getStartAt())
                 .endAt(session.getEndAt())
@@ -32,7 +35,14 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionEntity update(UUID sessionId, SessionModel session) {
-        return null;
+        return sessionRepository.findById(sessionId)
+                .map(existingSession -> {
+                    existingSession.setStartAt(session.getStartAt());
+                    existingSession.setEndAt(session.getEndAt());
+                    existingSession.setProfileId(session.getProfileId());
+                    existingSession.setChannelMemberId(session.getChannelMemberId());
+                    return sessionRepository.save(existingSession);
+                }).orElseThrow(() -> new SessionNotFoundException("Session not found with ID: " + sessionId));
     }
 
     @Override

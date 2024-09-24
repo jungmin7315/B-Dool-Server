@@ -8,14 +8,12 @@ import java.util.UUID;
 
 @Component
 @Data
-public class MemberModel {
-    private UUID memberId;
+public class ParticipantModel {
+    private UUID participantId;
 
     private UUID channelId;
 
-    private UUID profileId;
-
-    private String name;
+    private String profileName;
 
     private boolean favorited;
 

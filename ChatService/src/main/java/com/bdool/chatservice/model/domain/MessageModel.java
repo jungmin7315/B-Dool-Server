@@ -22,5 +22,6 @@ public class MessageModel {
     private Boolean isDeleted;
 
     private UUID parentMessageId;
-    private UUID memberId;
+    private UUID participantId;
+    private UUID fileId;
 }

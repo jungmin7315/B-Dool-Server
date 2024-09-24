@@ -16,7 +16,7 @@ public interface MessageService {
 
     List<MessageEntity> findAll();
 
-    List<MessageEntity> findByChannelId(UUID channelId);
+    List<MessageEntity> findByChannelId(UUID channelId, int page, int size);
 
     MessageEntity findById(UUID messageId);
 

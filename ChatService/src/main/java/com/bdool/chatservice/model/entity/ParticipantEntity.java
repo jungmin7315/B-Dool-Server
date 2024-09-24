@@ -14,16 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Document(collection = "member")
-public class MemberEntity {
+public class ParticipantEntity {
 
     @Id
-    private UUID memberId;  // MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+    private UUID participantId;// MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
 
     private UUID channelId;
 
-    private UUID profileId;
-
-    private String name;
+    private String profileName;
 
     private boolean favorited;
 

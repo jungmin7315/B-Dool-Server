@@ -9,110 +9,108 @@
 </head>
 <body>
 <h2 id="channelTitle">Chat Room</h2>
-<div id="messageArea" style="height: 300px; overflow-y: auto;"></div> <!-- 스크롤을 위해 영역 고정 -->
+<div id="messageArea" style="height: 300px; overflow-y: auto;"></div>
 <input type="text" id="messageInput" placeholder="Type a message..." />
 <button onclick="sendMessage()">Send</button>
 
 <script type="text/javascript">
     var stompClient = null;
     var channelId = null;
+    var currentPage = 0;  // 현재 페이지 번호
+    var oldScrollHeight = 0;  // 이전 스크롤 높이를 저장하기 위한 변수
 
-    // URL에서 channelId 쿼리 파라미터를 추출
     function getChannelIdFromUrl() {
         const params = new URLSearchParams(window.location.search);
         return params.get('channelId');
     }
 
-    // 채널 메시지 내역 불러오기
-    function loadChannelMessages() {
-        fetch(`/api/messages/${channelId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch messages');
-                }
-                return response.json();
-            })
+    function loadChannelMessages(initial = false) {
+        if (initial) {
+            currentPage = 0; // 초기 로딩을 위해 최신 페이지로 설정, 서버 측 로직에 따라 조정 가능
+        }
+
+        fetch(`/api/messages/${channelId}?page=${currentPage}&size=10`)
+            .then(response => response.json())
             .then(messages => {
-                messages.forEach(message => {
-                    showMessage(message.content);  // 메시지를 화면에 표시
+                const messageArea = document.getElementById('messageArea');
+                const atBottom = messageArea.scrollHeight - messageArea.clientHeight <= messageArea.scrollTop + 1;
+                messages.reverse().forEach(message => {
+                    showMessage(message.content, message.sendDate, !initial);
                 });
+
+                if (initial) {
+                    messageArea.scrollTop = messageArea.scrollHeight;  // 초기 로드시 스크롤을 맨 하단으로
+                } else {
+                    // 스크롤 위치 조정
+                    let newScrollHeight = messageArea.scrollHeight;
+                    messageArea.scrollTop = newScrollHeight - oldScrollHeight;
+                }
+
+                currentPage++; // 다음 페이지를 로드하기 위해 페이지 번호 증가
             })
-            .catch(error => {
-                console.error('Error loading messages:', error);
-            });
+            .catch(error => console.error('Error loading messages:', error));
     }
 
-    // 채팅방에 입장
     function enterChatRoom() {
         channelId = getChannelIdFromUrl();
         if (channelId) {
             document.getElementById('channelTitle').innerText = `Channel ${channelId}`;
-
-            // 채널의 과거 메시지 내역 불러오기
-            loadChannelMessages();
-
-            // WebSocket 연결 설정
+            loadChannelMessages(true);  // 최신 메시지부터 로딩
             var socket = new SockJS('/ws/chat');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
-
-                // 특정 채널의 메시지를 구독
                 stompClient.subscribe(`/topic/channel/${channelId}`, function (message) {
-                    showMessage(JSON.parse(message.body).content);
+                    showMessage(JSON.parse(message.body).content, JSON.parse(message.body).sendDate);
                 });
-            }, function (error) {
-                console.error("WebSocket connection error: " + error);
             });
         } else {
             alert("No channel selected.");
         }
     }
 
-    // 메시지를 전송하는 함수
     function sendMessage() {
         var messageInput = document.getElementById('messageInput').value.trim();
-
-        // 입력 값이 없으면 전송하지 않음
         if (!messageInput) {
             alert("Please enter a message.");
             return;
         }
-
         if (channelId && stompClient && stompClient.connected) {
             stompClient.send(`/app/message/${channelId}`, {}, JSON.stringify({
                 content: messageInput,
                 channelId: channelId,
-                memberId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b"  // 실제 memberId로 설정
+                memberId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b"
             }));
-
-            // 메시지를 보낸 후 입력창 초기화
             document.getElementById('messageInput').value = "";
         } else {
             alert("You are not connected to the chat.");
         }
     }
 
-    // 메시지를 화면에 표시하는 함수
-    function showMessage(message) {
+    function showMessage(message, sendDate, prepend = false) {
         var messageArea = document.getElementById('messageArea');
         var messageElement = document.createElement('p');
-        messageElement.appendChild(document.createTextNode(message));
-        messageArea.appendChild(messageElement);
-
-        // 새로운 메시지가 추가될 때마다 자동으로 스크롤
-        messageArea.scrollTop = messageArea.scrollHeight;
+        messageElement.classList.add('bubble');
+        messageElement.innerText = `${message} (Sent on ${new Date(sendDate).toLocaleString()})`;
+        if (prepend) {
+            messageArea.insertBefore(messageElement, messageArea.firstChild);
+        } else {
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight; // 항상 새 메시지를 추가할 때 스크롤 맨 아래로
+        }
     }
 
-    // 페이지 로드 시 채팅방에 입장
-    window.onload = enterChatRoom;
+    document.getElementById('messageArea').addEventListener('scroll', function() {
+        if (this.scrollTop === 0) {
+            oldScrollHeight = this.scrollHeight;
+            loadChannelMessages(false); // 과거 메시지 로딩
+        }
+    });
 
-    // 페이지를 떠날 때 WebSocket 연결 종료
+    window.onload = enterChatRoom;
     window.onbeforeunload = function() {
         if (stompClient && stompClient.connected) {
-            stompClient.disconnect(function() {
-                console.log("Disconnected from WebSocket");
-            });
+            stompClient.disconnect();
         }
     }
 </script>

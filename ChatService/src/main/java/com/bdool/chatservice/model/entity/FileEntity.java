@@ -1,6 +1,5 @@
 package com.bdool.chatservice.model.entity;
 
-import com.bdool.chatservice.model.Enum.FileKind;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +17,7 @@ import java.util.UUID;
 public class FileEntity {
 
     @Id
-    private UUID fileId;  // MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+    private UUID fileId;
 
     private String fname;
 
@@ -26,7 +25,7 @@ public class FileEntity {
 
     private Integer size;
 
-    private FileKind kind;  // MongoDB에서는 @Enumerated 없이 Enum 값 저장이 가능합니다.
+    private String extension;
 
     private LocalDateTime uploadedAt;
 

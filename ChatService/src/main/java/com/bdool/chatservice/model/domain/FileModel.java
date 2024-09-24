@@ -1,6 +1,5 @@
 package com.bdool.chatservice.model.domain;
 
-import com.bdool.chatservice.model.Enum.FileKind;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ public class FileModel {
 
     private Integer size;
 
-    private FileKind kind;
+    private String extension;
 
     private LocalDateTime uploadedAt;
 
