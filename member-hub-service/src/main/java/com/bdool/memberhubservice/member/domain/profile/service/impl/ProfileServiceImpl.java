@@ -3,18 +3,16 @@ package com.bdool.memberhubservice.member.domain.profile.service.impl;
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
+import com.bdool.memberhubservice.member.domain.profile.repository.querydsl.ProfileQueryDslRepositoryCustom;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
-import com.bdool.memberhubservice.notification.domain.notification.entity.NotificationType;
-import com.bdool.memberhubservice.notification.domain.setting.service.NotificationTargetSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +20,11 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
+    private final ProfileSSEService sseService;
     private final NotificationTargetSettingService settingService;
 
     @Override
+
     public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
@@ -35,6 +35,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .memberId(member.getId())
                 .isWorkspaceCreator(isWorkspaceCreator)
                 .email(member.getEmail())
+                .isOnline(false)
                 .build();
         profileRepository.save(profile);
         initializeDefaultSettings(profile.getId());
@@ -57,6 +58,24 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public List<ProfileResponse> findByWorkspaceId(Long workspaceId) {
+//        return profileRepository.findProfilesByWorkspaceId(workspaceId);
+        List<Profile> profiles = profileRepository.findProfilesByWorkspaceId(workspaceId);
+        return profiles.stream()
+                .map(this::convertToProfileResponse)  // 변환 메서드 사용
+                .collect(Collectors.toList());
+    }
+
+    private ProfileResponse convertToProfileResponse(Profile profile) {
+        return new ProfileResponse(
+                profile.getId(),
+                profile.getNickname(),
+                profile.getIsOnline()
+        );
+    }
+
+
+    @Override
     public boolean existsById(Long profileId) {
         return profileRepository.existsById(profileId);
     }
@@ -74,6 +93,12 @@ public class ProfileServiceImpl implements ProfileService {
                 profileUpdateRequest.getPosition(),
                 profileUpdateRequest.getProfilePictureUrl());
         profileRepository.save(findProfile);
+
+        ProfileNicknameResponse profileNicknameResponse = new ProfileNicknameResponse(
+                profileId,
+                findProfile.getWorkspaceId(),
+                findProfile.getNickname());
+        sseService.notifyNicknameChange(profileNicknameResponse);
         return findProfile;
     }
 
@@ -83,6 +108,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateStatus(status);
         profileRepository.save(findProfile);
+
         return findProfile.getStatus();
     }
 
@@ -92,6 +118,12 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateOnline(isOnline);
         profileRepository.save(findProfile);
+
+        ProfileOnlineResponse profileOnlineResponse = new ProfileOnlineResponse(
+                profileId, findProfile.getWorkspaceId(), findProfile.getIsOnline()
+        );
+        sseService.notifyOnlineChange(profileOnlineResponse);
+
         return findProfile.getIsOnline();
     }
 
