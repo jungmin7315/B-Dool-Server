@@ -3,6 +3,7 @@ package com.bdool.memberhubservice.member.domain.profile.service;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileResponse;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface ProfileService {
     List<Profile> findAll();
 
     long count();
+
+    List<ProfileResponse> findByWorkspaceId(Long workspaceId);
 
     boolean existsById(Long profileId);
 
