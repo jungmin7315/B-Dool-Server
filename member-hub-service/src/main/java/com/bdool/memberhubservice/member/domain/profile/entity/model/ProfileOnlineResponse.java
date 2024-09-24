@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ProfileOnlineResponse {
 
-    private Long profileId;
+    private Long id;
     private Long workspaceId;
-    private boolean isOnline;
+    private Boolean isOnline;
 }

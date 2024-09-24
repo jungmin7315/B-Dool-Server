@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ProfileNicknameResponse {
 
-    private Long profileId;
+    private Long id;
     private Long workspaceId;
     private String nickname;
 }
