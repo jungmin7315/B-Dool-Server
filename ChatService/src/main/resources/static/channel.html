@@ -155,9 +155,31 @@
 
         fetch('/api/channel')
             .then(response => response.json())
-            .then(data => output.innerHTML = `<p>All Channels: ${JSON.stringify(data)}</p>`)
-            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+            .then(data => {
+                let outputHtml = '<p>All Channels:</p><ul>';
+
+                data.forEach((channel, index) => {
+                    outputHtml += `<li>Channel ${index + 1}:</li><ul>`;
+
+                    // 객체의 각 키-값 쌍에 대해 타입 출력
+                    Object.keys(channel).forEach(key => {
+                        const value = channel[key];
+                        const valueType = typeof value;
+                        outputHtml += `<li>${key}: ${value} (Type: ${valueType})</li>`;
+                    });
+
+                    outputHtml += '</ul>';
+                });
+
+                outputHtml += '</ul>';
+                output.innerHTML = outputHtml;
+            })
+            .catch(error => {
+                output.innerHTML = `<p>Error: ${error}</p>`;
+            });
     });
+
+
 
     // 특정 워크스페이스에 해당하는 채널 조회
     document.getElementById('findChannelsByWorkspaceForm').addEventListener('submit', function (e) {

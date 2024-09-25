@@ -51,7 +51,7 @@
 <script>
   // 워크스페이스 UUID로 채널 목록을 가져오는 함수
   function loadChannels(workspaceUuid) {
-    fetch(`/api/channel/All/${workspaceUuid}`)  // 서버의 API에서 해당 워크스페이스의 채널 목록을 가져옴
+    fetch(`/api/channel/workspaces/${workspaceId}/channel`)  // 서버의 API에서 해당 워크스페이스의 채널 목록을 가져옴
             .then(response => {
               if (!response.ok) {
                 throw new Error('Failed to fetch channel list.');
