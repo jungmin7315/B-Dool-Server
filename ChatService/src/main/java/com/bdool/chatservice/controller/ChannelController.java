@@ -40,7 +40,7 @@ public class ChannelController {
     }
     // 워크스페이스에 해당 하는 채널 전체 목록 조회
     @GetMapping("/All/{workspaceId}")
-    public ResponseEntity<?> findAllByWorkspacesId(@PathVariable UUID workspaceId) {
+    public ResponseEntity<?> findAllByWorkspacesId(@PathVariable int workspaceId) {
         List<ChannelEntity> channels = channelService.findAllByWorkspacesId(workspaceId);
         if (channels.isEmpty()) {
             return ResponseEntity.noContent().build();  // 204 No Content

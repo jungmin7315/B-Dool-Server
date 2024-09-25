@@ -58,8 +58,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<ChannelEntity> findAllByWorkspacesId(UUID uuid) {
-        return channelRepository.findAllByWorkspacesId(uuid);
+    public List<ChannelEntity> findAllByWorkspacesId(int id) {
+        return channelRepository.findAllByWorkspacesId(id);
     }
 
     @Override

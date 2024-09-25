@@ -12,7 +12,7 @@ import java.util.UUID;
 public class ChannelModel {
     private UUID channelId;
 
-    private UUID workspacesId;
+    private Integer workspacesId;
 
     private String name;
 
