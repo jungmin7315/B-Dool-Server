@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 5px;
+            margin: 5px;
+        }
+        .output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Channel Management</h1>
+
+<!-- 채널 생성 -->
+<h3>채널 생성</h3>
+<form id="createChannelForm">
+    <label for="channelName">채널 이름: </label>
+    <input type="text" id="channelName" name="name" required><br>
+
+    <label for="channelDescription">채널 설명: </label>
+    <input type="text" id="channelDescription" name="description" required><br>
+
+    <label for="channelPrivate">채널 잠금 여부: </label>
+    <input type="checkbox" id="channelPrivate" name="isPrivate"><br>
+
+    <button type="submit">Create</button>
+</form>
+
+<!-- 채널 업데이트 -->
+<h3>Update Channel</h3>
+<form id="updateChannelForm">
+    <label for="updateChannelId">채널 ID: </label>
+    <input type="text" id="updateChannelId" name="id" required><br>
+
+    <label for="updateChannelName">수정 채널 이름: </label>
+    <input type="text" id="updateChannelName" name="name" required><br>
+
+    <label for="updateChannelDescription">수정 채널 설명: </label>
+    <input type="text" id="updateChannelDescription" name="description" required><br>
+
+    <label for="updateChannelPrivate">수정 채널 잠금 여부: </label>
+    <input type="checkbox" id="updateChannelPrivate" name="isPrivate"><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<!-- 특정 채널 조회 -->
+<h3>Find Channel By ID</h3>
+<form id="findChannelForm">
+    <label for="findChannelId">Channel ID: </label>
+    <input type="text" id="findChannelId" name="id" required><br>
+    <button type="submit">Find</button>
+</form>
+
+<!-- 채널 전체 조회 -->
+<h3>Get All Channels</h3>
+<form id="findAllChannelsForm">
+    <button type="submit">Get All Channels</button>
+</form>
+
+<!-- 특정 워크스페이스에 해당하는 채널 조회 -->
+<h3>Find Channels By Workspace ID</h3>
+<form id="findChannelsByWorkspaceForm">
+    <label for="workspaceId">Workspace ID: </label>
+    <input type="text" id="workspaceId" name="workspaceId" required><br>
+    <button type="submit">Find</button>
+</form>
+
+<!-- 채널 삭제 -->
+<h3>Delete Channel By ID</h3>
+<form id="deleteChannelForm">
+    <label for="deleteChannelId">Channel ID: </label>
+    <input type="text" id="deleteChannelId" name="id" required><br>
+    <button type="submit">Delete</button>
+</form>
+
+<div class="output" id="output"></div>
+
+<script>
+    const output = document.getElementById('output');
+
+    // 채널 생성
+    document.getElementById('createChannelForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const channel = {
+            name: document.getElementById('channelName').value,
+            description: document.getElementById('channelDescription').value,
+            isPrivate: document.getElementById('channelPrivate').checked,
+            channelType: 'DEFAULT', // 필요에 따라 수정
+            profileId: 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b', // 실제 프로필 ID로 수정
+            workspacesId: 1 // 실제 워크스페이스 ID로 수정
+        };
+
+        fetch('/api/channel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(channel)
+        })
+            .then(response => response.json())
+            .then(data => output.innerHTML = `<p>Created Channel: ${JSON.stringify(data)}</p>`)
+            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+    });
+
+    // 채널 업데이트
+    document.getElementById('updateChannelForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const id = document.getElementById('updateChannelId').value;
+        const channel = {
+            name: document.getElementById('updateChannelName').value,
+            description: document.getElementById('updateChannelDescription').value,
+            isPrivate: document.getElementById('updateChannelPrivate').checked,
+            channelType: 'DEFAULT', // 필요에 따라 수정
+            profileId: 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b', // 실제 프로필 ID로 수정
+            workspacesId: '87e1e718-1274-4922-b85e-afe642fd1311' // 실제 워크스페이스 ID로 수정
+        };
+
+        fetch(`/api/channel/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(channel)
+        })
+            .then(response => response.json())
+            .then(data => output.innerHTML = `<p>Updated Channel: ${JSON.stringify(data)}</p>`)
+            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+    });
+
+    // 특정 채널 조회
+    document.getElementById('findChannelForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const id = document.getElementById('findChannelId').value;
+
+        fetch(`/api/channel/${id}`)
+            .then(response => response.json())
+            .then(data => output.innerHTML = `<p>Found Channel: ${JSON.stringify(data)}</p>`)
+            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+    });
+
+    // 채널 전체 조회
+    document.getElementById('findAllChannelsForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        fetch('/api/channel')
+            .then(response => response.json())
+            .then(data => {
+                let outputHtml = '<p>All Channels:</p><ul>';
+
+                data.forEach((channel, index) => {
+                    outputHtml += `<li>Channel ${index + 1}:</li><ul>`;
+
+                    // 객체의 각 키-값 쌍에 대해 타입 출력
+                    Object.keys(channel).forEach(key => {
+                        const value = channel[key];
+                        const valueType = typeof value;
+                        outputHtml += `<li>${key}: ${value} (Type: ${valueType})</li>`;
+                    });
+
+                    outputHtml += '</ul>';
+                });
+
+                outputHtml += '</ul>';
+                output.innerHTML = outputHtml;
+            })
+            .catch(error => {
+                output.innerHTML = `<p>Error: ${error}</p>`;
+            });
+    });
+
+
+
+    // 특정 워크스페이스에 해당하는 채널 조회
+    document.getElementById('findChannelsByWorkspaceForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const workspaceId = document.getElementById('workspaceId').value;
+
+        fetch(`/api/channel/All/${workspaceId}`)
+            .then(response => response.json())
+            .then(data => output.innerHTML = `<p>Channels in Workspace: ${JSON.stringify(data)}</p>`)
+            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+    });
+
+    // 채널 삭제
+    document.getElementById('deleteChannelForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const id = document.getElementById('deleteChannelId').value;
+
+        fetch(`/api/channel/${id}`, {
+            method: 'DELETE'
+        })
+            .then(() => output.innerHTML = `<p>Channel deleted successfully.</p>`)
+            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+    });
+</script>
+
+</body>
+</html>
