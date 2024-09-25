@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/channel")
 @RequiredArgsConstructor
 public class ChannelController {
@@ -39,7 +40,7 @@ public class ChannelController {
         return ResponseEntity.ok(channels);  // 200 OK
     }
     // 워크스페이스에 해당 하는 채널 전체 목록 조회
-    @GetMapping("/All/{workspaceId}")
+    @GetMapping("/workspaces/{workspaceId}/channel")
     public ResponseEntity<?> findAllByWorkspacesId(@PathVariable int workspaceId) {
         List<ChannelEntity> channels = channelService.findAllByWorkspacesId(workspaceId);
         if (channels.isEmpty()) {
