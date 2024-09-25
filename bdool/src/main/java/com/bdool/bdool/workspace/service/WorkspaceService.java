@@ -12,7 +12,7 @@ public interface WorkspaceService {
     WorkspaceEntity updateWorkspace(Long workspaceId, WorkspaceRequest request);
     boolean isUrlAvailable(String url); // url 더블체크
     void deleteWorkspace(Long workspaceId, Long userId);
-
     long countWorkspace();
+    List<WorkspaceEntity> getWorkspacesByIds(List<Long> workspaceIds);
 
 }

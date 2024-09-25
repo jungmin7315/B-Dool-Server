@@ -24,15 +24,15 @@ public class WorkspaceController {
         return ResponseEntity.ok(createdWorkspace);
     }
 
-    @GetMapping("/list") //All
+    @GetMapping("/All") //All
     public ResponseEntity<List<WorkspaceEntity>> getAllWorkspaces() {
         List<WorkspaceEntity> workspaces = workspaceService.getWorkspaces();
         return ResponseEntity.ok(workspaces);
     }
 
     @GetMapping("/{workspaceId}") //one
-    public ResponseEntity<WorkspaceEntity> getWorkspaceById(@PathVariable Long id) {
-        Optional<WorkspaceEntity> workspaceOpt = workspaceService.getWorkspaceById(id);
+    public ResponseEntity<WorkspaceEntity> getWorkspaceById(@PathVariable Long workspaceId) {
+        Optional<WorkspaceEntity> workspaceOpt = workspaceService.getWorkspaceById(workspaceId);
         return workspaceOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -55,5 +55,10 @@ public class WorkspaceController {
     public ResponseEntity<Void> deleteWorkspace(@PathVariable Long workspaceId, @RequestBody Long userId) {
         workspaceService.deleteWorkspace(workspaceId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/list")
+    public List<WorkspaceEntity> getWorkspacesByIds(@RequestBody List<Long> workspaceIds) {
+        return workspaceService.getWorkspacesByIds(workspaceIds);
     }
 }

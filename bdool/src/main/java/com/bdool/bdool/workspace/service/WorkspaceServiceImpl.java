@@ -113,4 +113,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public long countWorkspace() {
         return workspaceRepository.count();
     }
+
+    @Override
+    public List<WorkspaceEntity> getWorkspacesByIds(List<Long> workspaceIds) {
+        return workspaceRepository.findByIdIn(workspaceIds);
+    }
+
 }

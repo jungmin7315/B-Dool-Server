@@ -35,7 +35,7 @@ public class WorkspaceEntity {
     private LocalDateTime createdAt;  // 워크스페이스 생성 시각
 
     @Column(name = "owner_id", nullable = false)
-    private Long ownerId; // 소유자 프로필 ID
+    private Long ownerId; // 소유자 멤버 ID
 
     // 생성 시각을 자동으로 설정하는 메서드
     @PrePersist
