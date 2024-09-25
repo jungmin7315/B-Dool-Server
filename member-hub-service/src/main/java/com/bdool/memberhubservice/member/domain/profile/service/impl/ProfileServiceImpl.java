@@ -5,7 +5,6 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
-import com.bdool.memberhubservice.member.domain.profile.repository.querydsl.ProfileQueryDslRepositoryCustom;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,8 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
     private final ProfileSSEService sseService;
-    private final NotificationTargetSettingService settingService;
 
     @Override
-
     public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
@@ -35,11 +32,24 @@ public class ProfileServiceImpl implements ProfileService {
                 .memberId(member.getId())
                 .isWorkspaceCreator(isWorkspaceCreator)
                 .email(member.getEmail())
-                .isOnline(false)
                 .build();
-        profileRepository.save(profile);
-        initializeDefaultSettings(profile.getId());
-        return profile;
+        return profileRepository.save(profile);
+    }
+
+    @Override
+    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator) {
+        Member member = memberService.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("member not found"));
+        Profile profile = Profile.builder()
+                .name(profileModel.getName())
+                .nickname(profileModel.getNickname())
+                .profilePictureUrl(profileModel.getProfilePictureUrl())
+                .memberId(member.getId())
+                .workspaceId(workspaceId)
+                .isWorkspaceCreator(isWorkspaceCreator)
+                .email(member.getEmail())
+                .build();
+        return profileRepository.save(profile);
     }
 
     @Override
@@ -125,18 +135,5 @@ public class ProfileServiceImpl implements ProfileService {
         sseService.notifyOnlineChange(profileOnlineResponse);
 
         return findProfile.getIsOnline();
-    }
-
-    private void initializeDefaultSettings(Long profileId) {
-        List<NotificationType> notificationTypes = Arrays.asList(
-                NotificationType.CHATTING,
-                NotificationType.EVENT,
-                NotificationType.SYSTEM,
-                NotificationType.OTHER
-        );
-
-        for (NotificationType type : notificationTypes) {
-            settingService.save(profileId, type, true);
-        }
     }
 }

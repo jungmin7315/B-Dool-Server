@@ -14,6 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
+@CrossOrigin
 public class MemberController {
 
     private final MemberService memberService;
