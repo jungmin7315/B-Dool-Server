@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "participants")
+@Table(name = "attendees")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ParticipantEntity {
+public class AttendeeEntity {
     @Id
+    @Column(name = "attendee_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,7 +25,7 @@ public class ParticipantEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ParticipantStatus status; // 참가 상태 (예: 초대됨, 수락됨, 거절됨)
+    private AttendeeStatus status; // 참가 상태
 
 
 }

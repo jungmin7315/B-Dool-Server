@@ -25,7 +25,7 @@ public class EventRequest {
     //참가자추가관련
     private EventScope scope;// 일정 범위 (PERSONAL, WORKSPACE, CHANNEL)
     private Long channelId;// 채널 ID (scope이 CHANNEL일 때만)
-    private List<Long> participantProfileIds;
+    private List<Long> attendeeProfileIds;
 
     //반복일정관련
     private RecurrenceType recurrenceType;

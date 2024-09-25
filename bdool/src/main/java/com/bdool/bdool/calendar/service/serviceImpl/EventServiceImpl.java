@@ -4,10 +4,10 @@ import com.bdool.bdool.calendar.model.domain.EventRequest;
 import com.bdool.bdool.calendar.model.entity.EventScope;
 import com.bdool.bdool.calendar.model.repository.EventRepository;
 import com.bdool.bdool.calendar.service.EventService;
-import com.bdool.bdool.calendar.service.ParticipantService;
+import com.bdool.bdool.calendar.service.AttendeeService;
 import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.model.entity.ParticipantEntity;
-import com.bdool.bdool.calendar.model.entity.ParticipantStatus;
+import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
+import com.bdool.bdool.calendar.model.entity.AttendeeStatus;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final ParticipantService participantService;
+    private final AttendeeService attendeeService;
 
     @Override
     public EventEntity createEvent(EventRequest request) {
@@ -42,11 +42,11 @@ public class EventServiceImpl implements EventService {
 
         EventEntity savedEvent = eventRepository.save(event);
 
-        // participantProfileIds로 참가자 리스트 생성
-        List<ParticipantEntity> participants = setParticipants(savedEvent, request.getParticipantProfileIds());
+        // AttendeeProfileIds로 참가자 리스트 생성
+        List<AttendeeEntity> attendeeEntityList = setParticipants(savedEvent, request.getAttendeeProfileIds());
 
         // 참가자 저장
-        participants.forEach(participantService::createParticipant);
+        attendeeEntityList.forEach(attendeeService::createAttendee);
 
         return savedEvent;
     }
@@ -97,18 +97,18 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    private List<ParticipantEntity> setParticipants(EventEntity event, List<Long> participantProfileIds) {
-        return participantProfileIds.stream()
+    private List<AttendeeEntity> setParticipants(EventEntity event, List<Long> AttendeeProfileIds) {
+        return AttendeeProfileIds.stream()
                 .map(profileId -> {
-                    ParticipantStatus status = (event.getScope() == EventScope.PERSONAL ? ParticipantStatus.OK : ParticipantStatus.PENDING);
-                    return createParticipantEntity(event, profileId, status);
+                    AttendeeStatus status = (event.getScope() == EventScope.PERSONAL ? AttendeeStatus.OK : AttendeeStatus.PENDING);
+                    return createAttendeeEntity(event, profileId, status);
                 })
                 .collect(Collectors.toList());
     }
 
 
-    private ParticipantEntity createParticipantEntity(EventEntity event, Long profileId, ParticipantStatus status) {
-        return ParticipantEntity.builder()
+    private AttendeeEntity createAttendeeEntity(EventEntity event, Long profileId, AttendeeStatus status) {
+        return AttendeeEntity.builder()
                 .profileId(profileId)
                 .status(status)
                 .event(event)
