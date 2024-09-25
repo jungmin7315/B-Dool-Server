@@ -2,6 +2,7 @@ package com.bdool.memberhubservice.member.domain.profile.controller;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileResponse;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/profiles")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -30,7 +32,7 @@ public class ProfileController {
                                                              @PathVariable Long workspaceId,
                                                              @RequestBody ProfileModel profileModel,
                                                              boolean isWorkspaceCreator) {
-        return ResponseEntity.ok(profileService.saveByInvitation(profileModel,  memberId, workspaceId, isWorkspaceCreator));
+        return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId, isWorkspaceCreator));
     }
 
     @GetMapping("/{profileId}")
@@ -46,6 +48,11 @@ public class ProfileController {
     @GetMapping("/count")
     public ResponseEntity<Long> getProfileCount() {
         return ResponseEntity.ok(profileService.count());
+    }
+
+    @GetMapping("/workspace/{workspaceId}")
+    public ResponseEntity<List<ProfileResponse>> getProfileByWorkspaceId(@PathVariable Long workspaceId) {
+        return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
     }
 
     @GetMapping("/exists/{profileId}")
