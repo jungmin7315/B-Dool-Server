@@ -17,13 +17,13 @@ import java.util.UUID;
 public class ParticipantEntity {
 
     @Id
-    private UUID participantId;// MongoDB에서는 @GeneratedValue가 필요하지 않습니다.
+    private UUID participantId; //UUID 자동 생성
 
-    private UUID channelId;
+    private UUID channelId; // 받아야 하는 필드
 
-    private String profileName;
+    private String profileName; // 받아야 하는 필드
 
-    private boolean favorited;
+    private boolean favorited; // 받아야 하는 필드
 
-    private LocalDateTime joinedAt;
+    private LocalDateTime joinedAt; // LocalDateTime.now()로 처리
 }

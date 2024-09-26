@@ -23,5 +23,6 @@ public class MessageModel {
 
     private UUID parentMessageId;
     private UUID participantId;
+    private String nickName;
     private UUID fileId;
 }

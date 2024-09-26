@@ -17,21 +17,21 @@ import java.util.UUID;
 public class FileEntity {
 
     @Id
-    private UUID fileId;
+    private UUID fileId; // UUID 자동 생성
 
-    private String fname;
+    private String fname; // 파일을 넣어주면 자동으로 추출해서 넣어줌
 
-    private String path;
+    private String path; // 파일을 넣어주면 자동으로 추출해서 넣어줌
 
-    private Integer size;
+    private Integer size; // 파일을 넣어주면 자동으로 추출해서 넣어줌
 
-    private String extension;
+    private String extension; // 파일을 넣어주면 자동으로 추출해서 넣어줌
 
-    private LocalDateTime uploadedAt;
+    private LocalDateTime uploadedAt; // LocalDateTime.now()로 처리
 
-    private UUID profileId;
+    private UUID profileId; // 받아야 하는 필드
 
-    private UUID channelId;
+    private UUID channelId; // 받아야 하는 필드
 
-    private UUID workspacesId;
+    private UUID workspacesId; // 받아야 하는 필드
 }

@@ -18,21 +18,21 @@ import java.util.UUID;
 public class ChannelEntity {
 
     @Id
-    private UUID channelId; // MongoDB에서는 @GeneratedValue를 사용하지 않고, 수동으로 UUID를 생성할 수 있습니다.
+    private UUID channelId; //UUID 자동 생성
 
-    private Integer workspacesId;
+    private Long workspacesId; // 받아야 하는 필드
 
-    private String name;
+    private String name; // 받아야 하는 필드
 
-    private Boolean isPrivate;
+    private Boolean isPrivate; // 받아야 하는 필드
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // LocalDateTime.now()로 처리
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt; // LocalDateTime.now()로 처리
 
-    private String description;
+    private String description; // 받아야 하는 필드
 
-    private UUID profileId;
+    private UUID profileId; // 받아야 하는 필드
 
-    private ChannelType channelType; // MongoDB에서는 @Enumerated 대신 일반 필드로 처리됩니다.
+    private ChannelType channelType; // 받아야 하는 필드
 }
