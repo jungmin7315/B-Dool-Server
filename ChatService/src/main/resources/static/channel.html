@@ -118,24 +118,30 @@
     // 채널 업데이트
     document.getElementById('updateChannelForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        const id = document.getElementById('updateChannelId').value;
+        const channelId = document.getElementById('updateChannelId').value;
+        const profileId = 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b'; // 실제 프로필 ID로 수정
+
         const channel = {
             name: document.getElementById('updateChannelName').value,
             description: document.getElementById('updateChannelDescription').value,
             isPrivate: document.getElementById('updateChannelPrivate').checked,
-            channelType: 'DEFAULT', // 필요에 따라 수정
-            profileId: 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b', // 실제 프로필 ID로 수정
-            workspacesId: '87e1e718-1274-4922-b85e-afe642fd1311' // 실제 워크스페이스 ID로 수정
+            channelType: 'DEFAULT' // 필요에 따라 수정
         };
 
-        fetch(`/api/channel/${id}`, {
+        // profileId와 channelId를 경로로 포함하여 PUT 요청
+        fetch(`/api/channel/${channelId}/profile/${profileId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(channel)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error updating channel');
+                }
+                return response.json();
+            })
             .then(data => output.innerHTML = `<p>Updated Channel: ${JSON.stringify(data)}</p>`)
-            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
+            .catch(error => output.innerHTML = `<p>Error: ${error.message}</p>`);
     });
 
     // 특정 채널 조회
@@ -186,7 +192,7 @@
         e.preventDefault();
         const workspaceId = document.getElementById('workspaceId').value;
 
-        fetch(`/api/channel/All/${workspaceId}`)
+        fetch(`/api/channel/workspaces/${workspaceId}/channel`)
             .then(response => response.json())
             .then(data => output.innerHTML = `<p>Channels in Workspace: ${JSON.stringify(data)}</p>`)
             .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);

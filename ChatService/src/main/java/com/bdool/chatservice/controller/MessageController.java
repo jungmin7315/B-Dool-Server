@@ -71,13 +71,6 @@ public class MessageController {
         return ResponseEntity.ok(exists);
     }
 
-    // 메시지 개수 카운트
-    @GetMapping("/count")
-    public ResponseEntity<Long> count() {
-        long count = messageService.count();
-        return ResponseEntity.ok(count);
-    }
-
     // ID로 메시지 삭제
     @DeleteMapping("/{messageId}")
     public ResponseEntity<Void> deleteById(@PathVariable UUID messageId) {

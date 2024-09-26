@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface ChannelService {
     ChannelEntity save(ChannelModel channel);
 
-    ChannelEntity update(UUID channelId, ChannelModel channel);
+    ChannelEntity update(UUID profileId, UUID channelId, ChannelModel channel);
 
     List<ChannelEntity> findAll();
 
