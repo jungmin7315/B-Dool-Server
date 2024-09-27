@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class EventRequest {
-    private Long profileId;
+    private Long hostId;
     private Long workspaceId;
 
     private String title;

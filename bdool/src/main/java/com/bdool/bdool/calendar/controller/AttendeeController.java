@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/participants")
+@RequestMapping("/api/attendees")
 @RequiredArgsConstructor
 public class AttendeeController {
 
@@ -27,22 +27,22 @@ public class AttendeeController {
     }
 
     // 참가자 상태 수정
-    @PutMapping("/{participantId}")
-    public ResponseEntity<AttendeeEntity> updateAttendee(@PathVariable Long participantId, @RequestBody AttendeeStatus status) {
-        AttendeeEntity updatedParticipant = attendeeService.updateAttendee(participantId, status);
+    @PutMapping("/{attendeeId}")
+    public ResponseEntity<AttendeeEntity> updateAttendee(@PathVariable Long attendeeId, @RequestBody AttendeeStatus status) {
+        AttendeeEntity updatedParticipant = attendeeService.updateAttendee(attendeeId, status);
         return ResponseEntity.ok(updatedParticipant);
     }
 
     // 특정 참가자 조회
-    @GetMapping("/{participantId}")
-    public ResponseEntity<AttendeeEntity> getAttendee(@PathVariable Long participantId) {
-        Optional<AttendeeEntity> participantOpt = attendeeService.getAttendeeById(participantId);
+    @GetMapping("/{attendeeId}")
+    public ResponseEntity<AttendeeEntity> getAttendee(@PathVariable Long attendeeId) {
+        Optional<AttendeeEntity> participantOpt = attendeeService.getAttendeeById(attendeeId);
         return participantOpt.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
     }
     // 참가자 삭제
-    @DeleteMapping("/{participantId}")
-    public ResponseEntity<Void> deleteAttendee(@PathVariable Long participantId) {
-        attendeeService.deleteAttendee(participantId);
+    @DeleteMapping("/{attendeeId}")
+    public ResponseEntity<Void> deleteAttendee(@PathVariable Long attendeeId) {
+        attendeeService.deleteAttendee(attendeeId);
         return ResponseEntity.noContent().build();
     }
 

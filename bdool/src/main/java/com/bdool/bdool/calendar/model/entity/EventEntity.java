@@ -36,8 +36,8 @@ public class EventEntity {
     private LocalDateTime endTime; // 일정 종료 시간
 
     @NonNull
-    @Column(name = "profile_id", nullable = false)
-    private Long profileId; // 일정 등록자의 프로필 ID
+    @Column(name = "host_id", nullable = false)
+    private Long hostId; // 일정 등록자의 프로필 ID
 
     @NonNull
     @Enumerated(EnumType.STRING)

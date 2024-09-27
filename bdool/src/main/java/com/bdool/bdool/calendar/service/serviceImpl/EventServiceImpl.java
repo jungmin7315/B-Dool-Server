@@ -30,7 +30,7 @@ public class EventServiceImpl implements EventService {
                 .description(request.getDescription())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
-                .profileId(request.getProfileId())
+                .hostId(request.getHostId())
                 .workspaceId(request.getWorkspaceId())
                 .scope(request.getScope())
                 .channelId(request.getChannelId())
@@ -58,7 +58,7 @@ public class EventServiceImpl implements EventService {
 
         EventEntity updatedEvent = existingEvent.builder()
                 .id(existingEvent.getId())
-                .profileId(existingEvent.getProfileId())  // 프로필 ID는 변경되지 않는다고 가정
+                .hostId(existingEvent.getHostId())  // 프로필 ID는 변경되지 않는다고 가정
                 .workspaceId(existingEvent.getWorkspaceId()) // 워크스페이스 ID도 변경되지 않는다고 가정
                 .title(request.getTitle() != null ? request.getTitle() : existingEvent.getTitle())  // null이면 기존 값 유지
                 .description(request.getDescription() != null ? request.getDescription() : existingEvent.getDescription())
