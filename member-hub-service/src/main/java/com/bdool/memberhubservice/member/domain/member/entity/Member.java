@@ -21,7 +21,6 @@ public class Member {
     private String email;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false, updatable = false)
     private Date createdAt;
 
     @PrePersist

@@ -10,6 +10,7 @@ import com.bdool.memberhubservice.notification.NotificationModel;
 import com.bdool.memberhubservice.notification.NotificationTargetType;
 import com.bdool.memberhubservice.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -27,9 +28,11 @@ public class ProfileServiceImpl implements ProfileService {
     private final MemberService memberService;
     private final ProfileSSEService sseService;
     private final WebClient.Builder webClientBuilder;
+    @Value("${notification-service.url}")  // 알림 서비스 URL을 설정 파일에서 가져옴
+    private String notificationServiceUrl;
 
     @Override
-    public Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator) {
+    public Profile save(ProfileModel profileModel, Long memberId) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
         Profile profile = Profile.builder()
@@ -37,14 +40,14 @@ public class ProfileServiceImpl implements ProfileService {
                 .nickname(profileModel.getNickname())
                 .profilePictureUrl(profileModel.getProfilePictureUrl())
                 .memberId(member.getId())
-                .isWorkspaceCreator(isWorkspaceCreator)
+                .isWorkspaceCreator(true)
                 .email(member.getEmail())
                 .build();
         return profileRepository.save(profile);
     }
 
     @Override
-    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator) {
+    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId) {
         Member member = memberService.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
         Profile profile = Profile.builder()
@@ -52,8 +55,9 @@ public class ProfileServiceImpl implements ProfileService {
                 .nickname(profileModel.getNickname())
                 .profilePictureUrl(profileModel.getProfilePictureUrl())
                 .memberId(member.getId())
+                .isOnline(profileModel.getIsOnline())
                 .workspaceId(workspaceId)
-                .isWorkspaceCreator(isWorkspaceCreator)
+                .isWorkspaceCreator(false)
                 .email(member.getEmail())
                 .build();
         Profile savedProfile = profileRepository.save(profile);
@@ -87,7 +91,7 @@ public class ProfileServiceImpl implements ProfileService {
         WebClient webClient = webClientBuilder.build();
 
         webClient.post()
-                .uri("http://localhost:8080/notifications")  // 알림 서비스의 엔드포인트
+                .uri(notificationServiceUrl + "/notifications")  // 알림 서비스의 엔드포인트
                 .bodyValue(notificationModel)  // 요청 바디에 알림 데이터 설정
                 .retrieve()
                 .bodyToMono(Void.class)

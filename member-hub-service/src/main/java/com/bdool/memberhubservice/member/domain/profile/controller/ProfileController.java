@@ -22,17 +22,15 @@ public class ProfileController {
 
     @PostMapping("/{memberId}")
     public ResponseEntity<Profile> createProfile(@PathVariable Long memberId,
-                                                 @RequestBody ProfileModel profileModel,
-                                                 boolean isWorkspaceCreator) {
-        return ResponseEntity.ok(profileService.save(profileModel, memberId, isWorkspaceCreator));
+                                                 @RequestBody ProfileModel profileModel) {
+        return ResponseEntity.ok(profileService.save(profileModel, memberId));
     }
 
     @PostMapping("/{memberId}&&{workspaceId}/invited")
     public ResponseEntity<Profile> createProfileByInvitation(@PathVariable Long memberId,
                                                              @PathVariable Long workspaceId,
-                                                             @RequestBody ProfileModel profileModel,
-                                                             boolean isWorkspaceCreator) {
-        return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId, isWorkspaceCreator));
+                                                             @RequestBody ProfileModel profileModel) {
+        return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId));
     }
 
     @GetMapping("/{profileId}")

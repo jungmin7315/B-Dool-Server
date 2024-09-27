@@ -29,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationTargetType targetType = notificationModel.getTargetType();
 
         boolean isTargetNotificationEnabled = targetSettingService.isNotificationEnabledForTarget(profileId, targetId, targetType);
+
         if (!isTargetNotificationEnabled) {
             return null;
         }
@@ -42,13 +43,14 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
 
         Notification savedNotification = notificationRepository.save(notification);
-        NotificationResponse notificationResponse = toNotificationResponse(savedNotification);
 
-        sseService.sendEventToAllEmitters("new-notification", notificationResponse);
+        NotificationResponse notificationResponse = toNotificationResponse(savedNotification);
+        sseService.sendEventToProfile(profileId, "new-notification", notificationResponse);
+
         return savedNotification;
     }
 
-    public NotificationResponse toNotificationResponse(Notification notification) {
+    private NotificationResponse toNotificationResponse(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getId())
                 .profileId(notification.getProfileId())
@@ -60,8 +62,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> findByProfileIdAndReadFalse(Long profileId) {
-        return notificationRepository.findByProfileIdAndReadFalse(profileId);
+    public List<Notification> findByProfileIdAndIsReadFalse(Long profileId) {
+        return notificationRepository.findByProfileIdAndIsReadFalse(profileId);
     }
 
     @Override

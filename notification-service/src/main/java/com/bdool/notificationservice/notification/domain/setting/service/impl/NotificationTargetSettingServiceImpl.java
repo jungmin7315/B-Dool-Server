@@ -24,7 +24,7 @@ public class NotificationTargetSettingServiceImpl implements NotificationTargetS
                         .targetType(model.getTargetType())
                         .build());
 
-        setting.updateNotificationsEnabled(model.isNotificationsEnabled());
+        setting.updateNotificationsEnabled(model.getNotificationsEnabled());
         return targetSettingRepository.save(setting);
     }
 
@@ -32,6 +32,15 @@ public class NotificationTargetSettingServiceImpl implements NotificationTargetS
     public boolean isNotificationEnabledForTarget(Long profileId, Long targetId, NotificationTargetType targetType) {
         return targetSettingRepository.findByProfileIdAndTargetIdAndTargetType(profileId, targetId, targetType)
                 .map(NotificationTargetSetting::isNotificationsEnabled)
-                .orElse(true);
+                .orElseGet(() -> {
+                    NotificationTargetSetting defaultSetting = NotificationTargetSetting.builder()
+                            .profileId(profileId)
+                            .targetId(targetId)
+                            .targetType(targetType)
+                            .notificationsEnabled(true)  // 기본값: 알림 활성화
+                            .build();
+                    targetSettingRepository.save(defaultSetting);
+                    return true;  // 기본값 true 반환
+                });
     }
 }

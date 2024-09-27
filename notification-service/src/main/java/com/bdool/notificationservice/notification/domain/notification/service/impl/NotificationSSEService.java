@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,45 +14,56 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class NotificationSSEService {
 
-    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter createSseEmitter() {
-        SseEmitter emitter = new SseEmitter(0L);
-        Long emitterId = System.currentTimeMillis();
-        emitters.put(emitterId, emitter);
+    public SseEmitter createSseEmitter(Long profileId) {
+        SseEmitter emitter = new SseEmitter(0L);  // 타임아웃을 무한대로 설정
+
+        emitters.computeIfAbsent(profileId, id -> new ArrayList<>()).add(emitter);
 
         emitter.onCompletion(() -> {
-            emitters.remove(emitterId);
-            System.out.println("SSE connection completed: " + emitterId);
+            emitters.get(profileId).remove(emitter);
+            System.out.println("SSE connection completed for profileId: " + profileId);
         });
 
         emitter.onTimeout(() -> {
-            emitters.remove(emitterId);
-            System.out.println("SSE connection timed out: " + emitterId);
-            emitter.complete();  // 타임아웃이 발생하면 완료 처리
+            emitters.get(profileId).remove(emitter);
+            System.out.println("SSE connection timed out for profileId: " + profileId);
+            emitter.complete();
         });
 
         emitter.onError(e -> {
-            emitters.remove(emitterId);
-            System.err.println("SSE connection error: " + emitterId + ", error: " + e.getMessage());
-            emitter.completeWithError(e);
+            emitters.get(profileId).remove(emitter);  // 에러 발생 시 emitter 제거
+            System.err.println("SSE connection error for profileId: " + profileId + ", error: " + e.getMessage());
+            emitter.completeWithError(e);  // 에러 발생 시 완료 처리
         });
 
         return emitter;  // SseEmitter 반환
     }
 
+    public void sendEventToProfile(Long profileId, String eventName, Object data) {
+        List<SseEmitter> emitterList = emitters.get(profileId);
+        if (emitterList != null) {
+            sendEventToEmitters(eventName, data, emitterList);
+        }
+    }
 
-    public void sendEventToAllEmitters(String eventName, Object data) {
-        emitters.forEach((id, emitter) -> {
-            try {
-                emitter.send(SseEmitter.event()
-                        .name(eventName)
-                        .data(data));
-            } catch (IOException e) {
-                System.err.println("Error sending event: " + e.getMessage());
-                emitter.completeWithError(e);
-                emitters.remove(id);
-            }
+    public void sendEventToAllProfiles(String eventName, Object data) {
+        emitters.forEach((profileId, emitterList) -> {
+            sendEventToEmitters(eventName, data, emitterList);
         });
+    }
+
+    private void sendEventToEmitters(String eventName, Object data, List<SseEmitter> emitterList) {
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+        for (SseEmitter emitter : emitterList) {
+            try {
+                emitter.send(SseEmitter.event().name(eventName).data(data));
+            } catch (IOException e) {
+                System.err.println("Error sending event, error: " + e.getMessage());
+                deadEmitters.add(emitter);
+            }
+        }
+        emitterList.removeAll(deadEmitters);
     }
 }

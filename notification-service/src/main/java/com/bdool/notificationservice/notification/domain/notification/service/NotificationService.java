@@ -9,7 +9,7 @@ public interface NotificationService {
 
     Notification createNotification(NotificationModel notificationModel);
 
-    List<Notification> findByProfileIdAndReadFalse(Long profileId);
+    List<Notification> findByProfileIdAndIsReadFalse(Long profileId);
 
     List<Notification> findByProfileIdOrderByCreatedAtDesc(Long profileId);
 
