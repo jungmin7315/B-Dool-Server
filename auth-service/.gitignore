@@ -35,8 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-/shelf/
-/httpRequests/
-/dataSources/
-/dataSources.local.xml
