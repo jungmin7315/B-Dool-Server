@@ -74,12 +74,6 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.existsById(messageId);
     }
 
-    // 메시지 개수 카운트
-    @Override
-    public Long count() {
-        return messageRepository.count();
-    }
-
     // ID로 메시지 삭제
     @Override
     public void deleteById(UUID messageId) {

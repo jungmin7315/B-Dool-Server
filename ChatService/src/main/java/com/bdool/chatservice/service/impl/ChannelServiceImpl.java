@@ -37,20 +37,31 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ChannelEntity update(UUID channelId, ChannelModel channel) {
+    public ChannelEntity update(UUID channelId, UUID profileId, ChannelModel channel) {
         return channelRepository.findById(channelId)
                 .map(existingChannel -> {
-            existingChannel.setName(channel.getName());
-            existingChannel.setDescription(channel.getDescription());
-            existingChannel.setIsPrivate(channel.getIsPrivate());
-            existingChannel.setChannelType(channel.getChannelType());
-            existingChannel.setUpdatedAt(LocalDateTime.now());
-            existingChannel.setProfileId(channel.getProfileId());
-            existingChannel.setWorkspacesId(channel.getWorkspacesId());
+                    // 전달받은 profileId와 기존의 profileId가 동일하지 않으면 예외 발생
+                    if (!existingChannel.getProfileId().equals(profileId)) {
+                        throw new IllegalArgumentException("You are not authorized to update this channel.");
+                    }
 
-            return channelRepository.save(existingChannel);
-        }).orElseThrow(() -> new ChannelNotFoundException("Channel not found with ID: " + channelId));
+                    existingChannel.setName(channel.getName());
+                    existingChannel.setDescription(channel.getDescription());
+                    existingChannel.setIsPrivate(channel.getIsPrivate());
+                    existingChannel.setChannelType(channel.getChannelType());
+                    existingChannel.setUpdatedAt(LocalDateTime.now());
+
+                    // workspacesId도 값이 null이 아니면 업데이트
+                    if (channel.getWorkspacesId() != null) {
+                        existingChannel.setWorkspacesId(channel.getWorkspacesId());
+                    }
+
+                    return channelRepository.save(existingChannel);
+                }).orElseThrow(() -> new ChannelNotFoundException("Channel not found with ID: " + channelId));
     }
+
+
+
 
     @Override
     public List<ChannelEntity> findAll() {

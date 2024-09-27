@@ -24,12 +24,14 @@ public class ChannelController {
         return ResponseEntity.ok(channelService.save(channel)); // 200 OK
     }
 
-    // 채널 업데이트
-    @PutMapping("/{channelId}")
-    public ResponseEntity<?> update(@PathVariable UUID channelId, @RequestBody ChannelModel channel) {
-        return ResponseEntity.ok(channelService.update(channelId, channel));  // 200 OK
+    // 채널 업데이트 (profileId와 channelId 모두 경로에서 받음)
+    @PutMapping("/{channelId}/profile/{profileId}")
+    public ResponseEntity<?> update(@PathVariable UUID channelId,
+                                    @PathVariable UUID profileId,
+                                    @RequestBody ChannelModel channel) {
+        // profileId와 channelId를 전달받아 업데이트 처리
+        return ResponseEntity.ok(channelService.update(channelId, profileId, channel));  // 200 OK
     }
-
 
     @GetMapping("")
     public ResponseEntity<?> findAll() {
