@@ -39,11 +39,8 @@ public class NotificationSSEService {
         return emitter;  // SseEmitter 반환
     }
 
-//    public void notify(NotificationResponse notificationResponse) {
-//        sendEventToAllEmitters("new-profile", notificationResponse );
-//    }
 
-    private void sendEventToAllEmitters(String eventName, Object data) {
+    public void sendEventToAllEmitters(String eventName, Object data) {
         emitters.forEach((id, emitter) -> {
             try {
                 emitter.send(SseEmitter.event()
