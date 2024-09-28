@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/B-Dool-Server.iml" filepath="$PROJECT_DIR$/.idea/B-Dool-Server.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bdool.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bdool.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bdool.test.iml" filepath="$PROJECT_DIR$/.idea/modules/bdool.test.iml" />
     </modules>
   </component>
 </project>
