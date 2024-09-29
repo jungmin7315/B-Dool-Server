@@ -10,7 +10,7 @@ public interface VerificationService {
 
     Verification save(VerificationModel verificationModel);
 
-    boolean sendVerificationCode(String mail);
+    Boolean sendVerificationCode(String mail);
 
-    boolean verifyCode(String email, String verificationCode);
+    Boolean verifyCode(String email, String verificationCode);
 }

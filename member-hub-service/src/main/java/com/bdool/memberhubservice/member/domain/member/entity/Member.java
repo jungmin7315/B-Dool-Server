@@ -3,6 +3,7 @@ package com.bdool.memberhubservice.member.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "members")
@@ -21,10 +22,10 @@ public class Member {
     private String email;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
+        createdAt = LocalDateTime.now();
     }
 }

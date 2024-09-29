@@ -28,7 +28,7 @@ public class NotificationTargetSetting {
     private NotificationTargetType targetType;
 
     @Column(nullable = false)
-    private boolean notificationsEnabled;
+    private Boolean notificationsEnabled;
 
     public void updateNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;

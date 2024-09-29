@@ -31,7 +31,7 @@ public class NotificationTargetSettingServiceImpl implements NotificationTargetS
     @Override
     public boolean isNotificationEnabledForTarget(Long profileId, Long targetId, NotificationTargetType targetType) {
         return targetSettingRepository.findByProfileIdAndTargetIdAndTargetType(profileId, targetId, targetType)
-                .map(NotificationTargetSetting::isNotificationsEnabled)
+                .map(NotificationTargetSetting::getNotificationsEnabled)
                 .orElseGet(() -> {
                     NotificationTargetSetting defaultSetting = NotificationTargetSetting.builder()
                             .profileId(profileId)

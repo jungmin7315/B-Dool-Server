@@ -12,6 +12,7 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -29,14 +30,14 @@ public class VerificationServiceImpl implements VerificationService {
         Verification verification = Verification.builder()
                 .verificationCode(verificationModel.getVerificationCode())
                 .email(verificationModel.getEmail())
-                .createdAt(new Date())
+                .createdAt(LocalDateTime.now())
                 .expiredAt(calculateExpirationDate())
                 .build();
         return verificationRepository.save(verification);
     }
 
     @Override
-    public boolean sendVerificationCode(String email) {
+    public Boolean sendVerificationCode(String email) {
         String verificationCode = generateVerificationCode();
         String body = "인증 코드 : " + verificationCode;
         LogModel logModel = new LogModel();
@@ -58,13 +59,13 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
-    public boolean verifyCode(String email, String verificationCode) {
+    public Boolean verifyCode(String email, String verificationCode) {
         Optional<Verification> verificationOpt = verificationRepository.findByEmail(email);
 
         if (verificationOpt.isPresent()) {
             Verification verification = verificationOpt.get();
             boolean isCodeValid = verification.getVerificationCode().equals(verificationCode);
-            boolean isNotExpired = !verification.getExpiredAt().before(new Date());
+            boolean isNotExpired = verification.getExpiredAt().isAfter(LocalDateTime.now());  // 변경된 부분
 
             if (isCodeValid && isNotExpired) {
                 if (!memberService.existsByEmail(email)) {
@@ -82,10 +83,8 @@ public class VerificationServiceImpl implements VerificationService {
         return String.valueOf(100000 + new Random().nextInt(900000));
     }
 
-    private Date calculateExpirationDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 30);
-        return calendar.getTime();
+    private LocalDateTime calculateExpirationDate() {
+        return LocalDateTime.now().plusMinutes(30);  // 변경된 부분
     }
 
     private Optional<Boolean> sendEmail(String email, String body) {

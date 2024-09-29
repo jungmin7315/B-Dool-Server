@@ -7,5 +7,5 @@ public class LogModel {
     private String email;
     private String subject;
     private String body;
-    private boolean isSent;
+    private Boolean isSent;
 }
