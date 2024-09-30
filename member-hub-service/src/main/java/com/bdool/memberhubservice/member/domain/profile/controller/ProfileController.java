@@ -53,6 +53,11 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
     }
 
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<List<Profile>> getProfileByMemberId(@PathVariable Long memberId) {
+        return ResponseEntity.ok(profileService.findByMemberId(memberId));
+    }
+
     @GetMapping("/exists/{profileId}")
     public ResponseEntity<Boolean> checkProfileExists(@PathVariable Long profileId) {
         return ResponseEntity.ok(profileService.existsById(profileId));

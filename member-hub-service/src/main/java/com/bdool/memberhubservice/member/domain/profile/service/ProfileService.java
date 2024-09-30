@@ -22,6 +22,8 @@ public interface ProfileService {
 
     List<ProfileResponse> findByWorkspaceId(Long workspaceId);
 
+    List<Profile> findByMemberId(Long memberId);
+
     boolean existsById(Long profileId);
 
     void deleteById(Long profileId);

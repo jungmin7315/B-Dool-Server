@@ -125,6 +125,11 @@ public class ProfileServiceImpl implements ProfileService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Profile> findByMemberId(Long memberId) {
+        return profileRepository.findByMemberId(memberId);
+    }
+
     private ProfileResponse convertToProfileResponse(Profile profile) {
         return new ProfileResponse(
                 profile.getId(),
