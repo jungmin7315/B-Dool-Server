@@ -3,6 +3,7 @@ package com.bdool.memberhubservice.mail.domain.verification.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "verifications")
@@ -22,8 +23,8 @@ public class Verification {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date expiredAt;
+    private LocalDateTime expiredAt;
 }

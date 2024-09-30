@@ -1,9 +1,11 @@
 package com.bdool.notificationservice.notification.domain.notification.entity;
 
+import com.bdool.notificationservice.notification.domain.global.JsonConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Table(name = "notifications")
 @Entity
@@ -36,8 +38,9 @@ public class Notification {
     @Column
     private LocalDateTime expiresAt;
 
-    @Column
-    private String metadata;
+    @Convert(converter = JsonConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private Map<String, Object> metadata;
 
     @PrePersist
     protected void onCreate() {

@@ -18,17 +18,17 @@ public class NotificationTargetSetting {
     private Long id;
 
     @Column(nullable = false)
-    private Long profileId;  // 사용자 ID
+    private Long profileId;
 
     @Column(nullable = false)
-    private Long targetId;  // 알림 대상의 ID (채널, 워크스페이스, 사용자 등)
+    private Long targetId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NotificationTargetType targetType;  // 알림 대상의 타입 (채널, 사용자, 워크스페이스 등)
+    private NotificationTargetType targetType;
 
     @Column(nullable = false)
-    private boolean notificationsEnabled;  // 해당 항목에 대한 알림 활성화 여부
+    private Boolean notificationsEnabled;
 
     public void updateNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;

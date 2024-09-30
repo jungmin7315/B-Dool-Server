@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findByProfileIdAndReadFalse(Long profileId);
+    List<Notification> findByProfileIdAndIsReadFalse(Long profileId);
 
     List<Notification> findByProfileIdOrderByCreatedAtDesc(Long profileId);
 

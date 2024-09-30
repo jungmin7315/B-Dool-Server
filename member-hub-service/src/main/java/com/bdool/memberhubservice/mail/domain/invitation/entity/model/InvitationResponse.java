@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InvitationResponse {
 
-    private boolean isValid;
+    private Boolean isValid;
     private Long memberId;
     private Long workspaceId;
 }

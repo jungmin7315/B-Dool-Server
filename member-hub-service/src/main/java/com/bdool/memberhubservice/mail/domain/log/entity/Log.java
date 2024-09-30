@@ -3,6 +3,7 @@ package com.bdool.memberhubservice.mail.domain.log.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,15 +20,15 @@ public class Log {
     private String email;
     private String subject;
     private String body;
-    private boolean isSent;
+    private Boolean isSent;
 
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date sentAt;
+    private LocalDateTime sentAt;
 
     @PrePersist
     protected void onCreate() {
-        this.sentAt = new Date();
+        this.sentAt = LocalDateTime.now();  // 변경된 부분
     }
 }

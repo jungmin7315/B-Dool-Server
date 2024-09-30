@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/notification-settings")
 @RequiredArgsConstructor
+@CrossOrigin
 public class NotificationTargetSettingController {
 
     private final NotificationTargetSettingService targetSettingService;
