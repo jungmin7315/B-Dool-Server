@@ -13,7 +13,7 @@ public class ParticipantModel {
 
     private UUID channelId;
 
-    private String profileName;
+    private String nickname;
 
     private boolean favorited;
 

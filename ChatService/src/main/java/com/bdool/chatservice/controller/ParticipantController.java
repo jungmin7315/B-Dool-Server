@@ -30,7 +30,7 @@ public class ParticipantController {
     @GetMapping("")
     public ResponseEntity<?> findAll() {
         List<ParticipantEntity> participants = participantService.findAll();
-        if(participants.isEmpty()){
+        if (participants.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
@@ -57,6 +57,17 @@ public class ParticipantController {
     @DeleteMapping("/{participantId}")
     public ResponseEntity<?> deleteById(@PathVariable UUID participantId) {
         participantService.deleteById(participantId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{profileId}/online")
+    public ResponseEntity<Void> updateOnlineStatus(@PathVariable Long profileId, @RequestParam Boolean isOnline) {
+        participantService.updateOnline(profileId,isOnline);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{profileId}/nickname")
+    public ResponseEntity<Void> updateNickname(@PathVariable Long profileId, @RequestParam String nickname) {
         return ResponseEntity.noContent().build();
     }
 }
