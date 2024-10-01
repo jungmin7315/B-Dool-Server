@@ -1,5 +1,6 @@
 package com.bdool.memberhubservice.member.domain.member.service.impl;
 
+import com.bdool.memberhubservice.member.domain.global.JwtUtil;
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     public Member save(MemberModel memberModel) {
@@ -28,6 +30,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Optional<Member> findById(Long memberId) {
         return memberRepository.findById(memberId);
+    }
+
+    @Override
+    public Optional<Member> getMemberByEmail(String token) {
+        return memberRepository.findByEmail(jwtUtil.extractEmail(token));
     }
 
     @Override
