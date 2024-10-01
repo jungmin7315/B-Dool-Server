@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/document-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/document-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/notification-service/notification-service.iml" filepath="$PROJECT_DIR$/notification-service/notification-service.iml" />
     </modules>
   </component>
 </project>

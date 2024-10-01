@@ -2,6 +2,7 @@ package com.bdool.notificationservice.notification.domain.notification.service.i
 
 import com.bdool.notificationservice.notification.domain.notification.entity.Notification;
 import com.bdool.notificationservice.notification.domain.notification.entity.model.NotificationModel;
+import com.bdool.notificationservice.notification.domain.notification.entity.model.NotificationResponse;
 import com.bdool.notificationservice.notification.domain.notification.repository.NotificationRepository;
 import com.bdool.notificationservice.notification.domain.notification.service.NotificationService;
 import com.bdool.notificationservice.notification.domain.setting.entity.NotificationTargetType;
@@ -28,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationTargetType targetType = notificationModel.getTargetType();
 
         boolean isTargetNotificationEnabled = targetSettingService.isNotificationEnabledForTarget(profileId, targetId, targetType);
+
         if (!isTargetNotificationEnabled) {
             return null;
         }
@@ -40,14 +42,28 @@ public class NotificationServiceImpl implements NotificationService {
                 .isRead(false)
                 .build();
 
-        return notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
 
+        NotificationResponse notificationResponse = toNotificationResponse(savedNotification);
+        sseService.sendEventToProfile(profileId, "new-notification", notificationResponse);
+
+        return savedNotification;
+    }
+
+    private NotificationResponse toNotificationResponse(Notification notification) {
+        return NotificationResponse.builder()
+                .id(notification.getId())
+                .profileId(notification.getProfileId())
+                .notificationType(notification.getNotificationType().toString())  // Enum을 문자열로 변환
+                .message(notification.getMessage())
+                .metadata(notification.getMetadata())
+                .createdAt(notification.getCreatedAt())
+                .build();
     }
 
     @Override
-    public List<Notification> findByProfileIdAndReadFalse(Long profileId) {
-        // 읽지 않은 알림 조회
-        return notificationRepository.findByProfileIdAndReadFalse(profileId);
+    public List<Notification> findByProfileIdAndIsReadFalse(Long profileId) {
+        return notificationRepository.findByProfileIdAndIsReadFalse(profileId);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     @PostMapping("/")
-    public ResponseEntity<Member> join(MemberModel memberModel) {
+    public ResponseEntity<Member> join(@RequestBody MemberModel memberModel) {
         return ResponseEntity.ok(memberService.save(memberModel));
     }
 

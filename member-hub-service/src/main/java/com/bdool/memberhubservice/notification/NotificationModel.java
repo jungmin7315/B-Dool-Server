@@ -1,8 +1,7 @@
-package com.bdool.notificationservice.notification.domain.notification.entity.model;
+package com.bdool.memberhubservice.notification;
 
-import com.bdool.notificationservice.notification.domain.notification.entity.NotificationType;
-import com.bdool.notificationservice.notification.domain.setting.entity.NotificationTargetType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +10,8 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class NotificationModel {
-
     private Long profileId;
     private String message;
     private Map<String, Object> metadata;

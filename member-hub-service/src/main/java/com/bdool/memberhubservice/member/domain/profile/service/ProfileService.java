@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProfileService {
-    Profile save(ProfileModel profileModel, Long memberId, boolean isWorkspaceCreator);
+    Profile save(ProfileModel profileModel, Long memberId);
 
-    Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId, boolean isWorkspaceCreator);
+    Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId);
 
     Optional<Profile> findById(Long profileId);
 
@@ -21,6 +21,8 @@ public interface ProfileService {
     long count();
 
     List<ProfileResponse> findByWorkspaceId(Long workspaceId);
+
+    List<Profile> findByMemberId(Long memberId);
 
     boolean existsById(Long profileId);
 

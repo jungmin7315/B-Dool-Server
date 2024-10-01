@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notifications")
+@CrossOrigin
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -24,7 +25,7 @@ public class NotificationController {
 
     @GetMapping("/unread/{profileId}")
     public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable Long profileId) {
-        List<Notification> unreadNotifications = notificationService.findByProfileIdAndReadFalse(profileId);
+        List<Notification> unreadNotifications = notificationService.findByProfileIdAndIsReadFalse(profileId);
         return ResponseEntity.ok(unreadNotifications);
     }
 

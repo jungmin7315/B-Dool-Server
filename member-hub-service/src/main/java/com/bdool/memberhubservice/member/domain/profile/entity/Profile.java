@@ -3,6 +3,7 @@ package com.bdool.memberhubservice.member.domain.profile.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "profiles")
@@ -30,29 +31,29 @@ public class Profile {
     private String email;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     private Long workspaceId;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = new Date();
-        updatedAt = new Date();
+        createdAt = LocalDateTime.now();
+        updatedAt =  LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = new Date();
+        updatedAt = LocalDateTime.now();
     }
 
     public void updateProfile(String nickname, String position, String profilePictureUrl) {
         this.nickname = nickname;
         this.position = position;
         this.profilePictureUrl = profilePictureUrl;
-        this.updatedAt = new Date();  // 업데이트 시간 갱신
+        this.updatedAt = LocalDateTime.now();  // 업데이트 시간 갱신
     }
 
     public void updateStatus(String status) {

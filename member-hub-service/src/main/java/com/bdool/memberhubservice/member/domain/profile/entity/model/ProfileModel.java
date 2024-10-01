@@ -14,12 +14,6 @@ public class ProfileModel {
 
     private String name; // 이름
     private String nickname; // 별명
-    private String position; // 직책
-    private String status; // 상태메세지
     private String profilePictureUrl; // 프로필 이미지 URL
-    private Boolean isOnline; // 온라인/오프라인 표시
-    private Boolean isWorkspaceCreator;
-    private Long memberId;
-    private String email;
-    private Long workspaceId;
+    private Boolean isOnline = true;
 }

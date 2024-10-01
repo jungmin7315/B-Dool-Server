@@ -42,7 +42,7 @@ public class InvitationServiceImpl implements InvitationService {
                 .inviterId(profile.getId())
                 .invitationCode(invitationModel.getInvitationCode())
                 .receiverEmail(invitationModel.getReceiverEmail())
-                .createdAt(new Date())
+                .createdAt(LocalDateTime.now())
                 .expiresAt(calculateExpirationDate())
                 .build();
         return invitationRepository.save(invitation);
@@ -81,7 +81,7 @@ public class InvitationServiceImpl implements InvitationService {
         Invitation invitation = invitationRepository.findByReceiverEmailAndInvitationCode(receiverEmail, invitationCode)
                 .orElseThrow(() -> new NoSuchElementException("초대를 찾을 수 없습니다. 이메일과 초대 코드를 확인해주세요."));
 
-        boolean isNotExpired = !invitation.getExpiresAt().before(new Date());
+        boolean isNotExpired = invitation.getExpiresAt().isAfter(LocalDateTime.now());  // 변경된 부분
         if (!isNotExpired) {
             throw new IllegalStateException("초대가 만료되었습니다.");
         }
@@ -92,8 +92,8 @@ public class InvitationServiceImpl implements InvitationService {
         return new InvitationResponse(true, member.getId(), invitation.getWorkspaceId());
     }
 
-    private Date calculateExpirationDate() {
-        return Date.from(LocalDateTime.now().plusDays(7).atZone(ZoneId.systemDefault()).toInstant());
+    private LocalDateTime calculateExpirationDate() {
+        return LocalDateTime.now().plusDays(7);  // 변경된 부분
     }
 
     private boolean sendEmail(String email, String body) {

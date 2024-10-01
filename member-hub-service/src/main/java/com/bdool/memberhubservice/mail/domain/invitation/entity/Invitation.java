@@ -3,7 +3,7 @@ package com.bdool.memberhubservice.mail.domain.invitation.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Table(name = "invitations")
 @Entity
@@ -23,8 +23,8 @@ public class Invitation {
     private String receiverEmail;
     private Long workspaceId;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date expiresAt;
+    private LocalDateTime expiresAt;
 
 }
