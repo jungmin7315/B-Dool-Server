@@ -13,9 +13,11 @@ public class ParticipantModel {
 
     private UUID channelId;
 
-    private String profileName;
-
     private boolean favorited;
 
     private LocalDateTime joinedAt;
+
+    private boolean isOnline;
+
+    private Long profileId;
 }

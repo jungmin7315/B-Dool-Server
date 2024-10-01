@@ -32,7 +32,7 @@ public class ChannelEntity {
 
     private String description; // 받아야 하는 필드
 
-    private UUID profileId; // 받아야 하는 필드
+    private Long profileId; // 받아야 하는 필드
 
     private ChannelType channelType; // 받아야 하는 필드
 }

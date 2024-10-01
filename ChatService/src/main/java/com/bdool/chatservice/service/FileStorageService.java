@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface FileStorageService {
     List<FileEntity> getAllFiles();
-    FileEntity storeFile(MultipartFile file, UUID profileId);
+    FileEntity storeFile(MultipartFile file, Long profileId);
     ResponseEntity<Resource> loadFileAsResource(UUID fileId, HttpServletRequest request);
     void deleteFile(UUID fileId);
 }

@@ -50,7 +50,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public FileEntity storeFile(MultipartFile file, UUID profileId) {
+    public FileEntity storeFile(MultipartFile file, Long profileId) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         if (fileName.contains("..")) {
             throw new FileStorageException("Invalid path sequence " + fileName);
@@ -77,7 +77,7 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .extension(extension)
                 .size((int) file.getSize())
                 .uploadedAt(LocalDateTime.now())
-                .profileId(profileId)
+                .profileImgId(profileId)
                 .build();
 
         return fileRepository.save(fileEntity);

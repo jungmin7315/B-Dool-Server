@@ -29,7 +29,7 @@ class ChatServiceApplicationTests {
     void contextLoads() {
 
         List<MessageEntity> messages = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(""))) {
+        try (CSVReader reader = new CSVReader(new FileReader("C:\\Users\\user\\Downloads\\Movie_Chat_Messages.csv"))) {
             String[] nextLine;
             reader.readNext(); // 헤더 스킵
             while ((nextLine = reader.readNext()) != null) {
@@ -41,7 +41,7 @@ class ChatServiceApplicationTests {
                         .isEdited(Boolean.parseBoolean(nextLine[4])) // isEdited
                         .isDeleted(Boolean.parseBoolean(nextLine[5])) // isDeleted
                         .parentMessageId(nextLine[6].isEmpty() ? null : UUID.fromString(nextLine[6])) // parentMessageId
-                        .participantId(UUID.fromString(nextLine[7])) // participantId
+//                        .profileId(UUID.fromString(nextLine[7])) // participantId
                         .fileUrl(nextLine[8].isEmpty() ? null : nextLine[8]) // fileUrl
                         .build();
 

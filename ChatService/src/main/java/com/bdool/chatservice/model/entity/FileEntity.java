@@ -1,5 +1,6 @@
 package com.bdool.chatservice.model.entity;
 
+import com.bdool.chatservice.model.Enum.EntityType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,9 +30,13 @@ public class FileEntity {
 
     private LocalDateTime uploadedAt; // LocalDateTime.now()로 처리
 
-    private UUID profileId; // 받아야 하는 필드
+    private Long profileImgId; // 받아야 하는 필드
 
-    private UUID channelId; // 받아야 하는 필드
+    private UUID channelImgId; // 받아야 하는 필드
 
-    private UUID workspacesId; // 받아야 하는 필드
+    private Long workspacesImgId; // 받아야 하는 필드
+
+    private UUID messageImgId; // 받아야 하는 필드
+
+    private EntityType entityType; // 받아야 하는 필드
 }

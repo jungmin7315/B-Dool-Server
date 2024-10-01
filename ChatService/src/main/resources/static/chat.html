@@ -11,6 +11,7 @@
 <h2 id="channelTitle">Chat Room</h2>
 <div id="messageArea" style="height: 300px; overflow-y: auto;"></div>
 <input type="text" id="messageInput" placeholder="Type a message..." />
+<input type="file" id="fileInput" accept=".jpg,.png,.gif,.pdf,.doc,.docx" /> <!-- 파일 첨부 추가 -->
 <button onclick="sendMessage()">Send</button>
 
 <script type="text/javascript">
@@ -26,7 +27,7 @@
 
     function loadChannelMessages(initial = false) {
         if (initial) {
-            currentPage = 0; // 초기 로딩을 위해 최신 페이지로 설정, 서버 측 로직에 따라 조정 가능
+            currentPage = 0; // 초기 로딩을 위해 최신 페이지로 설정
         }
 
         fetch(`/api/messages/${channelId}?page=${currentPage}&size=10`)
@@ -35,13 +36,12 @@
                 const messageArea = document.getElementById('messageArea');
                 const atBottom = messageArea.scrollHeight - messageArea.clientHeight <= messageArea.scrollTop + 1;
                 messages.reverse().forEach(message => {
-                    showMessage(message.content, message.sendDate, !initial);
+                    showMessage(message.content, message.sendDate, message.isEdited, message.isDeleted, message.fileUrl, !initial);
                 });
 
                 if (initial) {
                     messageArea.scrollTop = messageArea.scrollHeight;  // 초기 로드시 스크롤을 맨 하단으로
                 } else {
-                    // 스크롤 위치 조정
                     let newScrollHeight = messageArea.scrollHeight;
                     messageArea.scrollTop = newScrollHeight - oldScrollHeight;
                 }
@@ -61,7 +61,8 @@
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
                 stompClient.subscribe(`/topic/channel/${channelId}`, function (message) {
-                    showMessage(JSON.parse(message.body).content, JSON.parse(message.body).sendDate);
+                    const parsedMessage = JSON.parse(message.body);
+                    showMessage(parsedMessage.content, parsedMessage.sendDate, parsedMessage.isEdited, parsedMessage.isDeleted, parsedMessage.fileUrl);
                 });
             });
         } else {
@@ -71,32 +72,62 @@
 
     function sendMessage() {
         var messageInput = document.getElementById('messageInput').value.trim();
-        if (!messageInput) {
-            alert("Please enter a message.");
+        var fileInput = document.getElementById('fileInput').files[0];
+        if (!messageInput && !fileInput) {
+            alert("Please enter a message or attach a file.");
             return;
         }
-        if (channelId && stompClient && stompClient.connected) {
-            stompClient.send(`/app/message/${channelId}`, {}, JSON.stringify({
-                content: messageInput,
-                channelId: channelId,
-                memberId: "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b"
-            }));
-            document.getElementById('messageInput').value = "";
-        } else {
-            alert("You are not connected to the chat.");
+
+        var formData = new FormData();
+        formData.append('content', messageInput);
+        formData.append('channelId', channelId);
+        formData.append('profileId', "a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b"); // 임의로 설정된 프로필 ID, 실제 값으로 수정
+        formData.append('isEdited', false);
+        formData.append('isDeleted', false);
+        if (fileInput) {
+            formData.append('file', fileInput); // 파일이 있으면 추가
         }
+
+        fetch(`/api/message/${channelId}`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Message sent:', data);
+                document.getElementById('messageInput').value = '';
+                document.getElementById('fileInput').value = ''; // 파일 입력 초기화
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
     }
 
-    function showMessage(message, sendDate, prepend = false) {
+    function showMessage(content, sendDate, isEdited, isDeleted, fileUrl, prepend = false) {
         var messageArea = document.getElementById('messageArea');
         var messageElement = document.createElement('p');
         messageElement.classList.add('bubble');
-        messageElement.innerText = `${message} (Sent on ${new Date(sendDate).toLocaleString()})`;
+
+        let messageText = isDeleted ? "[Message Deleted]" : content;
+        if (isEdited && !isDeleted) {
+            messageText += " (Edited)";
+        }
+        if (fileUrl && !isDeleted) {
+            messageText += ` <a href="${fileUrl}" target="_blank">[File]</a>`;
+        }
+
+        messageElement.innerHTML = `${messageText} (Sent on ${new Date(sendDate).toLocaleString()})`;
+
         if (prepend) {
             messageArea.insertBefore(messageElement, messageArea.firstChild);
         } else {
             messageArea.appendChild(messageElement);
-            messageArea.scrollTop = messageArea.scrollHeight; // 항상 새 메시지를 추가할 때 스크롤 맨 아래로
+            messageArea.scrollTop = messageArea.scrollHeight; // 새 메시지를 추가할 때 스크롤 맨 아래로
         }
     }
 

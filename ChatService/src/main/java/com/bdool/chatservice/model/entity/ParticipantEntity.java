@@ -21,9 +21,11 @@ public class ParticipantEntity {
 
     private UUID channelId; // 받아야 하는 필드
 
-    private String profileName; // 받아야 하는 필드
-
     private boolean favorited; // 받아야 하는 필드
 
     private LocalDateTime joinedAt; // LocalDateTime.now()로 처리
+
+    private boolean isOnline; // 받아야 하는 필드
+
+    private Long profileId; // 받아야 하는 필드
 }

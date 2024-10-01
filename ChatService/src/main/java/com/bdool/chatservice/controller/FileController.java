@@ -27,7 +27,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public FileEntity uploadFile(@RequestParam("file") MultipartFile file, @RequestParam UUID profileId) {
+    public FileEntity uploadFile(@RequestParam("file") MultipartFile file, @RequestParam Long profileId) {
         return fileService.uploadFile(file, profileId);
     }
 

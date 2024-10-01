@@ -12,7 +12,7 @@
         form {
             margin-bottom: 20px;
         }
-        input, button {
+        input, button, select {
             padding: 5px;
             margin: 5px;
         }
@@ -37,6 +37,19 @@
     <label for="channelPrivate">채널 잠금 여부: </label>
     <input type="checkbox" id="channelPrivate" name="isPrivate"><br>
 
+    <label for="workspacesId">워크스페이스 ID: </label>
+    <input type="number" id="workspacesId" name="workspacesId" required><br>
+
+    <label for="profileId">프로필 ID: </label>
+    <input type="number" id="profileId" name="profileId" required><br>
+
+    <label for="channelType">채널 타입: </label>
+    <select id="channelType" name="channelType" required>
+        <option value="DEFAULT">DEFAULT</option>
+        <option value="CUSTOM">CUSTOM</option>
+        <option value="DM">DM</option>
+    </select><br>
+
     <button type="submit">Create</button>
 </form>
 
@@ -54,6 +67,13 @@
 
     <label for="updateChannelPrivate">수정 채널 잠금 여부: </label>
     <input type="checkbox" id="updateChannelPrivate" name="isPrivate"><br>
+
+    <label for="updateChannelType">수정 채널 타입: </label>
+    <select id="updateChannelType" name="channelType" required>
+        <option value="DEFAULT">DEFAULT</option>
+        <option value="CUSTOM">CUSTOM</option>
+        <option value="DM">DM</option>
+    </select><br>
 
     <button type="submit">Update</button>
 </form>
@@ -100,9 +120,9 @@
             name: document.getElementById('channelName').value,
             description: document.getElementById('channelDescription').value,
             isPrivate: document.getElementById('channelPrivate').checked,
-            channelType: 'DEFAULT', // 필요에 따라 수정
-            profileId: 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b', // 실제 프로필 ID로 수정
-            workspacesId: 1 // 실제 워크스페이스 ID로 수정
+            workspacesId: document.getElementById('workspacesId').value,
+            profileId: document.getElementById('profileId').value,
+            channelType: document.getElementById('channelType').value,
         };
 
         fetch('/api/channel', {
@@ -119,17 +139,14 @@
     document.getElementById('updateChannelForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const channelId = document.getElementById('updateChannelId').value;
-        const profileId = 'a6cbe7e9-203b-4f9c-beb6-efeb8ce7a84b'; // 실제 프로필 ID로 수정
-
         const channel = {
             name: document.getElementById('updateChannelName').value,
             description: document.getElementById('updateChannelDescription').value,
             isPrivate: document.getElementById('updateChannelPrivate').checked,
-            channelType: 'DEFAULT' // 필요에 따라 수정
+            channelType: document.getElementById('updateChannelType').value
         };
 
-        // profileId와 channelId를 경로로 포함하여 PUT 요청
-        fetch(`/api/channel/${channelId}/profile/${profileId}`, {
+        fetch(`/api/channel/${channelId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(channel)
@@ -185,8 +202,6 @@
             });
     });
 
-
-
     // 특정 워크스페이스에 해당하는 채널 조회
     document.getElementById('findChannelsByWorkspaceForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -207,9 +222,4 @@
             method: 'DELETE'
         })
             .then(() => output.innerHTML = `<p>Channel deleted successfully.</p>`)
-            .catch(error => output.innerHTML = `<p>Error: ${error}</p>`);
-    });
-</script>
 
-</body>
-</html>

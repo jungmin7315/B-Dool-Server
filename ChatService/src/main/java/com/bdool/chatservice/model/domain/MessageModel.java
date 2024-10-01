@@ -22,7 +22,7 @@ public class MessageModel {
     private Boolean isDeleted;
 
     private UUID parentMessageId;
-    private UUID participantId;
+    private Long profileId;
     private String nickName;
     private UUID fileId;
 }

@@ -24,7 +24,7 @@ public class ChannelModel {
 
     private String description;
 
-    private UUID profileId;
+    private Long profileId;
 
     private ChannelType channelType;
 }

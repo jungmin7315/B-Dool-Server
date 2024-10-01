@@ -19,7 +19,7 @@ public class FileServiceImpl implements FileService {
     private final FileStorageService fileStorageService;
 
     @Override
-    public FileEntity uploadFile(MultipartFile file, UUID profileId) {
+    public FileEntity uploadFile(MultipartFile file, Long profileId) {
         return fileStorageService.storeFile(file, profileId);
     }
 

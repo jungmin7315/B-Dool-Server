@@ -9,10 +9,30 @@
 <h1>File Upload Test</h1>
 
 <!-- 파일 업로드 폼 -->
-<form action="/api/files/upload" method="post" enctype="multipart/form-data">
+<form id="uploadForm" enctype="multipart/form-data">
     <label for="file">Select file:</label>
-    <input type="file" id="file" name="file">
-    <input type="hidden" name="profileId" value="093b54da-4972-4b4c-aeb2-30cc2d090d2e"> <!-- 필요한 경우 프로필 ID -->
+    <input type="file" id="file" name="file" required><br>
+
+    <label for="profileImgId">프로필 이미지 ID: </label>
+    <input type="text" id="profileImgId" name="profileImgId" required><br>
+
+    <label for="channelImgId">채널 이미지 ID: </label>
+    <input type="text" id="channelImgId" name="channelImgId" required><br>
+
+    <label for="workspacesImgId">워크스페이스 이미지 ID: </label>
+    <input type="text" id="workspacesImgId" name="workspacesImgId" required><br>
+
+    <label for="messageImgId">메시지 이미지 ID: </label>
+    <input type="text" id="messageImgId" name="messageImgId" required><br>
+
+    <label for="entityType">엔티티 타입: </label>
+    <select id="entityType" name="entityType" required>
+        <option value="PROFILE">PROFILE</option>
+        <option value="CHANNEL">CHANNEL</option>
+        <option value="WORKSPACE">WORKSPACE</option>
+        <option value="MESSAGE">MESSAGE</option>
+    </select><br>
+
     <button type="submit">Upload</button>
 </form>
 
@@ -21,20 +41,54 @@
 <!-- 파일 다운로드 링크 -->
 <form action="/api/files/download" method="get">
     <label for="fileId">Enter File ID:</label>
-    <input type="text" id="fileId" name="fileId">
+    <input type="text" id="fileId" name="fileId" required>
     <button type="submit">Download</button>
 </form>
+
 <h2>Delete File</h2>
 
 <!-- 파일 삭제 폼 -->
-<form action="/api/files/delete" method="post" id="deleteForm">
+<form id="deleteForm">
     <label for="deleteFileId">Enter File ID:</label>
-    <input type="text" id="deleteFileId" name="fileId">
+    <input type="text" id="deleteFileId" name="fileId" required>
     <button type="button" onclick="deleteFile()">Delete</button>
 </form>
+
 <h2>Uploaded Files</h2>
 <ul id="fileList"></ul>
+
 <script>
+    // 파일 업로드 처리
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        const fileInput = document.getElementById('file');
+
+        formData.append('file', fileInput.files[0]);
+        formData.append('profileImgId', document.getElementById('profileImgId').value);
+        formData.append('channelImgId', document.getElementById('channelImgId').value);
+        formData.append('workspacesImgId', document.getElementById('workspacesImgId').value);
+        formData.append('messageImgId', document.getElementById('messageImgId').value);
+        formData.append('entityType', document.getElementById('entityType').value);
+
+        fetch('/api/files/upload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('File uploaded successfully');
+                    location.reload();
+                } else {
+                    alert('Failed to upload file');
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+    });
+
+    // 파일 삭제 처리
     function deleteFile() {
         const fileId = document.getElementById('deleteFileId').value;
         fetch(`/api/files/delete/${fileId}`, {
@@ -47,18 +101,26 @@
                 } else {
                     alert('Failed to delete file');
                 }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
             });
     }
 
+    // 업로드된 파일 목록 불러오기
     fetch('/api/files')
         .then(response => response.json())
         .then(files => {
             const fileList = document.getElementById('fileList');
+            fileList.innerHTML = ''; // 이전 목록 초기화
             files.forEach(file => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `File Name: ${file.fname}, Size: ${file.size} bytes, ID: ${file.fileId}, Extension: ${file.extension}`;
                 fileList.appendChild(listItem);
             });
+        })
+        .catch(error => {
+            alert('Error fetching files: ' + error);
         });
 </script>
 </body>

@@ -27,10 +27,11 @@ public class ParticipantServiceImpl implements ParticipantService {
         UUID participantId = UUIDUtil.getOrCreateUUID(participant.getParticipantId());
         return participantRepository.save(ParticipantEntity.builder()
                 .participantId(participantId)
-                .profileName(participant.getProfileName())
+                .profileId(participant.getProfileId())
                 .favorited(participant.isFavorited())
                 .joinedAt(LocalDateTime.now())
                 .channelId(participant.getChannelId())
+                .isOnline(participant.isOnline())
                 .build());
     }
 
@@ -39,8 +40,9 @@ public class ParticipantServiceImpl implements ParticipantService {
         return participantRepository.findById(participantId).map(existingMember -> {
             existingMember.setChannelId(participant.getChannelId());
             existingMember.setFavorited(participant.isFavorited());
-            existingMember.setProfileName(participant.getProfileName());
+            existingMember.setProfileId(participant.getProfileId());
             existingMember.setParticipantId(participant.getParticipantId());
+            existingMember.setOnline(participant.isOnline());
 
             return participantRepository.save(existingMember);
         }).orElseThrow(() -> new ParticipantIdNotFoundException("Member not found with ID: " + participantId));
