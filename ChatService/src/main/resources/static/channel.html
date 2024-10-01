@@ -46,8 +46,8 @@
     <label for="channelType">채널 타입: </label>
     <select id="channelType" name="channelType" required>
         <option value="DEFAULT">DEFAULT</option>
-        <option value="CUSTOM">CUSTOM</option>
-        <option value="DM">DM</option>
+        <option value="PUBLIC">PUBLIC</option>
+        <option value="PRIVATE">PRIVATE</option>
     </select><br>
 
     <button type="submit">Create</button>
@@ -71,8 +71,8 @@
     <label for="updateChannelType">수정 채널 타입: </label>
     <select id="updateChannelType" name="channelType" required>
         <option value="DEFAULT">DEFAULT</option>
-        <option value="CUSTOM">CUSTOM</option>
-        <option value="DM">DM</option>
+        <option value="PUBLIC">PUBLIC</option>
+        <option value="PRIVATE">PRIVATE</option>
     </select><br>
 
     <button type="submit">Update</button>
@@ -214,6 +214,7 @@
     });
 
     // 채널 삭제
+    // 채널 삭제
     document.getElementById('deleteChannelForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const id = document.getElementById('deleteChannelId').value;
@@ -221,5 +222,19 @@
         fetch(`/api/channel/${id}`, {
             method: 'DELETE'
         })
-            .then(() => output.innerHTML = `<p>Channel deleted successfully.</p>`)
-
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete channel');
+                }
+                return response.json();
+            })
+            .then(() => {
+                output.innerHTML = `<p>Channel deleted successfully.</p>`;
+            })
+            .catch(error => {
+                output.innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+    });
+</script>
+</body>
+</html>
