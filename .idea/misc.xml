@@ -4,6 +4,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/auth-service" />
     <file type="web" url="file://$PROJECT_DIR$/chatbot-service" />
+    <file type="web" url="file://$PROJECT_DIR$/ChatService" />
     <file type="web" url="file://$PROJECT_DIR$/member-hub-service" />
     <file type="web" url="file://$PROJECT_DIR$/notification-service" />
   </component>
