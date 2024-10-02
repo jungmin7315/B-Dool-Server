@@ -23,4 +23,8 @@ public interface ParticipantService {
     long count();
 
     void deleteById(UUID participantId);
+
+    void updateOnline(Long profileId, Boolean isOnline);
+
+    void updateNickname(Long profileId, String nickname);
 }

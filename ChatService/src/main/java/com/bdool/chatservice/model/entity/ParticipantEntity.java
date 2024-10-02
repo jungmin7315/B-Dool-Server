@@ -21,11 +21,21 @@ public class ParticipantEntity {
 
     private UUID channelId; // 받아야 하는 필드
 
+    private String nickname;
+
     private boolean favorited; // 받아야 하는 필드
 
     private LocalDateTime joinedAt; // LocalDateTime.now()로 처리
 
-    private boolean isOnline; // 받아야 하는 필드
+    private Boolean isOnline;
 
-    private Long profileId; // 받아야 하는 필드
+    private Long profileId;
+
+    public void updateOnline(Boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

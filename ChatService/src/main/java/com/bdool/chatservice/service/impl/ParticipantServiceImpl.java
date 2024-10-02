@@ -5,6 +5,9 @@ import com.bdool.chatservice.model.domain.ParticipantModel;
 import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ParticipantService;
+import com.bdool.chatservice.sse.ParticipantSSEService;
+import com.bdool.chatservice.sse.model.ParticipantNicknameResponse;
+import com.bdool.chatservice.sse.model.ParticipantOnlineResponse;
 import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,17 +24,17 @@ import java.util.UUID;
 public class ParticipantServiceImpl implements ParticipantService {
 
     private final ParticipantRepository participantRepository;
+    private final ParticipantSSEService sseService;
 
     @Override
     public ParticipantEntity save(ParticipantModel participant) {
         UUID participantId = UUIDUtil.getOrCreateUUID(participant.getParticipantId());
         return participantRepository.save(ParticipantEntity.builder()
                 .participantId(participantId)
-                .profileId(participant.getProfileId())
+                .nickname(participant.getNickname())
                 .favorited(participant.isFavorited())
                 .joinedAt(LocalDateTime.now())
                 .channelId(participant.getChannelId())
-                .isOnline(participant.isOnline())
                 .build());
     }
 
@@ -40,9 +43,8 @@ public class ParticipantServiceImpl implements ParticipantService {
         return participantRepository.findById(participantId).map(existingMember -> {
             existingMember.setChannelId(participant.getChannelId());
             existingMember.setFavorited(participant.isFavorited());
-            existingMember.setProfileId(participant.getProfileId());
+            existingMember.setNickname(participant.getNickname());
             existingMember.setParticipantId(participant.getParticipantId());
-            existingMember.setOnline(participant.isOnline());
 
             return participantRepository.save(existingMember);
         }).orElseThrow(() -> new ParticipantIdNotFoundException("Member not found with ID: " + participantId));
@@ -71,5 +73,35 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public void deleteById(UUID participantId) {
         participantRepository.deleteById(participantId);
+    }
+
+    @Override
+    public void updateOnline(Long profileId, Boolean isOnline) {
+        List<ParticipantEntity> participants = participantRepository.findParticipantEntitiesByProfileId(profileId);
+
+        for (ParticipantEntity participant : participants) {
+            participant.updateOnline(isOnline);
+            participantRepository.save(participant);
+
+            ParticipantOnlineResponse participantOnlineResponse = new ParticipantOnlineResponse(
+                    profileId, participant.getChannelId(), participant.getIsOnline()
+            );
+            sseService.notifyOnlineChange(participantOnlineResponse);
+        }
+    }
+
+    @Override
+    public void updateNickname(Long profileId, String nickname) {
+        List<ParticipantEntity> participants = participantRepository.findParticipantEntitiesByProfileId(profileId);
+
+        for (ParticipantEntity participant : participants) {
+            participant.updateNickname(nickname);
+            participantRepository.save(participant);
+
+            ParticipantNicknameResponse participantNicknameResponse = new ParticipantNicknameResponse(
+                    profileId, participant.getChannelId(), participant.getNickname()
+            );
+            sseService.notifyNicknameChange(participantNicknameResponse);
+        }
     }
 }
