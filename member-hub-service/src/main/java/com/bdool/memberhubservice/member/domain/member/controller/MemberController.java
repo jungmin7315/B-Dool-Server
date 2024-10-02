@@ -32,8 +32,8 @@ public class MemberController {
 
 
     @GetMapping("/me")
-    public ResponseEntity<Optional<Member>> getCurrentMember(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(memberService.findByEmail(token));
+    public ResponseEntity<Optional<Member>> getCurrentMember(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(memberService.findByEmail(accessToken));
     }
 
     @GetMapping("/")

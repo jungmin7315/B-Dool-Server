@@ -12,12 +12,14 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VerificationServiceImpl implements VerificationService {
 
     private final VerificationRepository verificationRepository;

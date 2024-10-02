@@ -3,6 +3,7 @@ package com.bdool.authservice.auth.service.impl;
 import com.bdool.authservice.auth.global.util.JwtUtil;
 import com.bdool.authservice.auth.service.AuthService;
 import com.bdool.authservice.auth.service.CustomUserDetailService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -56,11 +57,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void setTokenCookies(HttpServletResponse response, String accessToken) {
-
-        String accessTokenCookie = String.format("accessToken=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=Lax",
-                accessToken, 60 * 15); // 15분 유효
-        response.addHeader("Set-Cookie", accessTokenCookie);
-
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);  // 클라이언트 스크립트에서 접근 불가
+        accessTokenCookie.setSecure(false);
+        accessTokenCookie.setPath("/");       // 모든 경로에서 쿠키 사용 가능
+        accessTokenCookie.setMaxAge(60 * 15); // 쿠키 유효 시간 15분x
+        response.addCookie(accessTokenCookie);
     }
 
     @Override
