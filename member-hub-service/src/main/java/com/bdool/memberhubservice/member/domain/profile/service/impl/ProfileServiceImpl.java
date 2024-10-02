@@ -7,18 +7,18 @@ import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import com.bdool.memberhubservice.notification.NotificationModel;
-import com.bdool.memberhubservice.notification.NotificationTargetType;
-import com.bdool.memberhubservice.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.bdool.memberhubservice.member.domain.profile.service.NotificationServiceHelper.createNotificationModel;
+import static com.bdool.memberhubservice.member.domain.profile.service.NotificationServiceHelper.sendNotification;
+import static com.bdool.memberhubservice.member.domain.profile.service.ParticipantServiceHelper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +27,11 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
     private final ProfileSSEService sseService;
-    private final WebClient.Builder webClientBuilder;
-    @Value("${notification-service.url}")  // 알림 서비스 URL을 설정 파일에서 가져옴
+    private final WebClient webClient;
+    @Value("${notification-service.url}")
     private String notificationServiceUrl;
+    @Value("${channel-service.url}")
+    private String channelServiceUrl;
 
     @Override
     public Profile save(ProfileModel profileModel, Long memberId) {
@@ -63,41 +65,13 @@ public class ProfileServiceImpl implements ProfileService {
         Profile savedProfile = profileRepository.save(profile);
 
         List<Profile> profilesInWorkspace = profileRepository.findProfilesByWorkspaceId(workspaceId);
-
         for (Profile profileInWorkspace : profilesInWorkspace) {
             NotificationModel notificationModel = createNotificationModel(profileModel, workspaceId, profileInWorkspace.getId());
-            sendNotification(notificationModel);
+
+            sendNotification(webClient, notificationServiceUrl, notificationModel);
         }
 
         return savedProfile;
-    }
-
-    private NotificationModel createNotificationModel(ProfileModel profileModel, Long workspaceId, Long recipientProfileId) {
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("nickname", profileModel.getNickname());
-        metadata.put("workspaceId", workspaceId);
-
-        return NotificationModel.builder()
-                .profileId(recipientProfileId)  // 알림을 받을 사용자 프로필 ID
-                .notificationType(NotificationType.WORKSPACE_ENTRY)  // 알림 유형
-                .message(profileModel.getNickname() + "님이 워크스페이스에 입장했습니다.")  // 알림 메시지
-                .metadata(metadata)
-                .targetType(NotificationTargetType.WORKSPACE)  // 타겟 유형
-                .targetId(workspaceId)  // 워크스페이스 ID
-                .build();
-    }
-
-    private void sendNotification(NotificationModel notificationModel) {
-        WebClient webClient = webClientBuilder.build();
-
-        webClient.post()
-                .uri(notificationServiceUrl + "/notifications")  // 알림 서비스의 엔드포인트
-                .bodyValue(notificationModel)  // 요청 바디에 알림 데이터 설정
-                .retrieve()
-                .bodyToMono(Void.class)
-                .doOnSuccess(response -> System.out.println("알림 전송 성공"))
-                .doOnError(error -> System.err.println("알림 전송 실패: " + error.getMessage()))
-                .subscribe();  // 비동기 호출 실행
     }
 
 
@@ -106,22 +80,12 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findById(profileId);
     }
 
-    @Override
-    public List<Profile> findAll() {
-        return profileRepository.findAll();
-    }
-
-    @Override
-    public long count() {
-        return profileRepository.count();
-    }
 
     @Override
     public List<ProfileResponse> findByWorkspaceId(Long workspaceId) {
-//        return profileRepository.findProfilesByWorkspaceId(workspaceId);
         List<Profile> profiles = profileRepository.findProfilesByWorkspaceId(workspaceId);
         return profiles.stream()
-                .map(this::convertToProfileResponse)  // 변환 메서드 사용
+                .map(this::convertToProfileResponse)
                 .collect(Collectors.toList());
     }
 
@@ -136,12 +100,6 @@ public class ProfileServiceImpl implements ProfileService {
                 profile.getNickname(),
                 profile.getIsOnline()
         );
-    }
-
-
-    @Override
-    public boolean existsById(Long profileId) {
-        return profileRepository.existsById(profileId);
     }
 
     @Override
@@ -163,6 +121,7 @@ public class ProfileServiceImpl implements ProfileService {
                 findProfile.getWorkspaceId(),
                 findProfile.getNickname());
         sseService.notifyNicknameChange(profileNicknameResponse);
+        sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
         return findProfile;
     }
 
@@ -186,7 +145,9 @@ public class ProfileServiceImpl implements ProfileService {
         ProfileOnlineResponse profileOnlineResponse = new ProfileOnlineResponse(
                 profileId, findProfile.getWorkspaceId(), findProfile.getIsOnline()
         );
+
         sseService.notifyOnlineChange(profileOnlineResponse);
+        sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
 
         return findProfile.getIsOnline();
     }

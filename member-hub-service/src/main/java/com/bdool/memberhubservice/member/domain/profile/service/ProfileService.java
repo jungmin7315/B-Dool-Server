@@ -16,15 +16,9 @@ public interface ProfileService {
 
     Optional<Profile> findById(Long profileId);
 
-    List<Profile> findAll();
-
-    long count();
-
     List<ProfileResponse> findByWorkspaceId(Long workspaceId);
 
     List<Profile> findByMemberId(Long memberId);
-
-    boolean existsById(Long profileId);
 
     void deleteById(Long profileId);
 

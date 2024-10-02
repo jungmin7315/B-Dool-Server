@@ -38,16 +38,6 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findById(profileId));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Profile>> getAllProfile() {
-        return ResponseEntity.ok(profileService.findAll());
-    }
-
-    @GetMapping("/count")
-    public ResponseEntity<Long> getProfileCount() {
-        return ResponseEntity.ok(profileService.count());
-    }
-
     @GetMapping("/workspace/{workspaceId}")
     public ResponseEntity<List<ProfileResponse>> getProfileByWorkspaceId(@PathVariable Long workspaceId) {
         return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
@@ -56,11 +46,6 @@ public class ProfileController {
     @GetMapping("/member/{memberId}")
     public ResponseEntity<List<Profile>> getProfileByMemberId(@PathVariable Long memberId) {
         return ResponseEntity.ok(profileService.findByMemberId(memberId));
-    }
-
-    @GetMapping("/exists/{profileId}")
-    public ResponseEntity<Boolean> checkProfileExists(@PathVariable Long profileId) {
-        return ResponseEntity.ok(profileService.existsById(profileId));
     }
 
     @DeleteMapping("/{profileId}")

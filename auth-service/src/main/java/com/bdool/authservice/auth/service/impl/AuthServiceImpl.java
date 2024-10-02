@@ -41,28 +41,22 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void issueTokensToCookies(String email, HttpServletResponse response) {
         String accessToken = issueToken(email);
-        String refreshToken = jwtUtil.generateRefreshToken(email);
-        setTokenCookies(response, accessToken, refreshToken);
+        setTokenCookies(response, accessToken);
     }
 
     @Override
     public void refreshTokensToCookies(String accessToken, HttpServletResponse response) {
         String newAccessToken = refreshTokens(accessToken);
         if (newAccessToken != null) {
-            setTokenCookies(response, newAccessToken, null);
+            setTokenCookies(response, newAccessToken);
         }
     }
 
-    private void setTokenCookies(HttpServletResponse response, String accessToken, String refreshToken) {
+    private void setTokenCookies(HttpServletResponse response, String accessToken) {
 
         String accessTokenCookie = String.format("accessToken=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=Lax",
                 accessToken, 60 * 15); // 15분 유효
         response.addHeader("Set-Cookie", accessTokenCookie);
 
-        if (refreshToken != null) {
-            String refreshTokenCookie = String.format("refreshToken=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=Lax",
-                    refreshToken, 60 * 60 * 24 * 7);  // 7일 유효
-            response.addHeader("Set-Cookie", refreshTokenCookie);
-        }
     }
 }

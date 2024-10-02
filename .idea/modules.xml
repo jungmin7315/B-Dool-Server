@@ -3,9 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/B-Dool-Server.iml" filepath="$PROJECT_DIR$/.idea/B-Dool-Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/document-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/document-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/notification-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notification-service.main.iml" />
     </modules>
   </component>
 </project>

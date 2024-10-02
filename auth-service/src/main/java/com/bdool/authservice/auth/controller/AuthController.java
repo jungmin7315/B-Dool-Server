@@ -16,7 +16,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/token")
-    public ResponseEntity<Void> generateToken(@RequestParam String email, HttpServletResponse response) {
+    public ResponseEntity<Boolean> generateToken(@RequestParam String email, HttpServletResponse response) {
         authService.issueTokensToCookies(email, response);
         return ResponseEntity.ok().build();
     }
