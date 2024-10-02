@@ -12,6 +12,8 @@ public interface MemberService {
 
     Optional<Member> findById(Long memberId);
 
+    Optional<Member> getMemberByEmail(String email);
+
     List<Member> findAll();
 
     long count();

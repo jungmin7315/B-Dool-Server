@@ -30,6 +30,12 @@ public class MemberController {
         return ResponseEntity.ok(memberService.findById(memberId));
     }
 
+
+    @GetMapping("/me")
+    public ResponseEntity<Optional<Member>> getCurrentMember(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(memberService.findByEmail(token));
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<Member>> getAllMembers() {
         return ResponseEntity.ok(memberRepository.findAll());
