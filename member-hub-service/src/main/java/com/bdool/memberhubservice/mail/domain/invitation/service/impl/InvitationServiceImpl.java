@@ -14,6 +14,7 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -90,6 +91,11 @@ public class InvitationServiceImpl implements InvitationService {
                 .orElseGet(() -> memberService.save(new MemberModel(receiverEmail)));
 
         return new InvitationResponse(true, member.getId(), invitation.getWorkspaceId());
+    }
+
+    @Scheduled(fixedRate = 86400000)
+    public void deleteExpiredInvitations() {
+        invitationRepository.deleteAllByExpiresAtBefore(LocalDateTime.now());
     }
 
     private LocalDateTime calculateExpirationDate() {
