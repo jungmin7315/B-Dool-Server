@@ -39,17 +39,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void issueTokensToCookies(String email, HttpServletResponse response) {
+    public Boolean issueTokensToCookies(String email, HttpServletResponse response) {
         String accessToken = issueToken(email);
         setTokenCookies(response, accessToken);
+        return true;
     }
 
     @Override
-    public void refreshTokensToCookies(String accessToken, HttpServletResponse response) {
+    public Boolean refreshTokensToCookies(String accessToken, HttpServletResponse response) {
         String newAccessToken = refreshTokens(accessToken);
         if (newAccessToken != null) {
             setTokenCookies(response, newAccessToken);
+            return true;
         }
+        return false;
     }
 
     private void setTokenCookies(HttpServletResponse response, String accessToken) {
@@ -58,5 +61,19 @@ public class AuthServiceImpl implements AuthService {
                 accessToken, 60 * 15); // 15분 유효
         response.addHeader("Set-Cookie", accessTokenCookie);
 
+    }
+
+    @Override
+    public Boolean logout(String email, HttpServletResponse response) {
+        Boolean result = redisTemplate.delete(email);
+        if (Boolean.TRUE.equals(result)) {
+            clearCookies(response);
+        }
+        return result;
+    }
+
+    private void clearCookies(HttpServletResponse response) {
+        String accessTokenCookie = "accessToken=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax";
+        response.addHeader("Set-Cookie", accessTokenCookie);
     }
 }

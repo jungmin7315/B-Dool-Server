@@ -17,13 +17,17 @@ public class AuthController {
 
     @PostMapping("/token")
     public ResponseEntity<Boolean> generateToken(@RequestParam String email, HttpServletResponse response) {
-        authService.issueTokensToCookies(email, response);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(authService.issueTokensToCookies(email, response));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshTokens(@RequestHeader(value = "Authorization", required = false) String accessToken, HttpServletResponse response) {
-        authService.refreshTokensToCookies(accessToken, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> refreshTokens(@RequestHeader(value = "Authorization", required = false) String accessToken, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.refreshTokensToCookies(accessToken, response));
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<Boolean> logout(@RequestParam String email, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.logout(email, response));
     }
 }
