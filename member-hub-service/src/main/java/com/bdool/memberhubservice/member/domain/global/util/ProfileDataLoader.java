@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.member.domain.global;
+package com.bdool.memberhubservice.member.domain.global.util;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;

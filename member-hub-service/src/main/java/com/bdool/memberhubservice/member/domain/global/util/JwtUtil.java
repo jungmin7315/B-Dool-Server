@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.member.domain.global;
+package com.bdool.memberhubservice.member.domain.global.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

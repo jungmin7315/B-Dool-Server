@@ -1,15 +1,16 @@
 package com.bdool.memberhubservice.member.domain.member.service.impl;
 
-import com.bdool.memberhubservice.member.domain.global.JwtUtil;
+import com.bdool.memberhubservice.member.domain.global.util.JwtUtil;
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
+import com.bdool.memberhubservice.member.domain.member.entity.Role;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberResponse;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,56 +20,45 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     @Override
     public Member save(MemberModel memberModel) {
         Member member = Member.builder()
                 .email(memberModel.getEmail())
+                .role(Role.ROLE_USER)
                 .build();
         return memberRepository.save(member);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Optional<Member> findById(Long memberId) {
-        return memberRepository.findById(memberId);
+    public MemberResponse findById(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + memberId));
+        return new MemberResponse(member.getEmail(), member.getRole().toString());
     }
 
-    @Override
-    public Optional<Member> getMemberByEmail(String token) {
-        return memberRepository.findByEmail(jwtUtil.extractEmail(token));
-    }
-
-    @Override
-    public List<Member> findAll() {
-        return memberRepository.findAll();
-    }
-
-    @Override
-    public long count() {
-        return memberRepository.count();
-    }
-
-    @Override
-    public boolean existsById(Long memberId) {
-        return memberRepository.existsById(memberId);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return memberRepository.existsByEmail(email);
-    }
-
+    @Transactional
     @Override
     public void deleteById(Long memberId) {
         memberRepository.deleteById(memberId);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Optional<Member> findByEmail(String email) {
-        return memberRepository.findByEmail(email);
+    public MemberResponse findByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+
+        return new MemberResponse(member.getEmail(), member.getRole().toString());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Long findIdByEmail(String receiverEmail) {
-        return memberRepository.findIdByEmail(receiverEmail);
+    public MemberResponse getMemberByToken(String accessToken) {
+        String email = jwtUtil.extractEmail(accessToken);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+        return new MemberResponse(member.getEmail(), member.getRole().toString());
     }
 }
