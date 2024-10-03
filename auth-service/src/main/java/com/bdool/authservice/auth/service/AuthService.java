@@ -10,7 +10,7 @@ public interface AuthService {
 
     Boolean issueTokensToCookies(String email, HttpServletResponse response);
 
-    Boolean refreshTokensToCookies(String accessToken, HttpServletResponse response);
+    Boolean accessTokenToCookiesByRefresh(String accessToken, HttpServletResponse response);
 
-    Boolean logout(String email,HttpServletResponse response);
+    void logout(String email,HttpServletResponse response);
 }
