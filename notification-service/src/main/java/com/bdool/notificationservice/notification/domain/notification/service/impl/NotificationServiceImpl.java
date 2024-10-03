@@ -5,6 +5,8 @@ import com.bdool.notificationservice.notification.domain.notification.entity.mod
 import com.bdool.notificationservice.notification.domain.notification.entity.model.NotificationResponse;
 import com.bdool.notificationservice.notification.domain.notification.repository.NotificationRepository;
 import com.bdool.notificationservice.notification.domain.notification.service.NotificationService;
+import com.bdool.notificationservice.notification.domain.notification.service.fcm.FCMService;
+import com.bdool.notificationservice.notification.domain.notification.service.fcm.FCMTokenService;
 import com.bdool.notificationservice.notification.domain.setting.entity.NotificationTargetType;
 import com.bdool.notificationservice.notification.domain.setting.service.NotificationTargetSettingService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationTargetSettingService targetSettingService;
     private final NotificationSSEService sseService;
+    private final FCMTokenService fcmTokenService;
+    private final FCMService fcmService;
 
     @Override
     public Notification createNotification(NotificationModel notificationModel) {
@@ -46,6 +50,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         NotificationResponse notificationResponse = toNotificationResponse(savedNotification);
         sseService.sendEventToProfile(profileId, "new-notification", notificationResponse);
+
+        String fcmToken = fcmTokenService.getTokenByProfileId(profileId);
+        if (fcmToken != null) {
+            fcmService.sendNotification(fcmToken, "새 알림", notificationModel.getMessage());
+        }
 
         return savedNotification;
     }

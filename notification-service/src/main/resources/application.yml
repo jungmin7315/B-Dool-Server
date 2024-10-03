@@ -10,3 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
 server:
   port: 8081
+
+firebase:
+  config:
+    path: "/Users/hyunpark/Desktop/BDool/bdool-3cce6-dff899281525.json"
