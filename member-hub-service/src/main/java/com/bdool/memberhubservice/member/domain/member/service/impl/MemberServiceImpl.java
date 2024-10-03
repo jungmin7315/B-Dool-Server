@@ -39,6 +39,11 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.getEmail());
     }
 
+    @Override
+    public Optional<Member> findMemberById(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
     @Transactional
     @Override
     public void deleteById(Long memberId) {

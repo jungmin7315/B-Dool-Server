@@ -1,4 +1,4 @@
-package com.bdool.memberhubservice.member.domain.profile.entity.model;
+package com.bdool.memberhubservice.member.domain.profile.entity.model.sse;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -5,7 +5,6 @@ import com.bdool.memberhubservice.member.domain.member.entity.model.MemberAuthRe
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberResponse;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MemberService {
@@ -13,6 +12,8 @@ public interface MemberService {
     Member save(MemberModel memberModel);
 
     MemberResponse findById(Long memberId);
+
+    Optional<Member> findMemberById(Long memberId);
 
     void deleteById(Long memberId);
 

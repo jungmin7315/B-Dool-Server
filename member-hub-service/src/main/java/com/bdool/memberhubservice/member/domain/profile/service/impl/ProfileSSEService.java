@@ -1,7 +1,7 @@
 package com.bdool.memberhubservice.member.domain.profile.service.impl;
 
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileNicknameResponse;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileOnlineResponse;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.sse.ProfileNicknameResponse;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.sse.ProfileOnlineResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
