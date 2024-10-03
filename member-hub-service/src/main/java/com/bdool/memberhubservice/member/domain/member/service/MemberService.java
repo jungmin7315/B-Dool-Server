@@ -1,6 +1,7 @@
 package com.bdool.memberhubservice.member.domain.member.service;
 
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberAuthResponse;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberResponse;
 
@@ -15,7 +16,7 @@ public interface MemberService {
 
     void deleteById(Long memberId);
 
-    MemberResponse findByEmail(String email);
+    MemberAuthResponse findByEmail(String email);
 
     MemberResponse getMemberByToken(String accessToken);
 }

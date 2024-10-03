@@ -1,6 +1,7 @@
 package com.bdool.memberhubservice.member.domain.member.controller;
 
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberAuthResponse;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberResponse;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;
@@ -33,7 +34,7 @@ public class MemberController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<MemberResponse> getMemberByEmail(@PathVariable String email) {
+    public ResponseEntity<MemberAuthResponse> getMemberByEmail(@PathVariable String email) {
         return ResponseEntity.ok(memberService.findByEmail(email));
     }
 
