@@ -31,17 +31,17 @@ public class ProfileController {
 
     @GetMapping("/{profileId}")
     public ResponseEntity<ProfileFindResponse> getProfileById(@PathVariable Long profileId) {
-        return ResponseEntity.ok(profileService.findById(profileId));
+        return ResponseEntity.ok(profileService.getProfileById(profileId));
     }
 
     @GetMapping("/workspace/{workspaceId}")
     public ResponseEntity<List<ProfileResponse>> getProfileByWorkspaceId(@PathVariable Long workspaceId) {
-        return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
+        return ResponseEntity.ok(profileService.getProfileByWorkspaceId(workspaceId));
     }
 
     @GetMapping("/member/{memberId}")
     public ResponseEntity<List<ProfileResponseMemberId>> getProfileByMemberId(@PathVariable Long memberId) {
-        return ResponseEntity.ok(profileService.findByMemberId(memberId));
+        return ResponseEntity.ok(profileService.getProfileByMemberId(memberId));
     }
 
     @DeleteMapping("/{profileId}")

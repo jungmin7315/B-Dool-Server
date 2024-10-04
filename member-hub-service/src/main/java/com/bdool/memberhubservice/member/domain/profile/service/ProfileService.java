@@ -5,17 +5,18 @@ import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProfileService {
     ProfileResponse save(ProfileModel profileModel, Long memberId);
 
     ProfileResponse saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId);
 
-    ProfileFindResponse findById(Long profileId);
+    ProfileFindResponse getProfileById(Long profileId);
 
-    List<ProfileResponse> findByWorkspaceId(Long workspaceId);
+    List<ProfileResponse> getProfileByWorkspaceId(Long workspaceId);
 
-    List<ProfileResponseMemberId> findByMemberId(Long memberId);
+    List<ProfileResponseMemberId> getProfileByMemberId(Long memberId);
 
     void deleteById(Long profileId);
 
@@ -24,4 +25,6 @@ public interface ProfileService {
     String updateStatus(Long profileId, String status);
 
     Boolean updateOnline(Long profileId, boolean isOnline);
+
+    Optional<Profile> findProfileById(Long invitorId);
 }

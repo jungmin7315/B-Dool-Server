@@ -33,7 +33,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional(readOnly = true)
     @Override
-    public MemberResponse findById(Long memberId) {
+    public MemberResponse getMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + memberId));
         return new MemberResponse(member.getEmail());
@@ -52,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional(readOnly = true)
     @Override
-    public MemberAuthResponse findByEmail(String email) {
+    public MemberAuthResponse getMemberByEmail(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
 
@@ -66,5 +66,15 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
         return new MemberResponse(member.getEmail());
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Optional<Member> findMemberByEmail(String receiverEmail) {
+        return memberRepository.findByEmail(receiverEmail);
     }
 }

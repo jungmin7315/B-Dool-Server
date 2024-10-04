@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.bdool.memberhubservice.member.domain.profile.entity.Profile.toProfileResponse;
@@ -78,14 +79,14 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Transactional(readOnly = true)
     @Override
-    public ProfileFindResponse findById(Long profileId) {
+    public ProfileFindResponse getProfileById(Long profileId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow();
         return fromEntity(profile);
     }
 
 
     @Override
-    public List<ProfileResponse> findByWorkspaceId(Long workspaceId) {
+    public List<ProfileResponse> getProfileByWorkspaceId(Long workspaceId) {
         List<Profile> profiles = profileRepository.findProfilesByWorkspaceId(workspaceId);
         return profiles.stream()
                 .map(Profile::toProfileResponse)
@@ -94,7 +95,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProfileResponseMemberId> findByMemberId(Long memberId) {
+    public List<ProfileResponseMemberId> getProfileByMemberId(Long memberId) {
         List<Profile> profiles = profileRepository.findByMemberId(memberId);
 
         return profiles.stream()
@@ -158,6 +159,11 @@ public class ProfileServiceImpl implements ProfileService {
         sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
 
         return findProfile.getIsOnline();
+    }
+
+    @Override
+    public Optional<Profile> findProfileById(Long invitorId) {
+        return profileRepository.findById(invitorId);
     }
 
     private void notifyWorkspaceMembers(ProfileModel profileModel, Long workspaceId) {

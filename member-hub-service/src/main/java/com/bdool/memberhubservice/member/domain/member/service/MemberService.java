@@ -11,13 +11,17 @@ public interface MemberService {
 
     Member save(MemberModel memberModel);
 
-    MemberResponse findById(Long memberId);
+    MemberResponse getMemberById(Long memberId);
 
     Optional<Member> findMemberById(Long memberId);
 
     void deleteById(Long memberId);
 
-    MemberAuthResponse findByEmail(String email);
+    MemberAuthResponse getMemberByEmail(String email);
 
     MemberResponse getMemberByToken(String accessToken);
+
+    boolean existsByEmail(String email);
+
+    Optional<Member> findMemberByEmail(String receiverEmail);
 }

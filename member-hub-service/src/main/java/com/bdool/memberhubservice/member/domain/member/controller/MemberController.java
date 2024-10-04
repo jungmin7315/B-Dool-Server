@@ -30,12 +30,12 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberResponse> getMemberById(@PathVariable Long memberId) {
-        return ResponseEntity.ok(memberService.findById(memberId));
+        return ResponseEntity.ok(memberService.getMemberById(memberId));
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<MemberAuthResponse> getMemberByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(memberService.findByEmail(email));
+        return ResponseEntity.ok(memberService.getMemberByEmail(email));
     }
 
     @GetMapping("/me")
