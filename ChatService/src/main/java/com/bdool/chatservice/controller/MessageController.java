@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +34,22 @@ public class MessageController {
         // 저장된 메시지를 구독중인 클라이언트에게 전송
         messagingTemplate.convertAndSend("/topic/channel/" + channelId, savedMessage);
     }
+//
+//    @PostMapping("/{channelId}")
+//    public ResponseEntity<MessageEntity> sendMessage(
+//            @PathVariable UUID channelId,
+//            @RequestParam("content") String content,
+//            @RequestParam("profileId") UUID profileId,
+//            @RequestParam("isEdited") boolean isEdited,
+//            @RequestParam("isDeleted") boolean isDeleted,
+//            @RequestParam(value = "file", required = false) MultipartFile file) {
+//
+//        // 파일 처리 및 메시지 저장 로직 추가
+//        MessageModel messageModel = new MessageModel(content, profileId, isEdited, isDeleted, file);
+//        MessageEntity savedMessage = messageService.save(messageModel);
+//        return ResponseEntity.ok(savedMessage);
+//    }
+
 
     @GetMapping("/{channelId}")
     public ResponseEntity<List<MessageEntity>> findAllChannelId(
