@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -61,11 +62,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional(readOnly = true)
     @Override
-    public MemberResponse getMemberByToken(String accessToken) {
-        String email = jwtUtil.extractEmail(accessToken);
-        Member member = memberRepository.findByEmail(email)
+    public Member getMemberByToken(String accessToken) {
+        Map<String, Object> objectMap = jwtUtil.extractEmail(accessToken);
+        String email = (String) objectMap.get("sub");
+        return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
-        return new MemberResponse(member.getEmail());
     }
 
     @Override

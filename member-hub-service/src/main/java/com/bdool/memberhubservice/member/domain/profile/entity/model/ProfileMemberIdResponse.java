@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileResponseMemberId {
+public class ProfileMemberIdResponse {
     private String nickname;
     private String profilePictureUrl;
     private Long workspaceId;

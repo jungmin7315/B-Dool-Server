@@ -19,7 +19,7 @@ public interface MemberService {
 
     MemberAuthResponse getMemberByEmail(String email);
 
-    MemberResponse getMemberByToken(String accessToken);
+    Member getMemberByToken(String accessToken);
 
     boolean existsByEmail(String email);
 

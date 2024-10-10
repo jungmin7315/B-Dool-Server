@@ -16,7 +16,7 @@ public interface ProfileService {
 
     List<ProfileResponse> getProfileByWorkspaceId(Long workspaceId);
 
-    List<ProfileResponseMemberId> getProfileByMemberId(Long memberId);
+    List<ProfileMemberIdResponse> getProfileByMemberId(Long memberId);
 
     void deleteById(Long profileId);
 
@@ -27,4 +27,6 @@ public interface ProfileService {
     Boolean updateOnline(Long profileId, boolean isOnline);
 
     Optional<Profile> findProfileById(Long invitorId);
+
+    List<Profile> getProfileByToken(String accessToken);
 }

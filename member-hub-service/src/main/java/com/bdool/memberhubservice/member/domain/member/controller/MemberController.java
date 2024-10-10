@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MemberResponse> getCurrentMember(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<Member> getCurrentMember(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok(memberService.getMemberByToken(accessToken));
     }
 

@@ -1,5 +1,6 @@
 package com.bdool.memberhubservice.member.domain.profile.service.impl;
 
+import com.bdool.memberhubservice.member.domain.global.util.JwtUtil;
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
     private final ProfileSSEService sseService;
+    private final JwtUtil jwtUtil;
     private final WebClient webClient;
     @Value("${notification-service.url}")
     private String notificationServiceUrl;
@@ -95,11 +98,11 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProfileResponseMemberId> getProfileByMemberId(Long memberId) {
+    public List<ProfileMemberIdResponse> getProfileByMemberId(Long memberId) {
         List<Profile> profiles = profileRepository.findByMemberId(memberId);
 
         return profiles.stream()
-                .map(profile -> new ProfileResponseMemberId(
+                .map(profile -> new ProfileMemberIdResponse(
                         profile.getNickname(),
                         profile.getProfilePictureUrl(),
                         profile.getWorkspaceId()
@@ -164,6 +167,13 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Optional<Profile> findProfileById(Long invitorId) {
         return profileRepository.findById(invitorId);
+    }
+
+    @Override
+    public List<Profile> getProfileByToken(String accessToken) {
+        Map<String, Object> objectMap = jwtUtil.extractEmail(accessToken);
+        String email = (String) objectMap.get("sub");
+        return profileRepository.findByEmail(email);
     }
 
     private void notifyWorkspaceMembers(ProfileModel profileModel, Long workspaceId) {

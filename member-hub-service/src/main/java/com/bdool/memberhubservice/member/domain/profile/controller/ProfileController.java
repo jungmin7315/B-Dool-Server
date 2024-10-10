@@ -1,5 +1,6 @@
 package com.bdool.memberhubservice.member.domain.profile.controller;
 
+import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,15 @@ public class ProfileController {
     }
 
     @GetMapping("/member/{memberId}")
-    public ResponseEntity<List<ProfileResponseMemberId>> getProfileByMemberId(@PathVariable Long memberId) {
+    public ResponseEntity<List<ProfileMemberIdResponse>> getProfileByMemberId(@PathVariable Long memberId) {
         return ResponseEntity.ok(profileService.getProfileByMemberId(memberId));
     }
+
+    @GetMapping("/token")
+    public ResponseEntity<List<Profile>> getProfilesByToken(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(profileService.getProfileByToken(accessToken));
+    }
+
 
     @DeleteMapping("/{profileId}")
     public ResponseEntity<Void> deleteProfileById(@PathVariable Long profileId) {
@@ -61,7 +68,7 @@ public class ProfileController {
     }
 
     @PatchMapping("/{profileId}/online")
-    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam boolean isOnline) {
+    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam Boolean isOnline) {
         return ResponseEntity.ok(profileService.updateOnline(profileId, isOnline));
     }
 }
