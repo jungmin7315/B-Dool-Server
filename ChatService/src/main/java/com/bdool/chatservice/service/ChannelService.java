@@ -20,9 +20,5 @@ public interface ChannelService {
 
     Optional<ChannelEntity> findById(UUID channelId);
 
-    boolean existsById(UUID channelId);
-
-    long count();
-
     void deleteById(UUID channelId);
 }

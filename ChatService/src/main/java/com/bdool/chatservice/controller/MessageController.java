@@ -34,7 +34,7 @@ public class MessageController {
         // 저장된 메시지를 구독중인 클라이언트에게 전송
         messagingTemplate.convertAndSend("/topic/channel/" + channelId, savedMessage);
     }
-//
+
 //    @PostMapping("/{channelId}")
 //    public ResponseEntity<MessageEntity> sendMessage(
 //            @PathVariable UUID channelId,
@@ -50,7 +50,6 @@ public class MessageController {
 //        return ResponseEntity.ok(savedMessage);
 //    }
 
-
     @GetMapping("/{channelId}")
     public ResponseEntity<List<MessageEntity>> findAllChannelId(
             @PathVariable UUID channelId,
@@ -59,7 +58,6 @@ public class MessageController {
         return ResponseEntity.ok(messageService.findByChannelId(channelId, page, size));
     }
 
-
     // 메시지 업데이트
     @PutMapping("/{messageId}")
     public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
@@ -67,25 +65,11 @@ public class MessageController {
         return ResponseEntity.ok(updatedMessage);
     }
 
-    // 모든 메시지 찾기
-    @GetMapping("")
-    public ResponseEntity<List<MessageEntity>> findAll() {
-        List<MessageEntity> messages = messageService.findAll();
-        return ResponseEntity.ok(messages);
-    }
-
     // ID로 메시지 찾기
     @GetMapping("/find/{messageId}")
     public ResponseEntity<MessageEntity> findById(@PathVariable UUID messageId) {
         MessageEntity message = messageService.findById(messageId);
         return ResponseEntity.ok(message);
-    }
-
-    // ID로 메시지가 존재하는지 확인
-    @GetMapping("/exists/{messageId}")
-    public ResponseEntity<Boolean> existsById(@PathVariable UUID messageId) {
-        boolean exists = messageService.existsById(messageId);
-        return ResponseEntity.ok(exists);
     }
 
     // ID로 메시지 삭제
