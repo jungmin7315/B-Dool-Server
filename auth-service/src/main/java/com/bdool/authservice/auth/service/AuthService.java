@@ -8,7 +8,9 @@ public interface AuthService {
 
     String refreshTokens(String accessToken);
 
-    void issueTokensToCookies(String email, HttpServletResponse response);
+    String issueTokensToCookies(String email, HttpServletResponse response);
 
-    void refreshTokensToCookies(String accessToken, HttpServletResponse response);
+    String accessTokenToCookiesByRefresh(String accessToken, HttpServletResponse response);
+
+    void logout(String email, HttpServletResponse response);
 }

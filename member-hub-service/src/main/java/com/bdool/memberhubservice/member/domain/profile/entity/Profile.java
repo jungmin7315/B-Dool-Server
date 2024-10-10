@@ -1,10 +1,10 @@
 package com.bdool.memberhubservice.member.domain.profile.entity;
 
+import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Table(name = "profiles")
 @Entity
@@ -30,10 +30,8 @@ public class Profile {
 
     private String email;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 
     private Long workspaceId;
@@ -62,6 +60,15 @@ public class Profile {
 
     public void updateOnline(boolean isOnline) {
         this.isOnline = isOnline;
+    }
+
+    public static ProfileResponse toProfileResponse(Profile profile) {
+        return new ProfileResponse(
+                profile.getId(),
+                profile.getNickname(),
+                profile.getIsOnline(),
+                profile.getProfilePictureUrl()
+        );
     }
 }
 

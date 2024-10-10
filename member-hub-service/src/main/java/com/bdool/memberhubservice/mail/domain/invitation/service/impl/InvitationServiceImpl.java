@@ -14,6 +14,7 @@ import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -55,7 +56,7 @@ public class InvitationServiceImpl implements InvitationService {
         // **초대 링크 생성**
         String invitationLink = "https://bdool.site/invite?code=" + invitationCode;
         // **이메일 본문 작성**
-        Profile profile = profileService.findById(invitorId)
+        Profile profile = profileService.findProfileById(invitorId)
                 .orElseThrow();
         String body = profile.getName() + "님이 워크스페이스에 초대하셨습니다.\n아래 링크를 클릭하여 참여하세요:\n" + invitationLink;
         LogModel logModel = new LogModel();
@@ -86,10 +87,15 @@ public class InvitationServiceImpl implements InvitationService {
             throw new IllegalStateException("초대가 만료되었습니다.");
         }
 
-        Member member = memberService.findByEmail(receiverEmail)
+        Member member = memberService.findMemberByEmail(receiverEmail)
                 .orElseGet(() -> memberService.save(new MemberModel(receiverEmail)));
 
         return new InvitationResponse(true, member.getId(), invitation.getWorkspaceId());
+    }
+
+    @Scheduled(fixedRate = 86400000)
+    public void deleteExpiredInvitations() {
+        invitationRepository.deleteAllByExpiresAtBefore(LocalDateTime.now());
     }
 
     private LocalDateTime calculateExpirationDate() {
