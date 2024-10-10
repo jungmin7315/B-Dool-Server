@@ -2,7 +2,6 @@ package com.bdool.authservice.auth.service.impl;
 
 import com.bdool.authservice.auth.global.util.JwtUtil;
 import com.bdool.authservice.auth.service.AuthService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,39 +37,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public Boolean issueTokensToCookies(String email, HttpServletResponse response) {
-        String accessToken = issueToken(email);
-        setTokenCookies(response, accessToken);
-        return true;
+    public String issueTokensToCookies(String email, HttpServletResponse response) {
+        return issueToken(email);
     }
 
     @Override
-    public Boolean accessTokenToCookiesByRefresh(String accessToken, HttpServletResponse response) {
-        String newAccessToken = refreshTokens(accessToken);
-        setTokenCookies(response, newAccessToken);
-        return true;
+    public String accessTokenToCookiesByRefresh(String accessToken, HttpServletResponse response) {
+        return refreshTokens(accessToken);
     }
 
     @Transactional
     @Override
     public void logout(String email, HttpServletResponse response) {
         redisTemplate.delete(email);
-        clearCookies(response);
-    }
-
-    private void setTokenCookies(HttpServletResponse response, String accessToken) {
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);  // 클라이언트 스크립트에서 접근 불가
-        accessTokenCookie.setSecure(false);
-        accessTokenCookie.setPath("/");       // 모든 경로에서 쿠키 사용 가능
-        accessTokenCookie.setMaxAge(60 * 30); // 쿠키 유효 시간 30분
-        response.addCookie(accessTokenCookie);
-    }
-
-    private void clearCookies(HttpServletResponse response) {
-        Cookie clearCookie = new Cookie("accessToken", null);
-        clearCookie.setMaxAge(0);
-        clearCookie.setPath("/");
-        response.addCookie(clearCookie);
     }
 }
