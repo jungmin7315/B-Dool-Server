@@ -1,15 +1,12 @@
 package com.bdool.bdool.elastic.service;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.WildcardQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.json.JsonData;
+import com.bdool.bdool.elastic.index.FileIndex;
 import com.bdool.bdool.elastic.index.MessageIndex;
 import com.bdool.bdool.elastic.index.ParticipantIndex;
 import com.bdool.bdool.elastic.index.ProfileIndex;
-import com.bdool.bdool.elastic.repository.ProfileSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -23,14 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SearchService {
-
-    private final ProfileSearchRepository profileSearchRepository;
     private final ElasticsearchOperations elasticsearchOperations;
-
-    public List<ProfileIndex> searchProfilesByName(String name) {
-        return profileSearchRepository.findByName(name);
-    }
-
     public List<ProfileIndex> searchProfiles(String keyword , int workspaceId ) {
         TermQuery termQuery = new TermQuery.Builder()
                 .field("workspace_id")
@@ -77,7 +67,7 @@ public class SearchService {
 
         for (String channelId : channelIds) {
             TermQuery termQuery = new TermQuery.Builder()
-                    .field("channelId")
+                    .field("channel_id")
                     .value(channelId)
                     .build();
             boolQueryBuilder.should(termQuery._toQuery());
@@ -91,7 +81,7 @@ public class SearchService {
         boolQueryBuilder.must(wildcardQuery._toQuery());
 
         if (startDate != null || endDate != null) {
-            RangeQuery.Builder rangeQuery = new RangeQuery.Builder().field("createdAt");
+            RangeQuery.Builder rangeQuery = new RangeQuery.Builder().field("created_at");
 
             if (startDate != null) {
                 rangeQuery.gte(JsonData.of(startDate));
@@ -107,7 +97,13 @@ public class SearchService {
                 .withQuery(boolQueryBuilder.build()._toQuery())
                 .withSort(s -> s
                         .field(f -> f
-                                .field("createdAt")
+                                .field("channel_id")
+                                .order(SortOrder.Asc)
+                        )
+                )
+                .withSort(s -> s
+                        .field(f -> f
+                                .field("created_at")
                                 .order(SortOrder.Desc)
                         )
                 )
@@ -118,6 +114,56 @@ public class SearchService {
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
     }
+
+    public List<FileIndex> searchFiles(String keyword, Long profileId, String extension){
+        BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
+
+        List<String> messageIds = getMessagesIdByProfileId(profileId);
+        for(String messageId : messageIds){
+            TermQuery termQuery = new TermQuery.Builder()
+                    .field("message_img_id")
+                    .value(messageId)
+                    .build();
+            boolQueryBuilder.should(termQuery._toQuery());
+        }
+        boolQueryBuilder.minimumShouldMatch("1");
+
+        WildcardQuery wildcardQuery = new WildcardQuery.Builder()
+                .field("fname")
+                .value("*" + keyword + "*")
+                .build();
+        boolQueryBuilder.must(wildcardQuery._toQuery());
+
+        if(extension != null){
+            TermQuery termQuery = new TermQuery.Builder()
+                    .field("extension")
+                    .value(extension)
+                    .build();
+            boolQueryBuilder.filter(termQuery._toQuery());
+        }
+
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(boolQueryBuilder.build()._toQuery())
+                .withSort(s -> s
+                        .field(f -> f
+                                .field("extension")
+                                .order(SortOrder.Asc)
+                        )
+                )
+                .withSort(s -> s
+                .field(f -> f
+                        .field("fname")
+                        .order(SortOrder.Asc)
+                )
+        )
+                .build();
+
+        SearchHits<FileIndex> searchHits = elasticsearchOperations.search(query, FileIndex.class);
+        return searchHits.stream()
+                .map(SearchHit::getContent)
+                .collect(Collectors.toList());
+    }
+
     public List<String> getChannelIdsByProfileId(Long profileId) {
         TermQuery termQuery = new TermQuery.Builder()
                 .field("profile_id")
@@ -130,8 +176,36 @@ public class SearchService {
 
         SearchHits<ParticipantIndex> searchHits =elasticsearchOperations.search(query, ParticipantIndex.class);
         return searchHits.getSearchHits().stream()
-                .map(hit -> hit.getContent().getChannel_id())
+                .map(hit -> hit.getContent().getChannelId())
                 .collect(Collectors.toList());
     }
 
+    public List<String> getMessagesIdByProfileId(Long profileId) {
+        BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
+
+        List<String> channelIds = getChannelIdsByProfileId(profileId);
+        for (String channelId : channelIds) {
+            TermQuery termQuery = new TermQuery.Builder()
+                    .field("channel_id")
+                    .value(channelId)
+                    .build();
+            boolQueryBuilder.should(termQuery._toQuery());
+        }
+        boolQueryBuilder.minimumShouldMatch("1");
+
+        ExistsQuery existsQuery = new ExistsQuery.Builder()
+                .field("file_URL")
+                .build();
+        boolQueryBuilder.must(existsQuery._toQuery());
+
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(boolQueryBuilder.build()._toQuery())
+                .build();
+
+        SearchHits<MessageIndex> searchHits =elasticsearchOperations.search(query, MessageIndex.class);
+
+        return searchHits.getSearchHits().stream()
+                .map(hit -> hit.getContent().getMessageId())
+                .collect(Collectors.toList());
+    }
 }

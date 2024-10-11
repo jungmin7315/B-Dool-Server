@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 @Document(indexName = "files")
 public class FileIndex {
-    @Id
     private String file_id;  // UUID
     private String fname;  // 파일 이름
     private String path;  // 파일 경로
@@ -19,6 +18,7 @@ public class FileIndex {
     private LocalDateTime uploadedAt;
     private Long profile_id;
     private String channel_id;
+    private String message_img_id;
     private Long workspaces_id;
 
 }

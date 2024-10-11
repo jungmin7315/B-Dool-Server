@@ -3,28 +3,37 @@ package com.bdool.bdool.elastic.index;
 import org.springframework.data.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.time.LocalDateTime;
 @Getter
 @Setter
-@Document(indexName = "sample_message")
+@Document(indexName = "message")
 public class MessageIndex {
-    @Id
+
+    @Field(name = "message_id", type = FieldType.Keyword)
     private String messageId;
+
+    @Field(name = "channel_id", type = FieldType.Keyword)
     private String channelId;
+
+    @Field(type = FieldType.Keyword)
     private String content;
-    //@Field(type = FieldType.Date, format = DateFormat.date_time)
+
+    @Field(name = "created_at", type = FieldType.Keyword)
     private String createdAt;
-    private Boolean isEdited;
-    private Boolean isDeleted;      // 삭제 여부 (TINYINT(1))
-    private String parentMessageId;
-    private String fileId;
+
+    @Field(name = "file_URL", type = FieldType.Keyword)
+    private String fileURL;
+
+    @Field(name = "is_deleted", type = FieldType.Long)
+    private Long isDeleted;
+
+    @Field(name = "is_edited", type = FieldType.Long)
+    private Long isEdited;
+
+    @Field(name = "profile_id", type = FieldType.Long)
     private Long profileId;
-
-
 
 }
