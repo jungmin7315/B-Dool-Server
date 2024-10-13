@@ -6,7 +6,6 @@ import com.bdool.chatservice.service.FileService;
 import com.bdool.chatservice.service.FileStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +23,6 @@ public class FileServiceImpl implements FileService {
         // EntityType에 따른 파일 저장 처리
         return fileStorageService.storeFile(file, profileImgId, channelImgId, workspacesImgId, messageImgId, entityType);
     }
-
 
     @Override
     public ResponseEntity<?> downloadFile(UUID fileId, HttpServletRequest request) {
