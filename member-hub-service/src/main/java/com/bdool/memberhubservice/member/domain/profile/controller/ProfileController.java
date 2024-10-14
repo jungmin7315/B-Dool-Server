@@ -1,16 +1,13 @@
 package com.bdool.memberhubservice.member.domain.profile.controller;
 
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileModel;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileResponse;
-import com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileUpdateRequest;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -21,32 +18,38 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/{memberId}")
-    public ResponseEntity<Profile> createProfile(@PathVariable Long memberId,
-                                                 @RequestBody ProfileModel profileModel) {
+    public ResponseEntity<ProfileResponse> createProfile(@PathVariable Long memberId,
+                                                         @RequestBody ProfileModel profileModel) {
         return ResponseEntity.ok(profileService.save(profileModel, memberId));
     }
 
     @PostMapping("/{memberId}&&{workspaceId}/invited")
-    public ResponseEntity<Profile> createProfileByInvitation(@PathVariable Long memberId,
-                                                             @PathVariable Long workspaceId,
-                                                             @RequestBody ProfileModel profileModel) {
+    public ResponseEntity<ProfileResponse> createProfileByInvitation(@PathVariable Long memberId,
+                                                                     @PathVariable Long workspaceId,
+                                                                     @RequestBody ProfileModel profileModel) {
         return ResponseEntity.ok(profileService.saveByInvitation(profileModel, memberId, workspaceId));
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<Optional<Profile>> getProfileById(@PathVariable Long profileId) {
-        return ResponseEntity.ok(profileService.findById(profileId));
+    public ResponseEntity<ProfileFindResponse> getProfileById(@PathVariable Long profileId) {
+        return ResponseEntity.ok(profileService.getProfileById(profileId));
     }
 
     @GetMapping("/workspace/{workspaceId}")
     public ResponseEntity<List<ProfileResponse>> getProfileByWorkspaceId(@PathVariable Long workspaceId) {
-        return ResponseEntity.ok(profileService.findByWorkspaceId(workspaceId));
+        return ResponseEntity.ok(profileService.getProfileByWorkspaceId(workspaceId));
     }
 
     @GetMapping("/member/{memberId}")
-    public ResponseEntity<List<Profile>> getProfileByMemberId(@PathVariable Long memberId) {
-        return ResponseEntity.ok(profileService.findByMemberId(memberId));
+    public ResponseEntity<List<ProfileMemberIdResponse>> getProfileByMemberId(@PathVariable Long memberId) {
+        return ResponseEntity.ok(profileService.getProfileByMemberId(memberId));
     }
+
+    @GetMapping("/token")
+    public ResponseEntity<List<Profile>> getProfilesByToken(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(profileService.getProfileByToken(accessToken));
+    }
+
 
     @DeleteMapping("/{profileId}")
     public ResponseEntity<Void> deleteProfileById(@PathVariable Long profileId) {
@@ -55,9 +58,8 @@ public class ProfileController {
     }
 
     @PutMapping("/{profileId}")
-    public ResponseEntity<Profile> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequest profileUpdateRequest) {
-        Profile updatedProfile = profileService.update(profileId, profileUpdateRequest);
-        return ResponseEntity.ok(updatedProfile);
+    public ResponseEntity<ProfileFindResponse> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+        return ResponseEntity.ok(profileService.update(profileId, profileUpdateRequest));
     }
 
     @PatchMapping("/{profileId}/status")
@@ -66,7 +68,7 @@ public class ProfileController {
     }
 
     @PatchMapping("/{profileId}/online")
-    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam boolean isOnline) {
+    public ResponseEntity<Boolean> updateOnlineStatus(@PathVariable Long profileId, @RequestParam Boolean isOnline) {
         return ResponseEntity.ok(profileService.updateOnline(profileId, isOnline));
     }
 }

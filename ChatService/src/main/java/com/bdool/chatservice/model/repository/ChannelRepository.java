@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ChannelRepository extends MongoRepository<ChannelEntity, UUID> {
     List<ChannelEntity> findAllByWorkspacesId(Integer id);
+
+    ChannelEntity findChannelEntitiesByChannelId(UUID channelId);
 }

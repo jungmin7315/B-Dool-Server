@@ -1,10 +1,13 @@
 package com.bdool.memberhubservice.member.domain.member.controller;
 
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberAuthResponse;
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
+import com.bdool.memberhubservice.member.domain.member.entity.model.MemberResponse;
 import com.bdool.memberhubservice.member.domain.member.repository.MemberRepository;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,31 +21,26 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
 
     @PostMapping("/")
     public ResponseEntity<Member> join(@RequestBody MemberModel memberModel) {
-        return ResponseEntity.ok(memberService.save(memberModel));
+        Member savedMember = memberService.save(memberModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedMember);
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<Optional<Member>> getMemberById(@PathVariable Long memberId) {
-        return ResponseEntity.ok(memberService.findById(memberId));
+    public ResponseEntity<MemberResponse> getMemberById(@PathVariable Long memberId) {
+        return ResponseEntity.ok(memberService.getMemberById(memberId));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Member>> getAllMembers() {
-        return ResponseEntity.ok(memberRepository.findAll());
+    @GetMapping("/email/{email}")
+    public ResponseEntity<MemberAuthResponse> getMemberByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(memberService.getMemberByEmail(email));
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<Long> getMemberCount() {
-        return ResponseEntity.ok(memberService.count());
-    }
-
-    @GetMapping("/exists/{memberId}")
-    public ResponseEntity<Boolean> checkMemberExists(@PathVariable Long memberId) {
-        return ResponseEntity.ok(memberService.existsById(memberId));
+    @GetMapping("/me")
+    public ResponseEntity<Member> getCurrentMember(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(memberService.getMemberByToken(accessToken));
     }
 
     @DeleteMapping("/{memberId}")

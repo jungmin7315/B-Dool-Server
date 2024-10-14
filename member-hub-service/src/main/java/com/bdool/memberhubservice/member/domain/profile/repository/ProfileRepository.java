@@ -12,4 +12,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     List<Profile> findProfilesByWorkspaceId(Long workspaceId);
 
     List<Profile> findByMemberId(Long memberId);
+
+    List<Profile> findByEmail(String email);
 }

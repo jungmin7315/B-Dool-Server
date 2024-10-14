@@ -25,23 +25,24 @@ public class OpenAiChatServiceImpl implements OpenAiChatService {
     private final String apiUrl = "https://api.openai.com/v1/chat/completions";
 
     @Override
-    public String getChatGPTResponse(String question) {
-        // 일반 대화 요청 (번역 요청이 아님)
-        return getChatGPTResponseInternal(question, false);
+    public String getChatGPTResponse(List<Map<String, String>> previousMessages, String newQuestion) {
+        // 일반 대화 요청 (번역이 아님)
+        return getChatGPTResponseInternal(previousMessages, newQuestion, false);
     }
 
     @Override
     public String getChatGPTTranslate(String question) {
-        // 번역 요청 (번역 요청임)
-        return getChatGPTResponseInternal(question, true);
+        // 번역 요청 (번역임, 이전 대화 내역 없음)
+        return getChatGPTResponseInternal(new ArrayList<>(), question, true);
     }
 
-    private String getChatGPTResponseInternal(String question, boolean isTranslation) {
+    private String getChatGPTResponseInternal(List<Map<String, String>> previousMessages, String question, boolean isTranslation) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<Map<String, Object>> entity = getMapHttpEntity(question, headers, isTranslation);
+        // 공통된 HttpEntity 생성
+        HttpEntity<Map<String, Object>> entity = createHttpEntity(previousMessages, question, headers, isTranslation);
 
         // API 호출
         ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, Map.class);
@@ -52,33 +53,36 @@ public class OpenAiChatServiceImpl implements OpenAiChatService {
         return (String) messageResponse.get("content");
     }
 
-    private static HttpEntity<Map<String, Object>> getMapHttpEntity(String question, HttpHeaders headers, boolean isTranslation) {
+    // 공통된 HttpEntity 생성 로직
+    private HttpEntity<Map<String, Object>> createHttpEntity(List<Map<String, String>> previousMessages, String question, HttpHeaders headers, boolean isTranslation) {
         Map<String, Object> body = new HashMap<>();
         body.put("model", "gpt-3.5-turbo");
 
-        List<Map<String, String>> messages = new ArrayList<>();
+        // 이전 대화 내역을 포함한 메시지 리스트
+        List<Map<String, String>> messages = new ArrayList<>(previousMessages);
 
         // 번역 요청일 경우 시스템 메시지 추가
         if (isTranslation) {
             Map<String, String> systemMessage = new HashMap<>();
             systemMessage.put("role", "system");
-            systemMessage.put("content", "질문에 대한 답변을 하지 말고, 질문을 정확하게 한국어로 번역한 텍스트만 반환해주세요.");
+            systemMessage.put("content",
+                    "질문에 대한 답변을 하지 말고, 사람 이름이나 고유 명사, 대명사는 번역하지 않고 그대로 유지하면서 질문을 정확하게 한국어로 번역하세요. " +
+                            "가능한 한 원문의 어조와 의미를 유지하며, 자연스럽고 정확한 번역을 반환해주세요.");
             messages.add(systemMessage);
         } else {
+            // 일반 대화일 경우 시스템 메시지 추가
             Map<String, String> systemMessage = new HashMap<>();
             systemMessage.put("role", "system");
             systemMessage.put("content", "질문을 한국어로 답변해주세요.");
             messages.add(systemMessage);
         }
 
-        // 사용자 메시지 (질문)
         Map<String, String> userMessage = new HashMap<>();
         userMessage.put("role", "user");
         userMessage.put("content", question); // 질문 내용
         messages.add(userMessage);
 
-        body.put("messages", messages);
-
+        body.put("messages", messages);  // 이전 메시지 + 새로운 메시지
         return new HttpEntity<>(body, headers);
     }
 }

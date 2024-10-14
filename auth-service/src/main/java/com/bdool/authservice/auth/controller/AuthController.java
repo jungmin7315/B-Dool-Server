@@ -16,14 +16,23 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/token")
-    public ResponseEntity<Boolean> generateToken(@RequestParam String email, HttpServletResponse response) {
-        authService.issueTokensToCookies(email, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> generateToken(@RequestParam String email, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.issueTokensToCookies(email, response));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshTokens(@RequestHeader(value = "Authorization", required = false) String accessToken, HttpServletResponse response) {
-        authService.refreshTokensToCookies(accessToken, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> refreshTokens(@RequestHeader(
+            value = "Authorization", required = false) String accessToken, HttpServletResponse response) {
+        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Access token is missing or invalid");
+        }
+        return ResponseEntity.ok(authService.accessTokenToCookiesByRefresh(accessToken, response));
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestParam String email, HttpServletResponse response) {
+        authService.logout(email, response);
+        return ResponseEntity.noContent().build();
     }
 }

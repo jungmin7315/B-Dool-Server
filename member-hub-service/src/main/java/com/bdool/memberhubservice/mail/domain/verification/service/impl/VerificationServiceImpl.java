@@ -10,13 +10,16 @@ import com.bdool.memberhubservice.mail.domain.verification.service.VerificationS
 import com.bdool.memberhubservice.member.domain.member.entity.model.MemberModel;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VerificationServiceImpl implements VerificationService {
 
     private final VerificationRepository verificationRepository;
@@ -38,6 +41,9 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Override
     public Boolean sendVerificationCode(String email) {
+
+        verificationRepository.deleteByEmail(email);
+
         String verificationCode = generateVerificationCode();
         String body = "인증 코드 : " + verificationCode;
         LogModel logModel = new LogModel();
@@ -65,7 +71,7 @@ public class VerificationServiceImpl implements VerificationService {
         if (verificationOpt.isPresent()) {
             Verification verification = verificationOpt.get();
             boolean isCodeValid = verification.getVerificationCode().equals(verificationCode);
-            boolean isNotExpired = verification.getExpiredAt().isAfter(LocalDateTime.now());  // 변경된 부분
+            boolean isNotExpired = verification.getExpiredAt().isAfter(LocalDateTime.now());
 
             if (isCodeValid && isNotExpired) {
                 if (!memberService.existsByEmail(email)) {
@@ -84,7 +90,7 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     private LocalDateTime calculateExpirationDate() {
-        return LocalDateTime.now().plusMinutes(30);  // 변경된 부분
+        return LocalDateTime.now().plusMinutes(5);  // 변경된 부분
     }
 
     private Optional<Boolean> sendEmail(String email, String body) {
@@ -94,5 +100,10 @@ public class VerificationServiceImpl implements VerificationService {
         } catch (Exception e) {
             return Optional.of(false);
         }
+    }
+
+    @Scheduled(fixedRate = 600000)
+    public void deleteExpiredVerifications() {
+        verificationRepository.deleteAllExpired(LocalDateTime.now());
     }
 }

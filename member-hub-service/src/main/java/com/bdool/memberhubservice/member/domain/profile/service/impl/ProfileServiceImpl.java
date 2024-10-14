@@ -1,21 +1,28 @@
 package com.bdool.memberhubservice.member.domain.profile.service.impl;
 
+import com.bdool.memberhubservice.member.domain.global.util.JwtUtil;
 import com.bdool.memberhubservice.member.domain.member.entity.Member;
 import com.bdool.memberhubservice.member.domain.member.service.MemberService;
 import com.bdool.memberhubservice.member.domain.profile.entity.Profile;
 import com.bdool.memberhubservice.member.domain.profile.entity.model.*;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.sse.ProfileNicknameResponse;
+import com.bdool.memberhubservice.member.domain.profile.entity.model.sse.ProfileOnlineResponse;
 import com.bdool.memberhubservice.member.domain.profile.repository.ProfileRepository;
 import com.bdool.memberhubservice.member.domain.profile.service.ProfileService;
 import com.bdool.memberhubservice.notification.NotificationModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.bdool.memberhubservice.member.domain.profile.entity.Profile.toProfileResponse;
+import static com.bdool.memberhubservice.member.domain.profile.entity.model.ProfileFindResponse.fromEntity;
 import static com.bdool.memberhubservice.member.domain.profile.service.NotificationServiceHelper.createNotificationModel;
 import static com.bdool.memberhubservice.member.domain.profile.service.NotificationServiceHelper.sendNotification;
 import static com.bdool.memberhubservice.member.domain.profile.service.ParticipantServiceHelper.*;
@@ -27,30 +34,35 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final MemberService memberService;
     private final ProfileSSEService sseService;
+    private final JwtUtil jwtUtil;
     private final WebClient webClient;
     @Value("${notification-service.url}")
     private String notificationServiceUrl;
     @Value("${channel-service.url}")
     private String channelServiceUrl;
 
+    @Transactional
     @Override
-    public Profile save(ProfileModel profileModel, Long memberId) {
-        Member member = memberService.findById(memberId)
+    public ProfileResponse save(ProfileModel profileModel, Long memberId) {
+        Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
         Profile profile = Profile.builder()
                 .name(profileModel.getName())
                 .nickname(profileModel.getNickname())
                 .profilePictureUrl(profileModel.getProfilePictureUrl())
                 .memberId(member.getId())
+                .workspaceId(profileModel.getWorkspaceId())
                 .isWorkspaceCreator(true)
                 .email(member.getEmail())
                 .build();
-        return profileRepository.save(profile);
+        Profile savedProfile = profileRepository.save(profile);
+        return toProfileResponse(savedProfile);
     }
 
+    @Transactional
     @Override
-    public Profile saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId) {
-        Member member = memberService.findById(memberId)
+    public ProfileResponse saveByInvitation(ProfileModel profileModel, Long memberId, Long workspaceId) {
+        Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("member not found"));
         Profile profile = Profile.builder()
                 .name(profileModel.getName())
@@ -64,51 +76,50 @@ public class ProfileServiceImpl implements ProfileService {
                 .build();
         Profile savedProfile = profileRepository.save(profile);
 
-        List<Profile> profilesInWorkspace = profileRepository.findProfilesByWorkspaceId(workspaceId);
-        for (Profile profileInWorkspace : profilesInWorkspace) {
-            NotificationModel notificationModel = createNotificationModel(profileModel, workspaceId, profileInWorkspace.getId());
+        notifyWorkspaceMembers(profileModel, workspaceId);
 
-            sendNotification(webClient, notificationServiceUrl, notificationModel);
-        }
+        return toProfileResponse(savedProfile);
+    }
 
-        return savedProfile;
+    @Transactional(readOnly = true)
+    @Override
+    public ProfileFindResponse getProfileById(Long profileId) {
+        Profile profile = profileRepository.findById(profileId).orElseThrow();
+        return fromEntity(profile);
     }
 
 
     @Override
-    public Optional<Profile> findById(Long profileId) {
-        return profileRepository.findById(profileId);
-    }
-
-
-    @Override
-    public List<ProfileResponse> findByWorkspaceId(Long workspaceId) {
+    public List<ProfileResponse> getProfileByWorkspaceId(Long workspaceId) {
         List<Profile> profiles = profileRepository.findProfilesByWorkspaceId(workspaceId);
         return profiles.stream()
-                .map(this::convertToProfileResponse)
+                .map(Profile::toProfileResponse)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<Profile> findByMemberId(Long memberId) {
-        return profileRepository.findByMemberId(memberId);
+    public List<ProfileMemberIdResponse> getProfileByMemberId(Long memberId) {
+        List<Profile> profiles = profileRepository.findByMemberId(memberId);
+
+        return profiles.stream()
+                .map(profile -> new ProfileMemberIdResponse(
+                        profile.getNickname(),
+                        profile.getProfilePictureUrl(),
+                        profile.getWorkspaceId()
+                ))
+                .collect(Collectors.toList());
     }
 
-    private ProfileResponse convertToProfileResponse(Profile profile) {
-        return new ProfileResponse(
-                profile.getId(),
-                profile.getNickname(),
-                profile.getIsOnline()
-        );
-    }
-
+    @Transactional
     @Override
     public void deleteById(Long profileId) {
         profileRepository.deleteById(profileId);
     }
 
+    @Transactional
     @Override
-    public Profile update(Long profileId, ProfileUpdateRequest profileUpdateRequest) {
+    public ProfileFindResponse update(Long profileId, ProfileUpdateRequest profileUpdateRequest) {
         Profile findProfile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateProfile(profileUpdateRequest.getNickname(),
@@ -122,9 +133,10 @@ public class ProfileServiceImpl implements ProfileService {
                 findProfile.getNickname());
         sseService.notifyNicknameChange(profileNicknameResponse);
         sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
-        return findProfile;
+        return fromEntity(findProfile);
     }
 
+    @Transactional
     @Override
     public String updateStatus(Long profileId, String status) {
         Profile findProfile = profileRepository.findById(profileId)
@@ -135,6 +147,7 @@ public class ProfileServiceImpl implements ProfileService {
         return findProfile.getStatus();
     }
 
+    @Transactional
     @Override
     public Boolean updateOnline(Long profileId, boolean isOnline) {
         Profile findProfile = profileRepository.findById(profileId)
@@ -150,5 +163,26 @@ public class ProfileServiceImpl implements ProfileService {
         sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
 
         return findProfile.getIsOnline();
+    }
+
+    @Override
+    public Optional<Profile> findProfileById(Long invitorId) {
+        return profileRepository.findById(invitorId);
+    }
+
+    @Override
+    public List<Profile> getProfileByToken(String accessToken) {
+        Map<String, Object> objectMap = jwtUtil.extractEmail(accessToken);
+        String email = (String) objectMap.get("sub");
+        return profileRepository.findByEmail(email);
+    }
+
+    private void notifyWorkspaceMembers(ProfileModel profileModel, Long workspaceId) {
+        List<Profile> profilesInWorkspace = profileRepository.findProfilesByWorkspaceId(workspaceId);
+        for (Profile profileInWorkspace : profilesInWorkspace) {
+            NotificationModel notificationModel = createNotificationModel(profileModel, workspaceId, profileInWorkspace.getId());
+
+            sendNotification(webClient, notificationServiceUrl, notificationModel);
+        }
     }
 }
