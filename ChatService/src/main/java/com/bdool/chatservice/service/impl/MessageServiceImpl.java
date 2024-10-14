@@ -32,7 +32,7 @@ public class MessageServiceImpl implements MessageService {
                 .sendDate(LocalDateTime.now())
                 .isEdited(false)
                 .isDeleted(false)
-                .participantId(message.getParticipantId())
+                .profileId(message.getProfileId())
                 .parentMessageId((message.getParentMessageId() == null) ? null : message.getParentMessageId())
                 .build());
     }

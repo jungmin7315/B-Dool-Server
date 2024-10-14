@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +35,21 @@ public class MessageController {
         messagingTemplate.convertAndSend("/topic/channel/" + channelId, savedMessage);
     }
 
+//    @PostMapping("/{channelId}")
+//    public ResponseEntity<MessageEntity> sendMessage(
+//            @PathVariable UUID channelId,
+//            @RequestParam("content") String content,
+//            @RequestParam("profileId") UUID profileId,
+//            @RequestParam("isEdited") boolean isEdited,
+//            @RequestParam("isDeleted") boolean isDeleted,
+//            @RequestParam(value = "file", required = false) MultipartFile file) {
+//
+//        // 파일 처리 및 메시지 저장 로직 추가
+//        MessageModel messageModel = new MessageModel(content, profileId, isEdited, isDeleted, file);
+//        MessageEntity savedMessage = messageService.save(messageModel);
+//        return ResponseEntity.ok(savedMessage);
+//    }
+
     @GetMapping("/{channelId}")
     public ResponseEntity<List<MessageEntity>> findAllChannelId(
             @PathVariable UUID channelId,
@@ -42,7 +58,6 @@ public class MessageController {
         return ResponseEntity.ok(messageService.findByChannelId(channelId, page, size));
     }
 
-
     // 메시지 업데이트
     @PutMapping("/{messageId}")
     public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
@@ -50,25 +65,11 @@ public class MessageController {
         return ResponseEntity.ok(updatedMessage);
     }
 
-    // 모든 메시지 찾기
-    @GetMapping("")
-    public ResponseEntity<List<MessageEntity>> findAll() {
-        List<MessageEntity> messages = messageService.findAll();
-        return ResponseEntity.ok(messages);
-    }
-
     // ID로 메시지 찾기
     @GetMapping("/find/{messageId}")
     public ResponseEntity<MessageEntity> findById(@PathVariable UUID messageId) {
         MessageEntity message = messageService.findById(messageId);
         return ResponseEntity.ok(message);
-    }
-
-    // ID로 메시지가 존재하는지 확인
-    @GetMapping("/exists/{messageId}")
-    public ResponseEntity<Boolean> existsById(@PathVariable UUID messageId) {
-        boolean exists = messageService.existsById(messageId);
-        return ResponseEntity.ok(exists);
     }
 
     // ID로 메시지 삭제

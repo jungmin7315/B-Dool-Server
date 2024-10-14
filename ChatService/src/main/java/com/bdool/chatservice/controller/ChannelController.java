@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/channel")
+@RequestMapping("/api/channels")
 @RequiredArgsConstructor
 public class ChannelController {
 
@@ -41,6 +41,7 @@ public class ChannelController {
         }
         return ResponseEntity.ok(channels);  // 200 OK
     }
+
     // 워크스페이스에 해당 하는 채널 전체 목록 조회
     @GetMapping("/workspaces/{workspaceId}/channel")
     public ResponseEntity<?> findAllByWorkspacesId(@PathVariable int workspaceId) {
@@ -54,24 +55,11 @@ public class ChannelController {
     // 특정 채널 조회
     @GetMapping("/{channelId}")
     public ResponseEntity<?> findById(@PathVariable UUID channelId) {
-        return channelService.findById(channelId)
-                .map(ResponseEntity::ok)  // 200 OK if found
-                .orElseGet(() -> ResponseEntity.notFound().build());  // 404 Not Found
+        return ResponseEntity.ok(channelService.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("Channel not found")));  // 200 OK
     }
 
-    // 특정 채널 ID 존재 여부 확인
-    @GetMapping("/exists/{channelId}")
-    public ResponseEntity<?> existsById(@PathVariable UUID channelId) {
-        return ResponseEntity.ok(channelService.existsById(channelId));  // 200 OK
-    }
-
-    // 채널 개수 확인
-    @GetMapping("/count")
-    public ResponseEntity<?> count() {
-        return ResponseEntity.ok(channelService.count());  // 200 OK
-    }
-
-    // 특정 채널 삭제
+    // 채널 삭제
     @DeleteMapping("/{channelId}")
     public ResponseEntity<?> deleteById(@PathVariable UUID channelId) {
         channelService.deleteById(channelId);

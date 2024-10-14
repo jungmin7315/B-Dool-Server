@@ -31,7 +31,7 @@ public class MessageEntity {
 
     private UUID parentMessageId; // 값이 없으면 null 있으면 부모의 메시지 ID를 받아야 함
 
-    private UUID participantId; // 받아야 하는 필드
+    private Long profileId; // 받아야 하는 필드
 
     private String fileUrl; // 파일이 첨부된 경우 받아야 함
 }

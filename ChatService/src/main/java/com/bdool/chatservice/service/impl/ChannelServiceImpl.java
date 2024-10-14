@@ -3,9 +3,10 @@ package com.bdool.chatservice.service.impl;
 import com.bdool.chatservice.exception.ChannelNotFoundException;
 import com.bdool.chatservice.model.domain.ChannelModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
+import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
+import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ChannelService;
-import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,21 +20,37 @@ import java.util.UUID;
 public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
+    private final ParticipantRepository participantRepository;  // 참석자 저장을 위한 리포지토리
 
     @Override
     public ChannelEntity save(ChannelModel channel) {
-        UUID channelId = UUIDUtil.getOrCreateUUID(channel.getChannelId());
-        return channelRepository.save(ChannelEntity.builder()
-                .channelId(channelId)
+        // 채널 엔티티 생성
+        ChannelEntity channelEntity = ChannelEntity.builder()
                 .name(channel.getName())
                 .description(channel.getDescription())
                 .isPrivate(channel.getIsPrivate())
                 .channelType(channel.getChannelType())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .profileId(channel.getProfileId())
                 .workspacesId(channel.getWorkspacesId())
-                .build());
+                .profileId(channel.getProfileId())  // 채널 생성자 정보
+                .build();
+
+        // 채널 저장
+        ChannelEntity savedChannel = channelRepository.save(channelEntity);
+
+        // 채널 생성자를 참석자로 자동 등록 (nickname 추가)
+        ParticipantEntity participant = ParticipantEntity.builder()
+                .channelId(savedChannel.getChannelId())
+                .nickname(channel.getNickname())  // 채널 생성 시 nickname을 받아서 설정
+                .profileId(channel.getProfileId())
+                .joinedAt(LocalDateTime.now())
+                .isOnline(true)  // 기본값으로 생성자는 온라인 상태로 설정
+                .build();
+
+        participantRepository.save(participant);  // 참석자 저장
+
+        return savedChannel;
     }
 
     @Override
@@ -60,9 +77,6 @@ public class ChannelServiceImpl implements ChannelService {
                 }).orElseThrow(() -> new ChannelNotFoundException("Channel not found with ID: " + channelId));
     }
 
-
-
-
     @Override
     public List<ChannelEntity> findAll() {
         return channelRepository.findAll();
@@ -76,16 +90,6 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public Optional<ChannelEntity> findById(UUID channelId) {
         return channelRepository.findById(channelId);
-    }
-
-    @Override
-    public boolean existsById(UUID channelId) {
-        return channelRepository.existsById(channelId);
-    }
-
-    @Override
-    public long count() {
-        return channelRepository.count();
     }
 
     @Override

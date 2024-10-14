@@ -1,5 +1,6 @@
 package com.bdool.chatservice.model.domain;
 
+import com.bdool.chatservice.model.Enum.EntityType;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +22,13 @@ public class FileModel {
 
     private LocalDateTime uploadedAt;
 
-    private UUID profileId;
+    private Long profileImgId;
 
-    private UUID channelId;
+    private UUID channelImgId;
 
-    private UUID workspacesId;
+    private Long workspacesImgId;
+
+    private UUID messageImgId;
+
+    private EntityType entityType;
 }

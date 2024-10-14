@@ -1,5 +1,6 @@
 package com.bdool.chatservice.controller;
 
+import com.bdool.chatservice.model.Enum.EntityType;
 import com.bdool.chatservice.model.entity.FileEntity;
 import com.bdool.chatservice.service.FileService;
 import com.bdool.chatservice.service.FileStorageService;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/api/files")
 public class FileController {
 
@@ -27,12 +29,19 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public FileEntity uploadFile(@RequestParam("file") MultipartFile file, @RequestParam UUID profileId) {
-        return fileService.uploadFile(file, profileId);
+    public ResponseEntity<FileEntity> uploadFile(@RequestParam("file") MultipartFile file,
+                                                 @RequestParam(required = false) Long profileId,
+                                                 @RequestParam(required = false) UUID channelImgId,
+                                                 @RequestParam(required = false) Long workspacesImgId,
+                                                 @RequestParam(required = false) UUID messageImgId,
+                                                 @RequestParam EntityType entityType) {
+        FileEntity storedFile = fileService.uploadFile(file, profileId, channelImgId, workspacesImgId, messageImgId, entityType);
+        return ResponseEntity.ok(storedFile);
     }
 
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile(@RequestParam UUID fileId, HttpServletRequest request) {
+    public ResponseEntity<?> downloadFile(@RequestParam UUID fileId, HttpServletRequest request) {
         return fileService.downloadFile(fileId, request);
     }
 
