@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace Channels</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .channel-list {
+      margin-top: 20px;
+    }
+    .channel-item {
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin: 5px 0;
+      cursor: pointer;
+    }
+    .channel-item:hover {
+      background-color: #f0f0f0;
+    }
+    #message {
+      color: red;
+    }
+    #channelList {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Enter Workspace UUID</h1>
+
+<!-- 워크스페이스 UUID 입력 폼 -->
+<form id="workspaceForm">
+  <label for="workspaceUuid">Workspace UUID:</label>
+  <input type="text" id="workspaceUuid" name="workspaceUuid" required>
+  <button type="submit">Get Channels</button>
+</form>
+
+<p id="message"></p>
+
+<!-- 채널 리스트가 표시될 곳 -->
+<div id="channelList" class="channel-list">
+  <h2>Channels in Workspace</h2>
+  <div id="channels"></div>
+</div>
+
+<script>
+  // 워크스페이스 UUID로 채널 목록을 가져오는 함수
+  function loadChannels(workspaceUuid) {
+    fetch(`/api/channel/workspaces/${workspaceId}/channel`)  // 서버의 API에서 해당 워크스페이스의 채널 목록을 가져옴
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch channel list.');
+              }
+              return response.json();
+            })
+            .then(data => {
+              const channelListDiv = document.getElementById('channels');
+              channelListDiv.innerHTML = '';  // 기존 채널 목록 초기화
+              if (data.length === 0) {
+                document.getElementById('message').textContent = 'No channels available for this workspace.';
+                document.getElementById('channelList').style.display = 'none';
+              } else {
+                document.getElementById('message').textContent = '';
+                document.getElementById('channelList').style.display = 'block';
+                data.forEach(channel => {
+                  const channelDiv = document.createElement('div');
+                  channelDiv.className = 'channel-item';
+                  channelDiv.textContent = channel.name;  // 채널 이름 표시
+                  channelDiv.addEventListener('click', () => enterChatRoom(channel.channelId));
+                  channelListDiv.appendChild(channelDiv);
+                });
+              }
+            })
+            .catch(error => {
+              document.getElementById('message').textContent = error.message;
+            });
+  }
+
+  // 채널 클릭 시 채팅방으로 이동하는 함수
+  function enterChatRoom(channelId) {
+    window.location.href = `/chat.html?channelId=${channelId}`;
+  }
+
+  // 폼 제출 시 채널 목록을 불러오는 함수
+  document.getElementById('workspaceForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const workspaceUuid = document.getElementById('workspaceUuid').value;
+    loadChannels(workspaceUuid);
+  });
+</script>
+
+</body>
+</html>
