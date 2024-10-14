@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface ChatHistoryService {
 
-    String processChat(Long workspaceId, Long profileId, Map<String,String> requestBody);
+    String processChat(Long profileId, Map<String, String> requestBody);
 
-    String processTranslate(Long workspaceId, Long profileId, Map<String, String> requestBody);
+    String processTranslate(Map<String, String> requestBody);
 
-    List<ChatHistory> getChatHistory(Long workspaceId, Long profileId);
+    List<ChatHistory> getChatHistory(Long profileId, int page, int size);
 }

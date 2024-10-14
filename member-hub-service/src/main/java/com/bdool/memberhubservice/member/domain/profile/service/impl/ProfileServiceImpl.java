@@ -51,6 +51,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .nickname(profileModel.getNickname())
                 .profilePictureUrl(profileModel.getProfilePictureUrl())
                 .memberId(member.getId())
+                .workspaceId(profileModel.getWorkspaceId())
                 .isWorkspaceCreator(true)
                 .email(member.getEmail())
                 .build();

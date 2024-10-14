@@ -16,4 +16,5 @@ public class ProfileModel {
     private String nickname; // 별명
     private String profilePictureUrl; // 프로필 이미지 URL
     private Boolean isOnline = true;
+    private Long workspaceId;
 }

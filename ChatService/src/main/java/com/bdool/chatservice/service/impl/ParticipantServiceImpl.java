@@ -2,21 +2,33 @@ package com.bdool.chatservice.service.impl;
 
 import com.bdool.chatservice.exception.ParticipantIdNotFoundException;
 import com.bdool.chatservice.model.domain.ParticipantModel;
+import com.bdool.chatservice.model.entity.ChannelEntity;
 import com.bdool.chatservice.model.entity.ParticipantEntity;
+import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
+import com.bdool.chatservice.notification.NotificationModel;
+import com.bdool.chatservice.notification.NotificationServiceHelper;
+import com.bdool.chatservice.notification.NotificationTargetType;
+import com.bdool.chatservice.notification.NotificationType;
+import com.bdool.chatservice.service.ChannelService;
 import com.bdool.chatservice.service.ParticipantService;
 import com.bdool.chatservice.sse.ParticipantSSEService;
 import com.bdool.chatservice.sse.model.ParticipantNicknameResponse;
 import com.bdool.chatservice.sse.model.ParticipantOnlineResponse;
 import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.bdool.chatservice.notification.NotificationServiceHelper.sendNotification;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +37,42 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     private final ParticipantRepository participantRepository;
     private final ParticipantSSEService sseService;
+    private final ChannelRepository channelRepository;
+    private final WebClient webClient;
+    @Value("${notification-service.url}")
+    private String notificationServiceUrl;
 
     @Override
     public ParticipantEntity save(ParticipantModel participant) {
         UUID participantId = UUIDUtil.getOrCreateUUID(participant.getParticipantId());
-        return participantRepository.save(ParticipantEntity.builder()
-                .participantId(participantId)
-                .nickname(participant.getNickname())
-                .favorited(participant.isFavorited())
-                .joinedAt(LocalDateTime.now())
-                .channelId(participant.getChannelId())
-                .build());
+        ParticipantEntity newParticipant = participantRepository.save(
+                ParticipantEntity.builder()
+                        .participantId(participantId)
+                        .nickname(participant.getNickname())
+                        .favorited(participant.isFavorited())
+                        .joinedAt(LocalDateTime.now())
+                        .channelId(participant.getChannelId())
+                        .build()
+        );
+        sendJoinNotificationToChannelParticipants(participant.getChannelId(), participant);
+
+        return newParticipant;
+    }
+
+    private void sendJoinNotificationToChannelParticipants(UUID channelId, ParticipantModel newParticipant) {
+
+        List<ParticipantEntity> participants = participantRepository.findByChannelId(channelId);
+        ChannelEntity channelEntitiesByChannelId = channelRepository.findChannelEntitiesByChannelId(channelId);
+        String channelName = channelEntitiesByChannelId.getName();
+
+        for (ParticipantEntity participant : participants) {
+            if (!participant.getParticipantId().equals(newParticipant.getParticipantId())) {
+                NotificationModel notificationModel = NotificationServiceHelper.createChannelJoinNotification(
+                        newParticipant, channelId, participant.getProfileId(), channelName);
+
+                sendNotification(webClient, notificationServiceUrl, notificationModel);
+            }
+        }
     }
 
     @Override
