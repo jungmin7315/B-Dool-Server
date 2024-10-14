@@ -17,7 +17,7 @@ public class NotificationSSEService {
     private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createSseEmitter(Long profileId) {
-        SseEmitter emitter = new SseEmitter(0L);  // 타임아웃을 무한대로 설정
+        SseEmitter emitter = new SseEmitter(0L);
 
         emitters.computeIfAbsent(profileId, id -> new ArrayList<>()).add(emitter);
 

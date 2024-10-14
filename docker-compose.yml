@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   mysql:
     container_name: mysql
@@ -8,7 +8,7 @@ services:
       - ./mysql/bdool/var/lib/mysql:/var/lib/mysql
       - ./mysql/bdool/var/log/mysql:/var/log/mysql
     environment:
-      - MYSQL_DATABASE=bdooldb
+      - MYSQL_DATABASE:bdooldb
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_ROOT_HOST=%
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
