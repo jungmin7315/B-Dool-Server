@@ -1,5 +1,5 @@
 package com.bdool.chatservice.notification;
 
 public enum NotificationType {
-    WORKSPACE_ENTRY
+    CHANNEL_JOIN
 }

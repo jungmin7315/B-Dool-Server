@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ParticipantRepository extends MongoRepository<ParticipantEntity, UUID> {
     List<ParticipantEntity> findParticipantEntitiesByProfileId(Long profileId);
+
+    List<ParticipantEntity> findByChannelId(UUID channelId);
 }
