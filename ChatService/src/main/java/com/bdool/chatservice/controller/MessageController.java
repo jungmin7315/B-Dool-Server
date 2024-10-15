@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@CrossOrigin
 @RequestMapping("/api/messages")
 @RequiredArgsConstructor
 public class MessageController {
