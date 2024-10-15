@@ -7,6 +7,7 @@ import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ChannelService;
+import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,9 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelEntity save(ChannelModel channel) {
         // 채널 엔티티 생성
+        UUID channelId = UUIDUtil.getOrCreateUUID(channel.getChannelId());
         ChannelEntity channelEntity = ChannelEntity.builder()
+                .channelId(channelId)
                 .name(channel.getName())
                 .description(channel.getDescription())
                 .isPrivate(channel.getIsPrivate())
@@ -48,7 +51,7 @@ public class ChannelServiceImpl implements ChannelService {
                 .isOnline(true)  // 기본값으로 생성자는 온라인 상태로 설정
                 .build();
 
-        participantRepository.save(participant);  // 참석자 저장
+//        participantRepository.save(participant);  // 참석자 저장
 
         return savedChannel;
     }

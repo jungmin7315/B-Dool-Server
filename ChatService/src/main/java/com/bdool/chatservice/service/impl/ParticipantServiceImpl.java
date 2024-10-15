@@ -39,7 +39,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final ParticipantSSEService sseService;
     private final ChannelRepository channelRepository;
     private final WebClient webClient;
-    @Value("${notification-service.url}")
+//    @Value("${notification-service.url}")
     private String notificationServiceUrl;
 
     @Override
