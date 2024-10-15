@@ -3,13 +3,13 @@ package com.bdool.chatservice.service.impl;
 import com.bdool.chatservice.exception.ChannelNotFoundException;
 import com.bdool.chatservice.model.domain.ChannelModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
-import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ChannelService;
 import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,10 +21,14 @@ import java.util.UUID;
 public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
-    private final ParticipantRepository participantRepository;  // 참석자 저장을 위한 리포지토리
 
     @Override
+    @Transactional
     public ChannelEntity save(ChannelModel channel) {
+
+        if (channelRepository.existsByWorkspacesIdAndName(channel.getWorkspacesId(), channel.getName())){
+            throw new IllegalArgumentException("Channel name already exists in this workspace.");
+        }
         // 채널 엔티티 생성
         UUID channelId = UUIDUtil.getOrCreateUUID(channel.getChannelId());
         ChannelEntity channelEntity = ChannelEntity.builder()
@@ -42,21 +46,11 @@ public class ChannelServiceImpl implements ChannelService {
         // 채널 저장
         ChannelEntity savedChannel = channelRepository.save(channelEntity);
 
-        // 채널 생성자를 참석자로 자동 등록 (nickname 추가)
-        ParticipantEntity participant = ParticipantEntity.builder()
-                .channelId(savedChannel.getChannelId())
-                .nickname(channel.getNickname())  // 채널 생성 시 nickname을 받아서 설정
-                .profileId(channel.getProfileId())
-                .joinedAt(LocalDateTime.now())
-                .isOnline(true)  // 기본값으로 생성자는 온라인 상태로 설정
-                .build();
-
-//        participantRepository.save(participant);  // 참석자 저장
-
         return savedChannel;
     }
 
     @Override
+    @Transactional
     public ChannelEntity update(UUID channelId, UUID profileId, ChannelModel channel) {
         return channelRepository.findById(channelId)
                 .map(existingChannel -> {
@@ -74,6 +68,8 @@ public class ChannelServiceImpl implements ChannelService {
                     // workspacesId도 값이 null이 아니면 업데이트
                     if (channel.getWorkspacesId() != null) {
                         existingChannel.setWorkspacesId(channel.getWorkspacesId());
+                    } else {
+                        throw new ChannelNotFoundException("Workspace ID cannot be null during channel update.");
                     }
 
                     return channelRepository.save(existingChannel);
@@ -86,9 +82,15 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<ChannelEntity> findAllByWorkspacesId(int id) {
+    public List<ChannelEntity> findAllByWorkspacesId(Long id) {
         return channelRepository.findAllByWorkspacesId(id);
     }
+
+    @Override
+    public List<ChannelEntity> findAllDefaultChannelsByWorkspacesId(Long workspacesId) {
+        return channelRepository.findAllByWorkspacesIdAndChannelType(workspacesId, "DEFAULT");
+    }
+
 
     @Override
     public Optional<ChannelEntity> findById(UUID channelId) {
@@ -96,6 +98,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    @Transactional
     public void deleteById(UUID channelId) {
         if (channelRepository.existsById(channelId)) {
             channelRepository.deleteById(channelId);
