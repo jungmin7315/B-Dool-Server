@@ -4,6 +4,7 @@ package com.bdool.authservice.auth.controller;
 import com.bdool.authservice.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshTokens(@RequestHeader(
-            value = "Authorization", required = false) String accessToken, HttpServletResponse response) {
+            HttpHeaders.AUTHORIZATION) String accessToken, HttpServletResponse response) {
         if (accessToken == null || !accessToken.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Access token is missing or invalid");
         }
