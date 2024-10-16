@@ -30,9 +30,9 @@ public class AttendeeServiceImpl implements AttendeeService {
     }
 
     @Override
-    public AttendeeEntity updateAttendee(Long id, AttendeeStatus status) {
+    public AttendeeEntity updateAttendee(Long eventId,Long profileId, AttendeeStatus status) {
 
-        AttendeeEntity existingAttendee = attendeeRepository.findById(id)
+        AttendeeEntity existingAttendee = attendeeRepository.findByEventIdAndProfileId(eventId,profileId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 참가자가 없습니다."));
 
         existingAttendee.setStatus(status);
@@ -44,6 +44,7 @@ public class AttendeeServiceImpl implements AttendeeService {
     public Optional<AttendeeEntity> getAttendeeById(Long id) {
         return attendeeRepository.findById(id);
     }
+
 
     @Override
     public void deleteAttendee(Long id) {
