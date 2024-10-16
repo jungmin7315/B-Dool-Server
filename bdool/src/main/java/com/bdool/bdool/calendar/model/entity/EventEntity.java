@@ -60,7 +60,9 @@ public class EventEntity {
  // 반복 관련 ///
     @Enumerated(EnumType.STRING)
     private RecurrenceType recurrenceType;
+
     private LocalDateTime repeatEnd; // 반복 종료일 (null이면 무한 반복)
+
     private int repeatInterval ; // 반복 주기 (1일, 1주, 1달, 1년)
     // 반복할 요일을 저장
     @ElementCollection(targetClass = DayOfWeek.class)
