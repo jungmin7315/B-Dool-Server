@@ -29,4 +29,6 @@ public interface ProfileService {
     Optional<Profile> findProfileById(Long invitorId);
 
     List<Profile> getProfileByToken(String accessToken);
+
+    List<Profile> getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId);
 }
