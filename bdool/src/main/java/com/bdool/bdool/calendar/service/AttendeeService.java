@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface AttendeeService {
     AttendeeEntity createAttendee(AttendeeEntity attendee);
-    AttendeeEntity updateAttendee(Long id, AttendeeStatus status); // 자기 일정 상태변경은 자기만
+    AttendeeEntity updateAttendee(Long eventId,Long profileId,AttendeeStatus status); // 자기 일정 상태변경은 자기만
     Optional<AttendeeEntity> getAttendeeById(Long id);
 
     List<AttendeeEntity> getAttendees();
