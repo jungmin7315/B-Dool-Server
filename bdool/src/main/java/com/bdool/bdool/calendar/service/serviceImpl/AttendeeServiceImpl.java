@@ -24,6 +24,7 @@ public class AttendeeServiceImpl implements AttendeeService {
         AttendeeEntity attendee = AttendeeEntity.builder()
                 .event(attendeeEntity.getEvent())
                 .profileId(attendeeEntity.getProfileId())
+                .nickname(attendeeEntity.getNickname())
                 .status(attendeeEntity.getStatus())
                 .build();
         return attendeeRepository.save(attendee);
