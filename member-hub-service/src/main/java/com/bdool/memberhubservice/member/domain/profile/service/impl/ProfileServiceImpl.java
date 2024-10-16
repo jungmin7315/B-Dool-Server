@@ -177,6 +177,11 @@ public class ProfileServiceImpl implements ProfileService {
         return profileRepository.findByEmail(email);
     }
 
+    @Override
+    public List<Profile> getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId) {
+        return profileRepository.findByMemberIdAndWorkspaceId(memberId, workspaceId);
+    }
+
     private void notifyWorkspaceMembers(ProfileModel profileModel, Long workspaceId) {
         List<Profile> profilesInWorkspace = profileRepository.findProfilesByWorkspaceId(workspaceId);
         for (Profile profileInWorkspace : profilesInWorkspace) {

@@ -45,6 +45,12 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getProfileByMemberId(memberId));
     }
 
+    @GetMapping("/member/{memberId}&&{workspaceId}")
+    public ResponseEntity<List<Profile>> getProfileByMemberIdAndWorkspaceId(@PathVariable Long memberId,
+                                                                            @PathVariable Long workspaceId) {
+        return ResponseEntity.ok(profileService.getProfileByMemberIdAndWorkspaceId(memberId, workspaceId));
+    }
+
     @GetMapping("/token")
     public ResponseEntity<List<Profile>> getProfilesByToken(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok(profileService.getProfileByToken(accessToken));
