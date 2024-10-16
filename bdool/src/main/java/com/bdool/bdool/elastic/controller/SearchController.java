@@ -50,6 +50,14 @@ public class SearchController {
         return unifiedSearchService.unifiedSearch(workspaceId,keyword, profileId, startDate, endDate, extension);
     }
 
+
+    @GetMapping("/messages/{profileId}")
+    public ResponseEntity<List<String>> getMessagesByProfileId(@PathVariable Long profileId) {
+        List<String> messageIds = searchService.getMessagesIdByProfileId(profileId);
+        return ResponseEntity.ok(messageIds);
+    }
+
+
 }
 
 

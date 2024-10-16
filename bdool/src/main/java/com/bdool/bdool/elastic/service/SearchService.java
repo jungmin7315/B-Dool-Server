@@ -74,11 +74,12 @@ public class SearchService {
         }
         boolQueryBuilder.minimumShouldMatch("1");
 
-        WildcardQuery wildcardQuery = new WildcardQuery.Builder()
+        MatchQuery matchQuery = new MatchQuery.Builder()
                 .field("content")
-                .value("*" + keyword + "*")
+                .query(keyword)
+                .operator(Operator.And)
                 .build();
-        boolQueryBuilder.must(wildcardQuery._toQuery());
+        boolQueryBuilder.must(matchQuery._toQuery());
 
         if (startDate != null || endDate != null) {
             RangeQuery.Builder rangeQuery = new RangeQuery.Builder().field("created_at");
@@ -97,7 +98,7 @@ public class SearchService {
                 .withQuery(boolQueryBuilder.build()._toQuery())
                 .withSort(s -> s
                         .field(f -> f
-                                .field("channel_id")
+                                .field("channel_id.keyword")
                                 .order(SortOrder.Asc)
                         )
                 )
@@ -128,18 +129,28 @@ public class SearchService {
         }
         boolQueryBuilder.minimumShouldMatch("1");
 
-        WildcardQuery wildcardQuery = new WildcardQuery.Builder()
+        MatchQuery matchQuery = new MatchQuery.Builder()
                 .field("fname")
-                .value("*" + keyword + "*")
+                .query(keyword)
+                .operator(Operator.And)
                 .build();
-        boolQueryBuilder.must(wildcardQuery._toQuery());
+
+        TermQuery termQuery = new TermQuery.Builder()
+                .field("extension")
+                .value(keyword)
+                .build();
+
+        boolQueryBuilder
+                .must(matchQuery._toQuery());
+                /*.should(termQuery._toQuery())
+                .minimumShouldMatch("1");*/
 
         if(extension != null){
-            TermQuery termQuery = new TermQuery.Builder()
+            TermQuery termQuery2 = new TermQuery.Builder()
                     .field("extension")
                     .value(extension)
                     .build();
-            boolQueryBuilder.filter(termQuery._toQuery());
+            boolQueryBuilder.filter(termQuery2._toQuery());
         }
 
         NativeQuery query = NativeQuery.builder()
@@ -147,16 +158,11 @@ public class SearchService {
                 .withSort(s -> s
                         .field(f -> f
                                 .field("extension")
-                                .order(SortOrder.Asc)
+                                .order(SortOrder.Desc)
                         )
                 )
-                .withSort(s -> s
-                .field(f -> f
-                        .field("fname")
-                        .order(SortOrder.Asc)
-                )
-        )
                 .build();
+
 
         SearchHits<FileIndex> searchHits = elasticsearchOperations.search(query, FileIndex.class);
         return searchHits.stream()
@@ -192,11 +198,6 @@ public class SearchService {
             boolQueryBuilder.should(termQuery._toQuery());
         }
         boolQueryBuilder.minimumShouldMatch("1");
-
-        ExistsQuery existsQuery = new ExistsQuery.Builder()
-                .field("file_URL")
-                .build();
-        boolQueryBuilder.must(existsQuery._toQuery());
 
         NativeQuery query = NativeQuery.builder()
                 .withQuery(boolQueryBuilder.build()._toQuery())

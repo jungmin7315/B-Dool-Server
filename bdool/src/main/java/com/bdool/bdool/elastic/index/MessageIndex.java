@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Getter
 @Setter
-@Document(indexName = "message")
+@Document(indexName = "messages")
 public class MessageIndex {
 
     @Field(name = "message_id", type = FieldType.Keyword)
@@ -18,10 +18,10 @@ public class MessageIndex {
     @Field(name = "channel_id", type = FieldType.Keyword)
     private String channelId;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String content;
 
-    @Field(name = "created_at", type = FieldType.Keyword)
+    @Field(name = "created_at", type = FieldType.Date)
     private String createdAt;
 
     @Field(name = "file_URL", type = FieldType.Keyword)
