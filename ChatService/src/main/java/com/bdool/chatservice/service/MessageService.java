@@ -22,4 +22,10 @@ public interface MessageService {
     Boolean existsById(UUID messageId);
 
     void deleteById(UUID messageId);
+
+    long countUnreadMessages(UUID channelId, Long profileId);
+
+    void updateReadStatus(UUID channelId, Long profileId, UUID lastReadMessageId);
+
+//    List<Long> findAllProfileIdsInChannel(UUID channelId);
 }

@@ -19,9 +19,9 @@ public class FileServiceImpl implements FileService {
     private final FileStorageService fileStorageService;
 
     @Override
-    public FileEntity uploadFile(MultipartFile file, Long profileImgId, UUID channelImgId, Long workspacesImgId, UUID messageImgId, EntityType entityType) {
+    public FileEntity uploadFile(MultipartFile file, String entityId, EntityType entityType) {
         // EntityType에 따른 파일 저장 처리
-        return fileStorageService.storeFile(file, profileImgId, channelImgId, workspacesImgId, messageImgId, entityType);
+        return fileStorageService.storeFile(file, entityId, entityType);
     }
 
     @Override

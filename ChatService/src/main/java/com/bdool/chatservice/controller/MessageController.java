@@ -4,19 +4,16 @@ import com.bdool.chatservice.model.domain.MessageModel;
 import com.bdool.chatservice.model.entity.MessageEntity;
 import com.bdool.chatservice.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/api/messages")
 @RequiredArgsConstructor
 public class MessageController {
 
@@ -32,49 +29,23 @@ public class MessageController {
 
         // 저장된 메시지를 구독중인 클라이언트에게 전송
         messagingTemplate.convertAndSend("/topic/channel/" + channelId, savedMessage);
+
+//        // 모든 사용자의 안 읽은 메시지 수 계산 후 알림
+//        List<Long> allUserIds = messageService.findAllProfileIdsInChannel(channelId);
+//        allUserIds.forEach(profileId -> {
+//            long unreadCount = messageService.countUnreadMessages(channelId, profileId);
+//            messagingTemplate.convertAndSendToUser(profileId.toString(), "/queue/unread-count", unreadCount);
+//        });
     }
 
-//    @PostMapping("/{channelId}")
-//    public ResponseEntity<MessageEntity> sendMessage(
-//            @PathVariable UUID channelId,
-//            @RequestParam("content") String content,
-//            @RequestParam("profileId") UUID profileId,
-//            @RequestParam("isEdited") boolean isEdited,
-//            @RequestParam("isDeleted") boolean isDeleted,
-//            @RequestParam(value = "file", required = false) MultipartFile file) {
+//    // 메시지 읽음 상태 업데이트
+//    @MessageMapping("/message/read/{channelId}")
+//    public void updateReadStatus(@DestinationVariable UUID channelId, Principal principal, UUID lastReadMessageId) {
+//        Long profileId = Long.parseLong(principal.getName());  // 사용자 ID 추출
+//        messageService.updateReadStatus(channelId, profileId, lastReadMessageId);
 //
-//        // 파일 처리 및 메시지 저장 로직 추가
-//        MessageModel messageModel = new MessageModel(content, profileId, isEdited, isDeleted, file);
-//        MessageEntity savedMessage = messageService.save(messageModel);
-//        return ResponseEntity.ok(savedMessage);
+//        // 안 읽은 메시지 수 업데이트 후 전송
+//        long unreadCount = messageService.countUnreadMessages(channelId, profileId);
+//        messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/unread-count", unreadCount);
 //    }
-
-    @GetMapping("/{channelId}")
-    public ResponseEntity<List<MessageEntity>> findAllChannelId(
-            @PathVariable UUID channelId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "30") int size) {
-        return ResponseEntity.ok(messageService.findByChannelId(channelId, page, size));
-    }
-
-    // 메시지 업데이트
-    @PutMapping("/{messageId}")
-    public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
-        MessageEntity updatedMessage = messageService.update(messageId, message);
-        return ResponseEntity.ok(updatedMessage);
-    }
-
-    // ID로 메시지 찾기
-    @GetMapping("/find/{messageId}")
-    public ResponseEntity<MessageEntity> findById(@PathVariable UUID messageId) {
-        MessageEntity message = messageService.findById(messageId);
-        return ResponseEntity.ok(message);
-    }
-
-    // ID로 메시지 삭제
-    @DeleteMapping("/{messageId}")
-    public ResponseEntity<Void> deleteById(@PathVariable UUID messageId) {
-        messageService.deleteById(messageId);
-        return ResponseEntity.noContent().build();  // 삭제 후 204 응답
-    }
 }
