@@ -87,7 +87,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<ChannelEntity> findAllDefaultChannelsByWorkspacesId(Long workspacesId) {
+    public ChannelEntity findAllDefaultChannelsByWorkspacesId(Long workspacesId) {
         return channelRepository.findAllByWorkspacesIdAndChannelType(workspacesId, "DEFAULT");
     }
 

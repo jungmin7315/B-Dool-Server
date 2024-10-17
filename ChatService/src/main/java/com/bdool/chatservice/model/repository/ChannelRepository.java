@@ -11,6 +11,6 @@ import java.util.UUID;
 public interface ChannelRepository extends MongoRepository<ChannelEntity, UUID> {
     List<ChannelEntity> findAllByWorkspacesId(Long id);
     ChannelEntity findChannelEntitiesByChannelId(UUID channelId);
-    List<ChannelEntity> findAllByWorkspacesIdAndChannelType(Long workspacesId, String channelType);
+    ChannelEntity findAllByWorkspacesIdAndChannelType(Long workspacesId, String channelType);
     boolean existsByWorkspacesIdAndName(Long workspacesId, String name);
 }
