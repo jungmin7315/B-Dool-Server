@@ -53,8 +53,8 @@ public class ChannelController {
 
     @GetMapping("/workspaces/{workspaceId}/default-channel")
     public ResponseEntity<?> findAllByDefaultChannel(@PathVariable Long workspaceId) {
-        List<ChannelEntity> channels = channelService.findAllDefaultChannelsByWorkspacesId(workspaceId);
-        if (channels.isEmpty()) {
+        ChannelEntity channels = channelService.findDefaultChannelsByWorkspacesId(workspaceId);
+        if (channels == null) {
             return ResponseEntity.noContent().build();  // 204 No Content
         }
         return ResponseEntity.ok(channels);  // 200 OK
