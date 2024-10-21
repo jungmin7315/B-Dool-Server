@@ -18,6 +18,8 @@ public interface ParticipantService {
 
     Optional<ParticipantEntity> findById(UUID participantId);
 
+    List<ParticipantEntity> findByChannelId(UUID channelId);
+
     boolean existsById(UUID participantId);
 
     long count();
