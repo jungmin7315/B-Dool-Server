@@ -16,7 +16,9 @@ public interface ChannelService {
 
     List<ChannelEntity> findAll();
 
-    List<ChannelEntity> findAllByWorkspacesId(int id);
+    List<ChannelEntity> findAllByWorkspacesId(Long id);
+
+    ChannelEntity findDefaultChannelsByWorkspacesId(Long workspacesId);
 
     Optional<ChannelEntity> findById(UUID channelId);
 

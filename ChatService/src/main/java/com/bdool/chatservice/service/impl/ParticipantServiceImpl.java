@@ -39,7 +39,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final ParticipantSSEService sseService;
     private final ChannelRepository channelRepository;
     private final WebClient webClient;
-    @Value("${notification-service.url}")
+//    @Value("${notification-service.url}")
     private String notificationServiceUrl;
 
     @Override
@@ -98,6 +98,12 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
     @Override
+    public List<ParticipantEntity> findByChannelId(UUID channelId) {
+        return participantRepository.findByChannelId(channelId);
+    }
+
+
+    @Override
     public boolean existsById(UUID participantId) {
         return participantRepository.existsById(participantId);
     }
@@ -141,4 +147,6 @@ public class ParticipantServiceImpl implements ParticipantService {
             sseService.notifyNicknameChange(participantNicknameResponse);
         }
     }
+
+
 }

@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
 @RequestMapping("/api/files")
 public class FileController {
 
@@ -30,12 +29,9 @@ public class FileController {
 
     @PostMapping("/upload")
     public ResponseEntity<FileEntity> uploadFile(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam(required = false) Long profileId,
-                                                 @RequestParam(required = false) UUID channelImgId,
-                                                 @RequestParam(required = false) Long workspacesImgId,
-                                                 @RequestParam(required = false) UUID messageImgId,
+                                                 @RequestParam String entityId,
                                                  @RequestParam EntityType entityType) {
-        FileEntity storedFile = fileService.uploadFile(file, profileId, channelImgId, workspacesImgId, messageImgId, entityType);
+        FileEntity storedFile = fileService.uploadFile(file, entityId, entityType);
         return ResponseEntity.ok(storedFile);
     }
 

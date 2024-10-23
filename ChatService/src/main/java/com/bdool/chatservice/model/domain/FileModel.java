@@ -14,6 +14,8 @@ public class FileModel {
 
     private String fname;
 
+    private String originalFileName;
+
     private String path;
 
     private Integer size;

@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -18,9 +17,8 @@ public class MessageReadStatusEntity {
 
     @Id
     private UUID id;
-
-    private UUID messageId;  // 어떤 메시지인지
-    private UUID profileId;     // 메시지를 읽은 사용자 ID
-    private LocalDateTime readAt; // 읽은 시간
+    private Long profileId;    // 사용자 ID
+    private UUID channelId; // 채팅방 ID
+    private UUID lastReadMessageId; // 마지막으로 읽은 메시지 ID
 }
 

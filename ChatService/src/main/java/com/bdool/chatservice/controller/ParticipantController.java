@@ -44,6 +44,11 @@ public class ParticipantController {
                 .orElseGet(() -> ResponseEntity.noContent().build()));
     }
 
+    @GetMapping("/{channelId}/channel")
+    public ResponseEntity<?> findByChannelId(@PathVariable UUID channelId){
+        return ResponseEntity.ok(participantService.findByChannelId(channelId));
+    }
+
     @GetMapping("/exists/{participantId}")
     public ResponseEntity<?> existsById(@PathVariable UUID participantId) {
         return ResponseEntity.ok(participantService.existsById(participantId));

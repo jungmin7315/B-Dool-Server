@@ -13,7 +13,7 @@ import java.util.UUID;
 @Service
 public interface FileService {
 
-    FileEntity uploadFile(MultipartFile file, Long profileImgId, UUID channelImgId, Long workspacesImgId, UUID messageImgId, EntityType entityType);
+    FileEntity uploadFile(MultipartFile file, String entityId, EntityType entityType);
     ResponseEntity<?> downloadFile(UUID fileId, HttpServletRequest request);
     void deleteFile(UUID fileId);
 }

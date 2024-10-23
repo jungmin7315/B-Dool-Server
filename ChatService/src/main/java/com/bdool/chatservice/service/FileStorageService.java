@@ -1,6 +1,7 @@
 package com.bdool.chatservice.service;
 
 import com.bdool.chatservice.model.Enum.EntityType;
+import com.bdool.chatservice.model.Enum.FileType;
 import com.bdool.chatservice.model.entity.FileEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface FileStorageService {
     List<FileEntity> getAllFiles();
-    FileEntity storeFile(MultipartFile file, Long profileImgId, UUID channelImgId, Long workspacesImgId, UUID messageImgId, EntityType entityType);
+    FileEntity storeFile(MultipartFile file, String entityId, EntityType entityType);
     ResponseEntity<?> loadFileAsResource(UUID fileId, HttpServletRequest request);
     void deleteFile(UUID fileId);
 }
