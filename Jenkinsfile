@@ -20,7 +20,7 @@ pipeline {
                     steps {
                         dir('auth-service') {
                             script {
-                                def imageName = "${DOCKER_HUB_URL}/auth-service"
+                                def imageName = "${DOCKER_HUB_URL}/bdool-auth-service"
                                 docker.build("${imageName}:latest").push()
                             }
                         }
@@ -30,7 +30,7 @@ pipeline {
                     steps {
                         dir('member-hub-service') {
                             script {
-                                def imageName = "${DOCKER_HUB_URL}/member-service"
+                                def imageName = "${DOCKER_HUB_URL}/bdool-member-service"
                                 docker.build("${imageName}:latest").push()
                             }
                         }
@@ -40,7 +40,7 @@ pipeline {
                     steps {
                         dir('notification-service') {
                             script {
-                                def imageName = "${DOCKER_HUB_URL}/notification-service"
+                                def imageName = "${DOCKER_HUB_URL}/bdool-notification-service"
                                 docker.build("${imageName}:latest").push()
                             }
                         }
