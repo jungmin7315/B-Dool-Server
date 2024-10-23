@@ -63,6 +63,6 @@ pipeline {
         }
         failure {
             echo '빌드 또는 푸시 실패!'
-        }
+        }docker --version
     }
 }
