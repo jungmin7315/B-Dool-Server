@@ -23,7 +23,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.save(profileModel, memberId));
     }
 
-    @PostMapping("/{memberId}&&{workspaceId}/invited")
+    @PostMapping("/member/{memberId}/workspace/{workspaceId}/invited")
     public ResponseEntity<ProfileResponse> createProfileByInvitation(@PathVariable Long memberId,
                                                                      @PathVariable Long workspaceId,
                                                                      @RequestBody ProfileModel profileModel) {
@@ -45,8 +45,8 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getProfileByMemberId(memberId));
     }
 
-    @GetMapping("/member/{memberId}&&{workspaceId}")
-    public ResponseEntity<List<Profile>> getProfileByMemberIdAndWorkspaceId(@PathVariable Long memberId,
+    @GetMapping("/member/{memberId}/workspace/{workspaceId}")
+    public ResponseEntity<Profile> getProfileByMemberIdAndWorkspaceId(@PathVariable Long memberId,
                                                                             @PathVariable Long workspaceId) {
         return ResponseEntity.ok(profileService.getProfileByMemberIdAndWorkspaceId(memberId, workspaceId));
     }

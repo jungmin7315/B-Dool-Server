@@ -41,7 +41,6 @@ public class AttendeeServiceImpl implements AttendeeService {
     }
 
     private void sendJoinNotificationToAttendee(AttendeeEntity attendee) {
-
         NotificationModel notificationModel = NotificationServiceHelper.createEventJoinNotification(
                 attendee, attendee.getProfileId()
         );

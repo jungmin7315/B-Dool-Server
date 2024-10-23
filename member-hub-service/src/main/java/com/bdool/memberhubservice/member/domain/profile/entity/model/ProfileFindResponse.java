@@ -17,7 +17,7 @@ public class ProfileFindResponse {
     private String nickname; // 별명
     private String position; // 직책
     private String status; // 상태메세지
-    private String profilePictureUrl; // 프로필 이미지 URL
+    private String profileImgUrl; // 프로필 이미지 URL
     private Boolean isOnline; // 온라인/오프라인 표시
     private Boolean isWorkspaceCreator;
     private String email;
@@ -32,7 +32,7 @@ public class ProfileFindResponse {
                 profile.getNickname(),
                 profile.getPosition(),
                 profile.getStatus(),
-                profile.getProfilePictureUrl(),
+                profile.getProfileImgUrl(),
                 profile.getIsOnline(),
                 profile.getIsWorkspaceCreator(),
                 profile.getEmail(),

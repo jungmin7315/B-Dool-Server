@@ -24,11 +24,11 @@ public interface ProfileService {
 
     String updateStatus(Long profileId, String status);
 
-    Boolean updateOnline(Long profileId, boolean isOnline);
+    Boolean updateOnline(Long profileId, Boolean isOnline);
 
     Optional<Profile> findProfileById(Long invitorId);
 
     List<Profile> getProfileByToken(String accessToken);
 
-    List<Profile> getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId);
+    Profile getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId);
 }
