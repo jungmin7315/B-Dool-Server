@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'  // 도커 허브 자격증명 ID
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'  // Docker Hub 자격증명 ID
         REPO_URL = 'https://github.com/B-Dool/B-Dool-Server.git'
         DOCKER_HUB_URL = 'gusdn0413'  // Docker Hub 네임스페이스
     }
@@ -15,7 +15,15 @@ pipeline {
             }
         }
 
-        stage('Build and Push Modules') {
+        stage('Build JAR Files') {
+            steps {
+                echo 'Building all JAR files...'
+                // 전체 프로젝트에서 Gradle 빌드 수행
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Build and Push Docker Images') {
             parallel {
                 stage('Auth Service') {
                     steps {
@@ -23,7 +31,7 @@ pipeline {
                             script {
                                 def imageName = "${DOCKER_HUB_URL}/bdool-auth-service"
                                 docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                                    docker.build("${imageName}:latest", '.').push()
+                                    docker.build("${imageName}:latest", '--build-arg JAR_FILE=build/libs/auth-service-0.0.1-SNAPSHOT.jar .').push()
                                 }
                             }
                         }
@@ -35,7 +43,7 @@ pipeline {
                             script {
                                 def imageName = "${DOCKER_HUB_URL}/bdool-member-service"
                                 docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                                    docker.build("${imageName}:latest", '.').push()
+                                    docker.build("${imageName}:latest", '--build-arg JAR_FILE=build/libs/member-hub-service-0.0.1-SNAPSHOT.jar .').push()
                                 }
                             }
                         }
@@ -47,7 +55,7 @@ pipeline {
                             script {
                                 def imageName = "${DOCKER_HUB_URL}/bdool-notification-service"
                                 docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                                    docker.build("${imageName}:latest", '.').push()
+                                    docker.build("${imageName}:latest", '--build-arg JAR_FILE=build/libs/notification-service-0.0.1-SNAPSHOT.jar .').push()
                                 }
                             }
                         }
