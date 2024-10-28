@@ -49,10 +49,11 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = Profile.builder()
                 .name(profileModel.getName())
                 .nickname(profileModel.getNickname())
-                .profilePictureUrl(profileModel.getProfilePictureUrl())
+                .profileImgUrl(profileModel.getProfileImgUrl())
                 .memberId(member.getId())
                 .workspaceId(profileModel.getWorkspaceId())
                 .isWorkspaceCreator(true)
+                .isOnline(false)
                 .email(member.getEmail())
                 .build();
         Profile savedProfile = profileRepository.save(profile);
@@ -67,9 +68,9 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = Profile.builder()
                 .name(profileModel.getName())
                 .nickname(profileModel.getNickname())
-                .profilePictureUrl(profileModel.getProfilePictureUrl())
+                .profileImgUrl(profileModel.getProfileImgUrl())
                 .memberId(member.getId())
-                .isOnline(profileModel.getIsOnline())
+                .isOnline(false)
                 .workspaceId(workspaceId)
                 .isWorkspaceCreator(false)
                 .email(member.getEmail())
@@ -105,7 +106,7 @@ public class ProfileServiceImpl implements ProfileService {
         return profiles.stream()
                 .map(profile -> new ProfileMemberIdResponse(
                         profile.getNickname(),
-                        profile.getProfilePictureUrl(),
+                        profile.getProfileImgUrl(),
                         profile.getWorkspaceId()
                 ))
                 .collect(Collectors.toList());
@@ -132,7 +133,7 @@ public class ProfileServiceImpl implements ProfileService {
                 findProfile.getWorkspaceId(),
                 findProfile.getNickname());
         sseService.notifyNicknameChange(profileNicknameResponse);
-        sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
+//        sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
         return fromEntity(findProfile);
     }
 
@@ -149,20 +150,20 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Transactional
     @Override
-    public Boolean updateOnline(Long profileId, boolean isOnline) {
+    public Boolean updateOnline(Long profileId, Boolean isOnline) {
         Profile findProfile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateOnline(isOnline);
-        profileRepository.save(findProfile);
+        Profile save = profileRepository.save(findProfile);
 
         ProfileOnlineResponse profileOnlineResponse = new ProfileOnlineResponse(
                 profileId, findProfile.getWorkspaceId(), findProfile.getIsOnline()
         );
 
         sseService.notifyOnlineChange(profileOnlineResponse);
-        sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
+//        sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
 
-        return findProfile.getIsOnline();
+        return save.getIsOnline();
     }
 
     @Override
@@ -178,7 +179,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<Profile> getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId) {
+    public Profile getProfileByMemberIdAndWorkspaceId(Long memberId, Long workspaceId) {
         return profileRepository.findByMemberIdAndWorkspaceId(memberId, workspaceId);
     }
 

@@ -22,7 +22,7 @@ public class Profile {
     private String nickname; // 별명
     private String position; // 직책
     private String status; // 상태메세지
-    private String profilePictureUrl; // 프로필 이미지 URL
+    private String profileImgUrl; // 프로필 이미지 URL
     private Boolean isOnline; // 온라인/오프라인 표시
     private Boolean isWorkspaceCreator;
 
@@ -47,10 +47,10 @@ public class Profile {
         updatedAt = LocalDateTime.now();
     }
 
-    public void updateProfile(String nickname, String position, String profilePictureUrl) {
+    public void updateProfile(String nickname, String position, String profileImgUrl) {
         this.nickname = nickname;
         this.position = position;
-        this.profilePictureUrl = profilePictureUrl;
+        this.profileImgUrl = profileImgUrl;
         this.updatedAt = LocalDateTime.now();  // 업데이트 시간 갱신
     }
 
@@ -67,7 +67,7 @@ public class Profile {
                 profile.getId(),
                 profile.getNickname(),
                 profile.getIsOnline(),
-                profile.getProfilePictureUrl()
+                profile.getProfileImgUrl()
         );
     }
 }
