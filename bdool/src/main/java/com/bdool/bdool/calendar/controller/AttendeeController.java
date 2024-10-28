@@ -27,9 +27,9 @@ public class AttendeeController {
     }
 
     // 참가자 상태 수정
-    @PutMapping("/{attendeeId}")
-    public ResponseEntity<AttendeeEntity> updateAttendee(@PathVariable Long attendeeId, @RequestBody AttendeeStatus status) {
-        AttendeeEntity updatedParticipant = attendeeService.updateAttendee(attendeeId, status);
+    @PutMapping("/{eventId}/{profileId}")
+    public ResponseEntity<AttendeeEntity> updateAttendee(@PathVariable Long eventId, @PathVariable Long profileId, @RequestBody AttendeeStatus status) {
+        AttendeeEntity updatedParticipant = attendeeService.updateAttendee(eventId,profileId, status);
         return ResponseEntity.ok(updatedParticipant);
     }
 

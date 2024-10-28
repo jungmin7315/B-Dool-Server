@@ -19,6 +19,8 @@ public class AttendeeEntity {
     @Column(name = "profile_id", nullable = false)
     private Long profileId; // 참가자 사용자 ID
 
+    private String nickname;
+
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private EventEntity event;  // 참가자가 속한 이벤트
