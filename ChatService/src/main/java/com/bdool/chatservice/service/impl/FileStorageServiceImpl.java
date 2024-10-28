@@ -79,7 +79,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public FileEntity storeFile(MultipartFile file, String entityId, EntityType entityType) {
+    public FileEntity storeFile(MultipartFile file, EntityType entityType) {
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         if (originalFileName.contains("..")) {
             throw new FileStorageException("Invalid path sequence " + originalFileName);
@@ -138,7 +138,6 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .size((int) file.getSize())
                 .uploadedAt(LocalDateTime.now())
                 .entityType(entityType)  // 엔터티 타입 설정
-                .entityId(entityId)  // 연관된 엔터티 ID 저장
                 .status(FileStatus.ACTIVE)  // 기본 상태는 ACTIVE로 설정
                 .fileType(fileType)// 파일 타입 설정
                 .md5Hash(md5Hash) // MDS 해시 저장

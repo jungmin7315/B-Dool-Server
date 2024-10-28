@@ -29,9 +29,8 @@ public class FileController {
 
     @PostMapping("/upload")
     public ResponseEntity<FileEntity> uploadFile(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam String entityId,
                                                  @RequestParam EntityType entityType) {
-        FileEntity storedFile = fileService.uploadFile(file, entityId, entityType);
+        FileEntity storedFile = fileService.uploadFile(file, entityType);
         return ResponseEntity.ok(storedFile);
     }
 

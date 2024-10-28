@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface FileStorageService {
     List<FileEntity> getAllFiles();
-    FileEntity storeFile(MultipartFile file, String entityId, EntityType entityType);
+    FileEntity storeFile(MultipartFile file, EntityType entityType);
     ResponseEntity<?> loadFileAsResource(UUID fileId, HttpServletRequest request);
     void deleteFile(UUID fileId);
 }
