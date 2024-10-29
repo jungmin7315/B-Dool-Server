@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -145,6 +146,73 @@ public class FileStorageServiceImpl implements FileStorageService {
 
         // 파일 엔티티 저장
         return fileRepository.save(fileEntity);
+    }
+
+    @Override
+    public FileEntity updateFile(UUID fileId, MultipartFile newFile) {
+        // 기존 파일 엔티티 조회
+        FileEntity existingFileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new MyFileNotFoundException("File not found with id " + fileId));
+
+        // 기존 파일이 삭제된 상태라면 업데이트할 수 없도록 예외 처리
+        if (existingFileEntity.getStatus() == FileStatus.DELETED) {
+            throw new FileStorageException("Cannot update a file that has been deleted. File id: " + fileId);
+        }
+
+        // 새로운 파일명 생성
+        String originalFileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        String extension = Optional.ofNullable(originalFileName)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(originalFileName.lastIndexOf(".") + 1))
+                .orElse("");
+
+        // 파일 확장자 유효성 검사
+        if (!isValidExtension(extension)) {
+            throw new FileStorageException("Invalid file extension: " + extension + ". Only image, video, and audio files are allowed.");
+        }
+
+        // 파일 타입 결정
+        FileType fileType = determineFileType(extension);
+        String newFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+
+        String md5Hash;
+        try (InputStream inputStream = newFile.getInputStream()) {
+            // MD5 해시 계산
+            InputStream inputStreamForHash = newFile.getInputStream();
+            InputStream inputStreamForUpload = newFile.getInputStream();
+            md5Hash = MD5Util.calculateMd5Hash(inputStreamForHash);
+
+            // S3에 새 파일 업로드
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(newFile.getSize());
+            metadata.setContentType(newFile.getContentType());
+            metadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
+
+            naverCloud.putObject(new PutObjectRequest(bucketName, newFileName, inputStreamForUpload, metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+
+            // 기존 파일 S3에서 삭제
+            naverCloud.deleteObject(bucketName, existingFileEntity.getFname());
+
+        } catch (SdkClientException | NoSuchAlgorithmException | IOException ex) {
+            throw new FileStorageException("Could not update file " + newFileName + ". Please try again!", ex);
+        }
+
+        // 업데이트된 파일 URL 생성
+        String fileUrl = naverCloud.getUrl(bucketName, newFileName).toString();
+
+        // 기존 파일 엔티티 정보 업데이트
+        existingFileEntity.setFname(newFileName); // 새 파일명으로 변경
+        existingFileEntity.setOriginalFileName(originalFileName);
+        existingFileEntity.setPath(fileUrl);
+        existingFileEntity.setExtension(extension);
+        existingFileEntity.setSize((int) newFile.getSize());
+        existingFileEntity.setUploadedAt(LocalDateTime.now());
+        existingFileEntity.setFileType(fileType);
+        existingFileEntity.setMd5Hash(md5Hash);
+
+        // 데이터베이스에 업데이트된 엔티티 저장
+        return fileRepository.save(existingFileEntity);
     }
 
 

@@ -1,8 +1,11 @@
 package com.bdool.chatservice.controller;
 
 import com.bdool.chatservice.model.domain.ChannelModel;
+import com.bdool.chatservice.model.domain.ParticipantModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
+import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.service.ChannelService;
+import com.bdool.chatservice.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +19,12 @@ import java.util.UUID;
 public class ChannelController {
 
     private final ChannelService channelService;
+    private final ParticipantService participantService;
 
     // 채널 생성
     @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody ChannelModel channel) {
+    public ResponseEntity<?> save(@RequestBody ChannelModel channel, @RequestBody ParticipantModel participant) {
+        ParticipantEntity save = participantService.save(participant);
         return ResponseEntity.ok(channelService.save(channel)); // 200 OK
     }
 

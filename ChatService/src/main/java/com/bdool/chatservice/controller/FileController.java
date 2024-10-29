@@ -34,6 +34,13 @@ public class FileController {
         return ResponseEntity.ok(storedFile);
     }
 
+    @PutMapping("/update/{fileId}")
+    public ResponseEntity<?> updateFile(
+            @PathVariable UUID fileId,
+            @RequestParam("file") MultipartFile newFile) {
+        FileEntity updatedFile = fileService.updateFile(fileId, newFile);
+        return ResponseEntity.ok(updatedFile);
+    }
 
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestParam UUID fileId, HttpServletRequest request) {

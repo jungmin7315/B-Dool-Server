@@ -25,6 +25,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public FileEntity updateFile(UUID fileId, MultipartFile newFile) {
+        return fileStorageService.updateFile(fileId,newFile);
+    }
+
+    @Override
     public ResponseEntity<?> downloadFile(UUID fileId, HttpServletRequest request) {
         return fileStorageService.loadFileAsResource(fileId, request);
     }

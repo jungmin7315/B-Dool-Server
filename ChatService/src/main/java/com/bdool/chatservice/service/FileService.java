@@ -13,6 +13,7 @@ import java.util.UUID;
 @Service
 public interface FileService {
     FileEntity uploadFile(MultipartFile file, EntityType entityType);
+    FileEntity updateFile(UUID fileId, MultipartFile newFile);
     ResponseEntity<?> downloadFile(UUID fileId, HttpServletRequest request);
     void deleteFile(UUID fileId);
 }
