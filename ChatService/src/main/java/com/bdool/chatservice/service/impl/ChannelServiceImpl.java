@@ -3,6 +3,7 @@ package com.bdool.chatservice.service.impl;
 import com.bdool.chatservice.exception.ChannelNotFoundException;
 import com.bdool.chatservice.model.domain.ChannelModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
+import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ChannelService;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
+    private final ParticipantRepository participantRepository;
 
     @Override
     @Transactional
@@ -46,6 +48,17 @@ public class ChannelServiceImpl implements ChannelService {
         // 채널 저장
         ChannelEntity savedChannel = channelRepository.save(channelEntity);
 
+        UUID participantId = UUIDUtil.getOrCreateUUID(null);
+        // 참석자 저장
+        ParticipantEntity participantEntity = participantRepository.save(
+                        ParticipantEntity.builder()
+                                .participantId(participantId)
+                                .channelId(channelId)
+                                .isOnline(true)
+                                .joinedAt(LocalDateTime.now())
+                                .nickname(channel.getNickname())
+                                .profileId(channel.getProfileId())
+                                .build());
         return savedChannel;
     }
 

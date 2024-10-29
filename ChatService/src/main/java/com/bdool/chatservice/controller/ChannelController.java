@@ -23,8 +23,7 @@ public class ChannelController {
 
     // 채널 생성
     @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody ChannelModel channel, @RequestBody ParticipantModel participant) {
-        ParticipantEntity save = participantService.save(participant);
+    public ResponseEntity<?> save(@RequestBody ChannelModel channel) {
         return ResponseEntity.ok(channelService.save(channel)); // 200 OK
     }
 
