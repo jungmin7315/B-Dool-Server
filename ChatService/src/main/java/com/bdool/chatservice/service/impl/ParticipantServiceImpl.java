@@ -52,7 +52,7 @@ public class ParticipantServiceImpl implements ParticipantService {
                                 .joinedAt(LocalDateTime.now())
                                 .nickname(participant.getNickname())
                                 .profileId(participant.getProfileId())
-                                .build());
+                                .build()
         );
         sendJoinNotificationToChannelParticipants(participant.getChannelId(), participant);
 
