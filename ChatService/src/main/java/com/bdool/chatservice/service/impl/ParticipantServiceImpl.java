@@ -24,7 +24,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,13 +45,14 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantEntity save(ParticipantModel participant) {
         UUID participantId = UUIDUtil.getOrCreateUUID(participant.getParticipantId());
         ParticipantEntity newParticipant = participantRepository.save(
-                ParticipantEntity.builder()
-                        .participantId(participantId)
-                        .nickname(participant.getNickname())
-                        .favorited(participant.isFavorited())
-                        .joinedAt(LocalDateTime.now())
-                        .channelId(participant.getChannelId())
-                        .build()
+                        ParticipantEntity.builder()
+                                .participantId(participantId)
+                                .channelId(participant.getChannelId())
+                                .isOnline(true)
+                                .joinedAt(LocalDateTime.now())
+                                .nickname(participant.getNickname())
+                                .profileId(participant.getProfileId())
+                                .build());
         );
         sendJoinNotificationToChannelParticipants(participant.getChannelId(), participant);
 
@@ -79,7 +79,6 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantEntity update(UUID participantId, ParticipantModel participant) {
         return participantRepository.findById(participantId).map(existingMember -> {
             existingMember.setChannelId(participant.getChannelId());
-            existingMember.setFavorited(participant.isFavorited());
             existingMember.setNickname(participant.getNickname());
             existingMember.setParticipantId(participant.getParticipantId());
 
