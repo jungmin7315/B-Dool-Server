@@ -35,4 +35,6 @@ public class ChannelEntity {
     private Long profileId; // 받아야 하는 필드
 
     private ChannelType channelType; // 받아야 하는 필드
+
+    private Long dmRequestId; //DM 요청한 프로필 id 필드
 }

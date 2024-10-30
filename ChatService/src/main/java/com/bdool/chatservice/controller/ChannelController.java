@@ -19,7 +19,6 @@ import java.util.UUID;
 public class ChannelController {
 
     private final ChannelService channelService;
-    private final ParticipantService participantService;
 
     // 채널 생성
     @PostMapping("")
