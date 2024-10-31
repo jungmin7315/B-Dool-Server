@@ -28,8 +28,9 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'chmod +x ./gradlew'  // gradlew에 실행 권한 부여
-                sh './gradlew clean build'
+                // gradlew 파일의 절대 경로 또는 상대 경로를 ChatService로 지정
+                sh 'chmod +x ChatService/gradlew'
+                sh 'ChatService/gradlew clean build'
             }
         }
 
@@ -37,7 +38,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                        def dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", '.')
+                        def dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", 'ChatService')
                         dockerImage.push()
                         dockerImage.push("latest")
                     }
