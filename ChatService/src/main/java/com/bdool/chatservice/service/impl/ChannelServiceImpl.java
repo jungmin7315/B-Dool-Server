@@ -42,7 +42,9 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         // ChannelEntity 생성
+        UUID channelId = UUIDUtil.getOrCreateUUID(channelModel.getChannelId());
         ChannelEntity channelEntity = ChannelEntity.builder()
+                .channelId(channelId)
                 .name(channelModel.getName())
                 .description(channelModel.getDescription())
                 .isPrivate(channelModel.getIsPrivate() != null ? channelModel.getIsPrivate() : true) // 기본값 설정
