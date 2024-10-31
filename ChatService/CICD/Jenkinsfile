@@ -1,5 +1,43 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'jenkins-agent'
+            defaultContainer 'jnlp'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              labels:
+                jenkins-agent: true
+            spec:
+              containers:
+              - name: jnlp
+                image: jenkins/inbound-agent:3273.v4cfe589b_fd83-1
+                args:
+                - \${computer.jnlpmac}
+                - \${computer.name}
+                resources:
+                  requests:
+                    memory: "1Gi"
+                    cpu: "500m"
+                  limits:
+                    memory: "1Gi"
+                    cpu: "1"
+              - name: docker
+                image: docker:latest
+                command:
+                - cat
+                tty: true
+                volumeMounts:
+                - name: docker-sock
+                  mountPath: /var/run/docker.sock
+            volumes:
+            - name: docker-sock
+              hostPath:
+                path: /var/run/docker.sock
+            """
+        }
+    }
 
     environment {
         DOCKER_CREDENTIALS_ID = 'jungmin-docker'
