@@ -22,6 +22,8 @@ public interface ParticipantService {
 
     boolean existsById(UUID participantId);
 
+    boolean isParticipantInChannel(UUID channelId, Long profileId);
+
     long count();
 
     void deleteById(UUID participantId);
