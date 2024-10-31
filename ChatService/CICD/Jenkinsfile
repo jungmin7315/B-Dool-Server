@@ -1,31 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-            // Pod Template 설정
-            label 'jenkins-agent'
-            defaultContainer 'jnlp'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            metadata:
-              labels:
-                jenkins-agent: true
-            spec:
-              containers:
-              - name: jnlp
-                image: jenkins/inbound-agent:3273.v4cfe589b_fd83-1
-                resourceRequests:
-                  memory: "1Gi"
-                  cpu: "1"
-                resourceLimits:
-                  memory: "1Gi"
-                  cpu: "1"
-                args:
-                - \${computer.jnlpmac}
-                - \${computer.name}
-            """
-        }
-    }
+    agent any
 
     environment {
         DOCKER_CREDENTIALS_ID = 'jungmin-docker'
