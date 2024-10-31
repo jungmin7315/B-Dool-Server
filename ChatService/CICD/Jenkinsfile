@@ -2,18 +2,29 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'jungmin-docker'  // Docker Hub 자격증명 ID
-        REPO_URL = 'https://github.com/your-repo/ChatService.git'
+        DOCKER_CREDENTIALS_ID = 'jungmin-docker'
+        REPO_URL = 'https://github.com/jungmin7315/B-Dool-Server.git'
         DOCKER_HUB_URL = 'jungmin7315'
         IMAGE_NAME = "${DOCKER_HUB_URL}/chat-service"
+        KUBECONFIG_PATH = '/root/.kube/kubeconfig'
     }
 
     options {
-        skipStagesAfterUnstable() // 이전 단계에서 실패할 경우 후속 스테이지를 건너뜁니다.
-        timestamps() // 로그에 타임스탬프 추가
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        // 다른 옵션이 필요하면 여기 추가
     }
 
     stages {
+        stage('Setup') {
+            steps {
+                script {
+                    wrap([$class: 'TimestamperBuildWrapper']) {
+                        echo 'Setting up environment with timestamps...'
+                    }
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'master', url: "${REPO_URL}"
@@ -22,10 +33,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Gradle 캐시를 사용하여 빌드 최적화
-                cache(path: '.gradle', key: 'gradle-cache-${BUILD_NUMBER}', shared: true) {
-                    sh './gradlew clean build'
-                }
+                sh './gradlew clean build'
             }
         }
 
@@ -45,10 +53,9 @@ pipeline {
             steps {
                 echo 'Deploying ChatService to Kubernetes...'
                 withKubeConfig([credentialsId: 'kubernetes-credentials']) {
-                    // 배포 상태 확인을 포함하여 이미지 업데이트
                     sh """
-                    kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
-                    kubectl rollout status deployment/chat-service -n default
+                        kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+                        kubectl rollout status deployment/chat-service -n default
                     """
                 }
             }
@@ -58,11 +65,9 @@ pipeline {
     post {
         success {
             echo 'ChatService가 성공적으로 빌드, 푸시 및 배포되었습니다.'
-            // 필요시 Slack 또는 이메일로 성공 알림 추가
         }
         failure {
             echo '빌드 또는 푸시 실패!'
-            // 필요시 Slack 또는 이메일로 실패 알림 추가
         }
     }
 }
