@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'      // Jenkins에 등록한 Docker Hub 자격증명 ID
+        REPO_URL = 'https://github.com/your-repo/ChatService.git' // Git 리포지토리 URL
+        DOCKER_HUB_URL = 'jungmin7315'           // Docker Hub 사용자 이름
+        IMAGE_NAME = "${DOCKER_HUB_URL}/chat-service"         // Docker Hub에 푸시할 이미지 이름
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Git 리포지토리에서 코드를 체크아웃
+                git branch: 'master', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Gradle을 사용하여 빌드
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
+                        docker.build("${IMAGE_NAME}:latest", '.').push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying ChatService to Kubernetes...'
+                withKubeConfig([credentialsId: 'kubernetes-credentials']) {
+                    sh 'kubectl apply -f CICD/deploy.yaml'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'ChatService가 성공적으로 빌드 및 푸시되었습니다.'
+        }
+        failure {
+            echo '빌드 또는 푸시 실패!'
+        }
+    }
+}
