@@ -75,4 +75,9 @@ public class ParticipantController {
     public ResponseEntity<Void> updateNickname(@PathVariable Long profileId, @RequestParam String nickname) {
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{profileId}/profileUrl")
+    public ResponseEntity<Void> updateProfileUrl(@PathVariable Long profileId, @RequestParam String profileUrl) {
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -20,4 +20,6 @@ public class ParticipantModel {
     private Boolean isOnline;
 
     private Long profileId;
+
+    private String profileURL;
 }

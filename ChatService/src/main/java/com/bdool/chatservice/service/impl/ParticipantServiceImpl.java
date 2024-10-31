@@ -15,6 +15,7 @@ import com.bdool.chatservice.service.ParticipantService;
 import com.bdool.chatservice.sse.ParticipantSSEService;
 import com.bdool.chatservice.sse.model.ParticipantNicknameResponse;
 import com.bdool.chatservice.sse.model.ParticipantOnlineResponse;
+import com.bdool.chatservice.sse.model.ParticipantPorfileUrlResponse;
 import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,7 @@ public class ParticipantServiceImpl implements ParticipantService {
                                 .joinedAt(LocalDateTime.now())
                                 .nickname(participant.getNickname())
                                 .profileId(participant.getProfileId())
+                                .profileURL(participant.getProfileURL())
                                 .build()
         );
         sendJoinNotificationToChannelParticipants(participant.getChannelId(), participant);
@@ -80,6 +82,7 @@ public class ParticipantServiceImpl implements ParticipantService {
         return participantRepository.findById(participantId).map(existingMember -> {
             existingMember.setChannelId(participant.getChannelId());
             existingMember.setNickname(participant.getNickname());
+            existingMember.setProfileURL(participant.getProfileURL());
             existingMember.setParticipantId(participant.getParticipantId());
 
             return participantRepository.save(existingMember);
@@ -146,6 +149,18 @@ public class ParticipantServiceImpl implements ParticipantService {
             sseService.notifyNicknameChange(participantNicknameResponse);
         }
     }
+    @Override
+    public void updatePorfileURL(Long profileId, String profileURL) {
+        List<ParticipantEntity> participants = participantRepository.findParticipantEntitiesByProfileId(profileId);
 
+        for (ParticipantEntity participant : participants) {
+            participant.updateProfileURL(profileURL);
+            participantRepository.save(participant);
 
+            ParticipantPorfileUrlResponse participantPorfileUrlResponse = new ParticipantPorfileUrlResponse(
+                    profileId, participant.getChannelId(), participant.getProfileURL()
+            );
+            sseService.notifyProfileUrlChange(participantPorfileUrlResponse);
+        }
+    }
 }

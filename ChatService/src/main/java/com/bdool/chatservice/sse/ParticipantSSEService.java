@@ -2,6 +2,7 @@ package com.bdool.chatservice.sse;
 
 import com.bdool.chatservice.sse.model.ParticipantNicknameResponse;
 import com.bdool.chatservice.sse.model.ParticipantOnlineResponse;
+import com.bdool.chatservice.sse.model.ParticipantPorfileUrlResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -53,6 +54,10 @@ public class ParticipantSSEService {
     // 온라인 상태 변경 이벤트를 모든 구독자에게 전송
     public void notifyOnlineChange(ParticipantOnlineResponse participantOnlineResponse) {
         sendEventToAllEmitters("online-status-change", participantOnlineResponse);
+    }
+
+    public void notifyProfileUrlChange(ParticipantPorfileUrlResponse participantPorfileUrlResponse) {
+        sendEventToAllEmitters("profileUrl-change", participantPorfileUrlResponse);
     }
 
     private void sendEventToAllEmitters(String eventName, Object data) {

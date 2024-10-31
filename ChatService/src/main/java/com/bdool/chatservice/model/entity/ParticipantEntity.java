@@ -29,11 +29,17 @@ public class ParticipantEntity {
 
     private Long profileId;
 
+    private String profileURL;
+
     public void updateOnline(Boolean isOnline) {
         this.isOnline = isOnline;
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateProfileURL(String profileURL) {
+        this.profileURL = profileURL;
     }
 }

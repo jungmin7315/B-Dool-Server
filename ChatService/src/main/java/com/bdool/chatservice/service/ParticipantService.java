@@ -29,4 +29,6 @@ public interface ParticipantService {
     void updateOnline(Long profileId, Boolean isOnline);
 
     void updateNickname(Long profileId, String nickname);
+
+    void updatePorfileURL(Long profileId, String profileURL);
 }

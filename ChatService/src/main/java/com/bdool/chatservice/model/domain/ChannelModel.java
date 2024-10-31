@@ -27,6 +27,8 @@ public class ChannelModel {
 
     private Long profileId; // 생성자의 프로필 ID, 필수 필드
 
+    private String profileURl; // 생성자의 프로필 URL, 필수 필드
+
     private String nickname; // 생성자의 닉네임
 
     private ChannelType channelType; // 채널 타입 (기본, 커스텀, DM 등)
