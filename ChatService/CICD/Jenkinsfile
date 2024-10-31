@@ -11,17 +11,12 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
-        // 다른 옵션이 필요하면 여기 추가
     }
 
     stages {
         stage('Setup') {
             steps {
-                script {
-                    wrap([$class: 'TimestamperBuildWrapper']) {
-                        echo 'Setting up environment with timestamps...'
-                    }
-                }
+                echo 'Setting up environment with timestamps...'
             }
         }
 
@@ -33,6 +28,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'chmod +x ./gradlew'  // gradlew에 실행 권한 부여
                 sh './gradlew clean build'
             }
         }
