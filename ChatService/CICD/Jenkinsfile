@@ -27,8 +27,8 @@ spec:
     image: gcr.io/kaniko-project/executor:latest
     args: ["--dockerfile=Dockerfile",
            "--context=dir:///home/jenkins/agent/ChatService",
-           "--destination=${DOCKER_HUB_URL}/chat-service:${BUILD_NUMBER}",
-           "--destination=${DOCKER_HUB_URL}/chat-service:latest"]
+           "--destination=\${DOCKER_HUB_URL}/chat-service:\${BUILD_NUMBER}",
+           "--destination=\${DOCKER_HUB_URL}/chat-service:latest"]
     volumeMounts:
     - name: docker-config
       mountPath: /kaniko/.docker/
