@@ -1,18 +1,18 @@
 pipeline {
     agent {
         kubernetes {
-            label 'kaniko-agent'
-            defaultContainer 'kaniko'
+            label 'buildkit-agent'
+            defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: kaniko-agent
+    jenkins/label: buildkit-agent
 spec:
   containers:
   - name: jnlp
-    image: jenkins/inbound-agent:3273.v4cfe589b_fd83-1
+    image: jenkins/inbound-agent:latest
     resources:
       limits:
         memory: 1Gi
@@ -23,21 +23,22 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:latest
-    args: ["--dockerfile=Dockerfile",
-           "--context=dir:///home/jenkins/agent/ChatService",
-           "--destination=\${DOCKER_HUB_URL}/chat-service:\${BUILD_NUMBER}",
-           "--destination=\${DOCKER_HUB_URL}/chat-service:latest"]
+  - name: buildkit
+    image: moby/buildkit:latest
+    securityContext:
+      privileged: true
+    args:
+    - --addr=unix:///run/buildkit/buildkitd.sock
     volumeMounts:
-    - name: docker-config
-      mountPath: /kaniko/.docker/
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
+    - name: buildkit-socket
+      mountPath: /run/buildkit
   volumes:
   - name: workspace-volume
     emptyDir: {}
-  - name: docker-config
-    secret:
-      secretName: docker-registry-credentials
+  - name: buildkit-socket
+    emptyDir: {}
 """
         }
     }
@@ -47,40 +48,40 @@ spec:
         REPO_URL = 'https://github.com/jungmin7315/B-Dool-Server.git'
         DOCKER_HUB_URL = 'jungmin7315'
         IMAGE_NAME = "${DOCKER_HUB_URL}/chat-service"
-        KUBECONFIG_PATH = '/root/.kube/kubeconfig'
-    }
-
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
-        stage('Setup') {
-            steps {
-                echo 'Setting up environment with timestamps...'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 git branch: 'master', url: "${REPO_URL}"
             }
         }
 
-        stage('Build') {
-            steps {
-                dir('ChatService') {
-                    sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                container('kaniko') {
+                container('buildkit') {
                     script {
-                        echo 'Using Kaniko to build and push Docker image...'
+                        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                            sh """
+                            export DOCKER_CONFIG=/kaniko/.docker/
+                            mkdir -p /kaniko/.docker/
+                            echo "{\\"auths\\":{\\"https://index.docker.io/v1/\\":{\\"username\\":\\"$DOCKER_USERNAME\\",\\"password\\":\\"$DOCKER_PASSWORD\\"}}}" > /kaniko/.docker/config.json
+
+                            # Build and push the image using BuildKit
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=./ChatService \
+                                --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
+
+                            # Also tag the latest version
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=./ChatService \
+                                --output type=image,name=${IMAGE_NAME}:latest,push=true
+                            """
+                        }
                     }
                 }
             }
