@@ -1,14 +1,14 @@
 pipeline {
     agent {
         kubernetes {
-            label 'jenkins-agent-docker'
-            defaultContainer 'jnlp'
+            label 'kaniko-agent'
+            defaultContainer 'kaniko'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: jenkins-agent-docker
+    jenkins/label: kaniko-agent
 spec:
   containers:
   - name: jnlp
@@ -23,24 +23,21 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  - name: docker
-    image: docker:latest  # Docker CLI 사용
-    securityContext:
-      privileged: true
-    command:
-    - cat
-    tty: true
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
+    args: ["--dockerfile=Dockerfile",
+           "--context=dir:///home/jenkins/agent/ChatService",
+           "--destination=${DOCKER_HUB_URL}/chat-service:${BUILD_NUMBER}",
+           "--destination=${DOCKER_HUB_URL}/chat-service:latest"]
     volumeMounts:
-    - mountPath: "/var/run/docker.sock"
-      name: docker-sock
-    - mountPath: "/home/jenkins/agent"
-      name: workspace-volume
+    - name: docker-config
+      mountPath: /kaniko/.docker/
   volumes:
   - name: workspace-volume
     emptyDir: {}
-  - name: docker-sock
-    hostPath:
-      path: "/var/run/docker.sock"
+  - name: docker-config
+    secret:
+      secretName: docker-registry-credentials
 """
         }
     }
@@ -81,13 +78,9 @@ spec:
 
         stage('Build Docker Image') {
             steps {
-                container('docker') { // Docker CLI 컨테이너에서 실행
+                container('kaniko') {
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                            def dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", 'ChatService')
-                            dockerImage.push()
-                            dockerImage.push("latest")
-                        }
+                        echo 'Using Kaniko to build and push Docker image...'
                     }
                 }
             }
