@@ -47,7 +47,7 @@ spec:
         DOCKER_CREDENTIALS_ID = 'jungmin-docker'
         REPO_URL = 'https://github.com/jungmin7315/B-Dool-Server.git'
         DOCKER_HUB_URL = 'jungmin7315'
-        IMAGE_NAME = "${DOCKER_HUB_URL}/chat-service"
+        IMAGE_NAME = "${DOCKER_HUB_URL}/chatservice" // chat-service -> chatservice (Docker Hub 레포지토리 이름과 일치시킴)
     }
 
     stages {
@@ -62,7 +62,6 @@ spec:
                 dir('ChatService') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
-                    sh 'ls -R build/libs'
                 }
             }
         }
@@ -75,20 +74,20 @@ spec:
                             sh """
                             export DOCKER_CONFIG=/kaniko/.docker/
                             mkdir -p /kaniko/.docker/
-                            echo "{\\"auths\\":{\\"https://index.docker.io/v1/\\":{\\"username\\":\\"$DOCKER_USERNAME\\",\\"password\\":\\"$DOCKER_PASSWORD\\"}}}" > /kaniko/.docker/config.json
+                            echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
 
                             # Build and push the image using BuildKit
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
-                                --local dockerfile=./ChatService \
+                                --local dockerfile=./ChatService/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             # Also tag the latest version
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
-                                --local dockerfile=./ChatService \
+                                --local dockerfile=./ChatService/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
