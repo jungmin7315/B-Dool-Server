@@ -25,5 +25,5 @@ public class MessageModel {
 
     private Long profileId;
 
-    private String fileURL;
+    private String fileUrl;
 }
