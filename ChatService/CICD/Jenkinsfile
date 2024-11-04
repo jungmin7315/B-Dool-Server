@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'jenkins-agent-docker' // Docker가 설치된 에이전트 라벨
+        }
+    }
 
     environment {
         DOCKER_CREDENTIALS_ID = 'jungmin-docker'
@@ -28,7 +32,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir('ChatService') { // ChatService 디렉토리에서 빌드 수행
+                dir('ChatService') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
                 }
