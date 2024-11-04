@@ -62,6 +62,7 @@ spec:
                 dir('ChatService') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
+                    sh 'ls -R build/libs'
                 }
             }
         }
@@ -79,15 +80,15 @@ spec:
                             # Build and push the image using BuildKit
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=./ChatService/Dockerfile \
+                                --local context=ChatService \
+                                --local dockerfile=ChatService/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             # Also tag the latest version
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=./ChatService/Dockerfile \
+                                --local context=ChatService \
+                                --local dockerfile=ChatService/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
