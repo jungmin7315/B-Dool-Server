@@ -24,15 +24,17 @@ spec:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
   - name: docker
-    image: docker:latest
+    image: docker:19.03-dind
+    securityContext:
+      privileged: true
     command:
-    - cat
+    - dockerd-entrypoint.sh
+    args:
+    - --host=unix:///var/run/docker.sock
     tty: true
     volumeMounts:
     - mountPath: "/var/run/docker.sock"
       name: docker-sock
-    - mountPath: "/home/jenkins/agent"
-      name: workspace-volume
   volumes:
   - name: docker-sock
     hostPath:
