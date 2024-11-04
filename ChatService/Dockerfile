@@ -9,7 +9,7 @@ RUN apk add --no-cache tzdata \
 # 워킹 디렉토리 설정
 WORKDIR /app
 
-COPY ./ChatService/build/libs/*.jar app.jar
+COPY ./build/libs/*.jar app.jar
 
 EXPOSE 8080
 

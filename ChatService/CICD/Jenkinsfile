@@ -57,6 +57,15 @@ spec:
             }
         }
 
+        stage('Build') {
+            steps {
+                dir('ChatService') {
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 container('buildkit') {
