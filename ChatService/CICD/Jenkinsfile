@@ -6,6 +6,9 @@ pipeline {
             yaml """
 apiVersion: v1
 kind: Pod
+metadata:
+  labels:
+    jenkins/label: jenkins-agent-docker
 spec:
   containers:
   - name: jnlp
@@ -21,7 +24,7 @@ spec:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
   - name: docker
-    image: docker:latest  # Docker CLI가 포함된 이미지
+    image: docker:latest
     command:
     - cat
     tty: true

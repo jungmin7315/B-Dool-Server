@@ -70,8 +70,9 @@ public class FileStorageServiceImpl implements FileStorageService {
             return FileType.VIDEO;
         } else if (ALLOWED_AUDIO_EXTENSIONS.contains(extension.toLowerCase())) {
             return FileType.AUDIO;
+        } else {
+            return FileType.OTHER; // 기본값으로 OTHER 반환
         }
-        throw new FileStorageException("Invalid file type for extension: " + extension);
     }
 
     @Override
