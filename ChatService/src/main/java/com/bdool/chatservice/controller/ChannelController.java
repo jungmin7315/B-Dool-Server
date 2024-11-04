@@ -27,7 +27,7 @@ public class ChannelController {
     }
 
     // 채널 업데이트 (profileId와 channelId 모두 경로에서 받음)
-    @PutMapping("/{channelId}/profile/{profileId}")
+    @PatchMapping("/{channelId}/profile/{profileId}")
     public ResponseEntity<?> update(@PathVariable UUID channelId,
                                     @PathVariable UUID profileId,
                                     @RequestBody ChannelModel channel) {

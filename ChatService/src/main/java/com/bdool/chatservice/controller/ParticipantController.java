@@ -22,7 +22,7 @@ public class ParticipantController {
         return ResponseEntity.ok(participantService.save(participant));
     }
 
-    @PutMapping("/{participantId}")
+    @PatchMapping("/{participantId}")
     public ResponseEntity<?> update(@PathVariable UUID participantId, @RequestBody ParticipantModel member) {
         return ResponseEntity.ok(participantService.update(participantId, member));
     }

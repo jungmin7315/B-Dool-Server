@@ -34,7 +34,7 @@ public class FileController {
         return ResponseEntity.ok(storedFile);
     }
 
-    @PutMapping("/update/{fileId}")
+    @PatchMapping("/update/{fileId}")
     public ResponseEntity<?> updateFile(
             @PathVariable UUID fileId,
             @RequestParam("file") MultipartFile newFile) {

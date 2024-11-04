@@ -1,7 +1,38 @@
 pipeline {
     agent {
         kubernetes {
-            label 'jenkins-agent-docker' // Docker가 설치된 에이전트 라벨
+            label 'jenkins-agent-docker'
+            defaultContainer 'jnlp'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: jenkins/inbound-agent:3273.v4cfe589b_fd83-1
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1
+      requests:
+        memory: 1Gi
+        cpu: 1
+    volumeMounts:
+    - mountPath: "/var/run/docker.sock"
+      name: docker-sock
+  - name: docker
+    image: docker:latest  # Docker CLI가 포함된 이미지
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: "/var/run/docker.sock"
+      name: docker-sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: "/var/run/docker.sock"
+"""
         }
     }
 
@@ -41,11 +72,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                        def dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", 'ChatService')
-                        dockerImage.push()
-                        dockerImage.push("latest")
+                container('docker') { // Docker 컨테이너에서 실행
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
+                            def dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", 'ChatService')
+                            dockerImage.push()
+                            dockerImage.push("latest")
+                        }
                     }
                 }
             }
