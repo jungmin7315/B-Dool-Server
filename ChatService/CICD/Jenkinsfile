@@ -64,6 +64,7 @@ spec:
                     sh './gradlew clean build'
                     sh 'ls -R build/libs'
                     sh 'pwd'
+                    sh 'ls -al'
                 }
             }
         }
