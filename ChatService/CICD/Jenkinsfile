@@ -114,14 +114,14 @@ spec:
                     withCredentials([string(credentialsId: 'ncloud_access_key', variable: 'NCLOUD_ACCESS_KEY'),
                                      string(credentialsId: 'ncloud_secret_key', variable: 'NCLOUD_SECRET_KEY')]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
-                            sh """
+                            sh '''
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
                                 /var/jenkins_home/ncp-iam-authenticator token --clusterUuid <cluster-uuid> --region KR > /var/jenkins_home/token
-                                kubectl get pods
-                                kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
-                                kubectl rollout status deployment/chat-service -n default
-                            """
+                                /var/jenkins_home/kubectl get pods
+                                /var/jenkins_home/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+                                /var/jenkins_home/kubectl rollout status deployment/chat-service -n default
+                            '''
                         }
                     }
                 }
