@@ -72,25 +72,31 @@ spec:
                     script {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            echo "Checking directory structure at /home/jenkins/agent/workspace:"
-                            ls -R /home/jenkins/agent/workspace  # 전체 디렉토리 구조 확인
+                            echo "Current directory contents at /home/jenkins/agent/workspace/bdool:"
+                            ls -R /home/jenkins/agent/workspace/bdool  # 전체 디렉토리 구조 확인
 
                             export DOCKER_CONFIG=/kaniko/.docker/
                             mkdir -p /kaniko/.docker/
                             echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
 
-                            # Build and push the image using BuildKit
+                            # Dockerfile 복사
+                            cp /home/jenkins/agent/workspace/bdool/ChatService/Dockerfile /home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile
+                            echo "Dockerfile 복사 완료. 다음은 복사된 Dockerfile의 위치입니다:"
+                            ls -l /home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile
+
+                            # Build and push the image using BuildKit with copied Dockerfile
+                            echo "Starting BuildKit build with copied Dockerfile..."
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=/home/jenkins/agent/workspace/bdool/ChatService \
-                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/Dockerfile \
+                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
-                            # Also tag the latest version
+                            echo "First build completed. Starting tag as latest..."
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=/home/jenkins/agent/workspace/bdool/ChatService \
-                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/Dockerfile \
+                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
