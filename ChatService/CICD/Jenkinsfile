@@ -35,7 +35,7 @@ spec:
     - name: buildkit-socket
       mountPath: /run/buildkit
   - name: kubectl
-    image: bitnami/kubectl:latest  # kubectl이 설치된 이미지를 지정
+    image: bitnami/kubectl:latest
     command:
     - cat
     tty: true
@@ -110,12 +110,19 @@ spec:
         stage('Deploy') {
             steps {
                 echo 'Deploying ChatService to Kubernetes...'
-                container('kubectl') {  // kubectl 컨테이너 사용
-                    withKubeConfig([credentialsId: 'jungmin-kube']) {
-                        sh """
-                            kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
-                            kubectl rollout status deployment/chat-service -n default
-                        """
+                container('kubectl') {
+                    withCredentials([string(credentialsId: 'ncloud_access_key', variable: 'NCLOUD_ACCESS_KEY'),
+                                     string(credentialsId: 'ncloud_secret_key', variable: 'NCLOUD_SECRET_KEY')]) {
+                        withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
+                            sh """
+                                export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
+                                export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
+                                /var/jenkins_home/ncp-iam-authenticator token --clusterUuid <cluster-uuid> --region KR > /var/jenkins_home/token
+                                kubectl get pods
+                                kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+                                kubectl rollout status deployment/chat-service -n default
+                            """
+                        }
                     }
                 }
             }
