@@ -49,8 +49,9 @@ spec:
     - sh
     - -c
     - |
-      curl -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64
-      chmod +x /home/jenkins/agent/ncp-iam-authenticator
+    set -x  # 디버그 모드 활성화
+    curl -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || echo "Download failed"
+    chmod +x /home/jenkins/agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
     emptyDir: {}
