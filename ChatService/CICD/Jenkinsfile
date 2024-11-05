@@ -51,19 +51,11 @@ spec:
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: "${REPO_URL}"
-                sh 'ls -R' // 디렉토리 구조 확인
-            }
-        }
-
         stage('Build') {
             steps {
                 dir('ChatService'){
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
-                    sh 'ls -R build/libs'
                 }
             }
         }
@@ -74,8 +66,8 @@ spec:
                     script {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            echo "Current directory contents:"
-                            ls -R  # 현재 디렉토리와 모든 하위 디렉토리의 파일 목록을 출력합니다.
+                            echo "Current directory contents at /home/jenkins/agent:"
+                            ls -R /home/jenkins/agent  # /home/jenkins/agent 내 파일 목록 출력
 
                             export DOCKER_CONFIG=/kaniko/.docker/
                             mkdir -p /kaniko/.docker/
@@ -84,15 +76,15 @@ spec:
                             # Build and push the image using BuildKit
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=Dockerfile \
+                                --local context=/home/jenkins/agent \
+                                --local dockerfile=/home/jenkins/agent/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             # Also tag the latest version
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=Dockerfile \
+                                --local context=/home/jenkins/agent \
+                                --local dockerfile=/home/jenkins/agent/Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
