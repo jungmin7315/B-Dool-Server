@@ -111,7 +111,7 @@ spec:
         stage('Deploy') {
             steps {
                 echo 'Deploying ChatService to Kubernetes...'
-                withKubeConfig([credentialsId: 'kubernetes-credentials']) {
+                withKubeConfig([credentialsId: 'jungmin-kube']) {
                     sh """
                         kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
                         kubectl rollout status deployment/chat-service -n default
