@@ -1,15 +1,16 @@
 pipeline {
     agent {
         kubernetes {
-            inheritFrom 'buildkit-agent' // 기존 템플릿을 상속받습니다.
+            label 'kubernetes-CICD'
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: buildkit-agent  # buildkit-agent라는 템플릿을 상속받음
+    jenkins/label: kubernetes-CICD
 spec:
+  ttlSecondsAfterFinished: 600  # 작업 종료 후 10분 동안 파드를 유지합니다.
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
@@ -40,7 +41,6 @@ spec:
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
-    - name: buildkit-socket
       mountPath: /run/buildkit
   initContainers:
   - name: install-ncp-iam-authenticator
@@ -87,29 +87,23 @@ spec:
             steps {
                 dir('ChatService') {
                     container('buildkit') {
-                        script {
-                            withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                                sh """
-                                export DOCKER_CONFIG=/kaniko/.docker/
-                                mkdir -p /kaniko/.docker/
-                                echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
+                        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                            sh """
+                            cp Dockerfile copied_Dockerfile
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=. \
+                                --opt filename=copied_Dockerfile \
+                                --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
-                                cp Dockerfile copied_Dockerfile
-                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                    --frontend dockerfile.v0 \
-                                    --local context=. \
-                                    --local dockerfile=. \
-                                    --opt filename=copied_Dockerfile \
-                                    --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
-
-                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                    --frontend dockerfile.v0 \
-                                    --local context=. \
-                                    --local dockerfile=. \
-                                    --opt filename=copied_Dockerfile \
-                                    --output type=image,name=${IMAGE_NAME}:latest,push=true
-                                """
-                            }
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=. \
+                                --opt filename=copied_Dockerfile \
+                                --output type=image,name=${IMAGE_NAME}:latest,push=true
+                            """
                         }
                     }
                 }
@@ -127,19 +121,12 @@ spec:
                     ]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh """
-                                #!/bin/bash
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
-                                echo "Starting token generation..."
                                 /home/jenkins/agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
 
-                                echo "Checking pods..."
                                 /home/jenkins/agent/kubectl get pods
-
-                                echo "Updating image..."
                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
-
-                                echo "Checking rollout status..."
                                 /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
                             """
                         }
@@ -151,10 +138,10 @@ spec:
 
     post {
         success {
-            echo 'ChatService가 성공적으로 빌드, 푸시 및 배포되었습니다.'
+            echo 'ChatService successfully built, pushed, and deployed.'
         }
         failure {
-            echo '빌드 또는 푸시 실패!'
+            echo 'Build or push failed.'
         }
     }
 }
