@@ -10,7 +10,7 @@ metadata:
   labels:
     jenkins/label: kubernetes-CICD
 spec:
-  ttlSecondsAfterFinished: 600  # 작업 종료 후 10분 동안 파드를 유지합니다.
+  ttlSecondsAfterFinished: 600
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
@@ -124,7 +124,7 @@ spec:
                             sh """
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
-                                /home/jenkins/agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
+                                /tmp/jenkins-agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
 
                                 /home/jenkins/agent/kubectl get pods
                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
