@@ -1,14 +1,14 @@
 pipeline {
     agent {
         kubernetes {
-            label 'kubernetes-CICD'
+            inheritFrom 'buildkit-agent' // 기존 템플릿을 상속받습니다.
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: kubernetes-CICD
+    jenkins/label: buildkit-agent  # buildkit-agent라는 템플릿을 상속받음
 spec:
   containers:
   - name: jnlp
