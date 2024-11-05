@@ -118,6 +118,14 @@ spec:
                     ]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh '''
+                                #!/bin/bash
+                                echo "NCLOUD_ACCESS_KEY: ${NCLOUD_ACCESS_KEY}"
+                                echo "NCLOUD_SECRET_KEY: ${NCLOUD_SECRET_KEY}"
+                                echo "CLUSTER_UUID: ${CLUSTER_UUID}"
+                                ls -l /var/jenkins_home/kubectl
+                                ls -l /var/jenkins_home/ncp-iam-authenticator
+                                chmod +x /var/jenkins_home/kubectl
+                                chmod +x /var/jenkins_home/ncp-iam-authenticator
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
                                 /var/jenkins_home/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /var/jenkins_home/token
