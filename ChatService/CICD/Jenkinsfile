@@ -1,15 +1,16 @@
 pipeline {
     agent {
         kubernetes {
-            label 'buildkit-agent'
+            label 'kubernetes-CICD'
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: buildkit-agent
+    jenkins/label: kubernetes-CICD
 spec:
+  ttlSecondsAfterFinished: 600
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
@@ -31,17 +32,20 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  initContainers:
-  - name: install-ncp-iam-authenticator
-    image: bitnami/kubectl:latest
-    command:
-    - sh
-    - -c
-    - |
-      curl -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64
-      chmod +x /home/jenkins/agent/ncp-iam-authenticator
+  - name: buildkit
+    image: moby/buildkit:latest
+    securityContext:
+      privileged: true
+    args:
+    - --addr=unix:///run/buildkit/buildkitd.sock
+    volumeMounts:
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
+      mountPath: /run/buildkit
   volumes:
   - name: workspace-volume
+    emptyDir: {}
+  - name: buildkit-socket
     emptyDir: {}
 """
         }
@@ -74,27 +78,23 @@ spec:
             steps {
                 dir('ChatService') {
                     container('buildkit') {
-                        script {
-                            withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                                sh """
-                                export DOCKER_CONFIG=/kaniko/.docker/
-                                mkdir -p /kaniko/.docker/
-                                echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
-                                cp Dockerfile copied_Dockerfile
-                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                    --frontend dockerfile.v0 \
-                                    --local context=. \
-                                    --local dockerfile=. \
-                                    --opt filename=copied_Dockerfile \
-                                    --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
-                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                    --frontend dockerfile.v0 \
-                                    --local context=. \
-                                    --local dockerfile=. \
-                                    --opt filename=copied_Dockerfile \
-                                    --output type=image,name=${IMAGE_NAME}:latest,push=true
-                                """
-                            }
+                        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                            sh """
+                            cp Dockerfile copied_Dockerfile
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=. \
+                                --opt filename=copied_Dockerfile \
+                                --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
+
+                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                --frontend dockerfile.v0 \
+                                --local context=. \
+                                --local dockerfile=. \
+                                --opt filename=copied_Dockerfile \
+                                --output type=image,name=${IMAGE_NAME}:latest,push=true
+                            """
                         }
                     }
                 }
@@ -112,10 +112,7 @@ spec:
                     ]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh """
-                                #!/bin/bash
-                                export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
-                                export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
-                                /home/jenkins/agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
+                                # Kubernetes 배포 스크립트
                                 /home/jenkins/agent/kubectl get pods
                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
                                 /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
@@ -129,10 +126,10 @@ spec:
 
     post {
         success {
-            echo 'ChatService가 성공적으로 빌드, 푸시 및 배포되었습니다.'
+            echo 'ChatService successfully built, pushed, and deployed.'
         }
         failure {
-            echo '빌드 또는 푸시 실패!'
+            echo 'Build or push failed.'
         }
     }
 }
