@@ -62,6 +62,9 @@ spec:
                 dir('ChatService') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
+
+                    // Build 결과 확인
+                    sh 'echo "Build output:" && ls -R build/libs/'
                 }
             }
         }
@@ -73,9 +76,6 @@ spec:
                         script {
                             withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                                 sh """
-                                echo "Current directory contents:"
-                                ls -R # 전체 디렉토리 구조 확인
-
                                 export DOCKER_CONFIG=/kaniko/.docker/
                                 mkdir -p /kaniko/.docker/
                                 echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
