@@ -71,8 +71,8 @@ spec:
 
         stage('Build Docker Image') {
             steps {
-                dir('ChatService') {
-                    container('buildkit') {
+                container('buildkit') {
+                    dir('ChatService') {
                         script {
                             withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                                 sh """
