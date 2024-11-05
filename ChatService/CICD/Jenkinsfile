@@ -54,19 +54,15 @@ spec:
         stage('Checkout') {
             steps {
                 git branch: 'master', url: "${REPO_URL}"
-                dir('ChatService') {
-                    sh 'ls -R' // Display directory structure
-                }
+                sh 'ls -R' // 디렉토리 구조 확인
             }
         }
 
         stage('Build') {
             steps {
-                dir('ChatService') {
-                    sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
-                    sh 'ls -R build/libs'
-                }
+                sh 'chmod +x gradlew'
+                sh './gradlew clean build'
+                sh 'ls -R build/libs'
             }
         }
 
@@ -84,14 +80,14 @@ spec:
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
-                                --local dockerfile=ChatService/Dockerfile \
+                                --local dockerfile=Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             # Also tag the latest version
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
-                                --local dockerfile=ChatService/Dockerfile \
+                                --local dockerfile=Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
