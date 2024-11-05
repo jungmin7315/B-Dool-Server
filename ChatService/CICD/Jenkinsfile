@@ -80,10 +80,6 @@ spec:
                     container('buildkit') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            # Docker 인증 정보 설정
-                            echo '{"auths":{"https://index.docker.io/v1/":{"username":"${DOCKER_USERNAME}","password":"${DOCKER_PASSWORD}"}}}' > /kaniko/.docker/config.json
-
-                            # Docker 이미지 빌드 및 푸시
                             cp Dockerfile copied_Dockerfile
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
@@ -91,7 +87,6 @@ spec:
                                 --local dockerfile=. \
                                 --opt filename=copied_Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
-
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
