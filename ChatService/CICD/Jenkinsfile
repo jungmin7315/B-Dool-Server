@@ -89,14 +89,16 @@ spec:
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=/home/jenkins/agent/workspace/bdool/ChatService \
-                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile \
+                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService \
+                                --opt filename=copied_Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             echo "First build completed. Starting tag as latest..."
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=/home/jenkins/agent/workspace/bdool/ChatService \
-                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService/copied_Dockerfile \
+                                --local dockerfile=/home/jenkins/agent/workspace/bdool/ChatService \
+                                --opt filename=copied_Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
@@ -104,6 +106,7 @@ spec:
                 }
             }
         }
+
 
         stage('Deploy') {
             steps {
