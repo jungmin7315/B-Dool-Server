@@ -74,6 +74,9 @@ spec:
                     script {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
+                            echo "Current directory contents:"
+                            ls -R  # 현재 디렉토리와 모든 하위 디렉토리의 파일 목록을 출력합니다.
+
                             export DOCKER_CONFIG=/kaniko/.docker/
                             mkdir -p /kaniko/.docker/
                             echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
@@ -81,15 +84,15 @@ spec:
                             # Build and push the image using BuildKit
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=ChatService \
-                                --local dockerfile=ChatService/Dockerfile \
+                                --local context=. \
+                                --local dockerfile=Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
 
                             # Also tag the latest version
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
-                                --local context=ChatService \
-                                --local dockerfile=ChatService/Dockerfile \
+                                --local context=. \
+                                --local dockerfile=Dockerfile \
                                 --output type=image,name=${IMAGE_NAME}:latest,push=true
                             """
                         }
