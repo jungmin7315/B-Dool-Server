@@ -34,8 +34,6 @@ spec:
       name: workspace-volume
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
-    args:
-    - ""
     volumeMounts:
     - name: workspace-volume
       mountPath: /workspace
