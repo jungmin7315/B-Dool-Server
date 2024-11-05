@@ -8,7 +8,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: buildkit-agent
+    jenkins/label: kubernetes-CICD
 spec:
   containers:
   - name: jnlp
@@ -31,6 +31,17 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
+  - name: buildkit
+    image: moby/buildkit:latest
+    securityContext:
+      privileged: true
+    args:
+    - --addr=unix:///run/buildkit/buildkitd.sock
+    volumeMounts:
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
+    - name: buildkit-socket
+      mountPath: /run/buildkit
   initContainers:
   - name: install-ncp-iam-authenticator
     image: bitnami/kubectl:latest
@@ -42,6 +53,8 @@ spec:
       chmod +x /home/jenkins/agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
+    emptyDir: {}
+  - name: buildkit-socket
     emptyDir: {}
 """
         }
