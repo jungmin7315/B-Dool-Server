@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            label 'buildkit-agent'
+            label 'kubernetes-CICD'
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
