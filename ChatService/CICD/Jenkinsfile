@@ -32,21 +32,19 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  - name: buildkit
-    image: moby/buildkit:latest
-    securityContext:
-      privileged: true
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
     args:
-    - --addr=unix:///run/buildkit/buildkitd.sock
+    - ""
     volumeMounts:
     - name: workspace-volume
-      mountPath: /home/jenkins/agent
-    - name: buildkit-socket
-      mountPath: /run/buildkit
+      mountPath: /workspace
+    - name: docker-config
+      mountPath: /kaniko/.docker
   volumes:
   - name: workspace-volume
     emptyDir: {}
-  - name: buildkit-socket
+  - name: docker-config
     emptyDir: {}
 """
         }
@@ -78,29 +76,15 @@ spec:
         stage('Build and Push Docker Image') {
             steps {
                 dir('ChatService') {
-                    container('buildkit') {
+                    container('kaniko') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            # 필요한 디렉터리 생성
-                            mkdir -p /kaniko/.docker
                             # Docker Hub 인증 정보 설정
+                            mkdir -p /kaniko/.docker
                             echo '{ "auths": { "https://index.docker.io/v1/": { "username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'" } } }' > /kaniko/.docker/config.json
 
-                            # BuildKit을 사용하여 Docker 이미지 빌드 및 푸시
-                            cp Dockerfile copied_Dockerfile
-                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=. \
-                                --opt filename=copied_Dockerfile \
-                                --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
-
-                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=. \
-                                --opt filename=copied_Dockerfile \
-                                --output type=image,name=${IMAGE_NAME}:latest,push=true
+                            # Kaniko를 사용하여 Docker 이미지 빌드 및 푸시
+                            /kaniko/executor --dockerfile Dockerfile --context /workspace --destination ${IMAGE_NAME}:${BUILD_NUMBER} --destination ${IMAGE_NAME}:latest
                             """
                         }
                     }
