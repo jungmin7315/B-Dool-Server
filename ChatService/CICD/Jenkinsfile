@@ -51,9 +51,15 @@ spec:
     }
 
     stages {
+        stage('Clone Repository') {
+            steps {
+                git url: "${REPO_URL}", branch: 'main'
+            }
+        }
+
         stage('Build') {
             steps {
-                dir('ChatService'){
+                dir('ChatService') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
                 }
