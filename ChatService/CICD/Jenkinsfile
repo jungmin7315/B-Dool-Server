@@ -43,15 +43,15 @@ spec:
       mountPath: /home/jenkins/agent
       mountPath: /run/buildkit
   initContainers:
-  - name: install-ncp-iam-authenticator
-    image: bitnami/kubectl:latest
-    command:
-    - sh
-    - -c
-    - |
-      mkdir -p /tmp/jenkins-agent
-      curl -f -o /tmp/jenkins-agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || (echo "Download failed" && exit 1)
-      chmod +x /tmp/jenkins-agent/ncp-iam-authenticator
+  # - name: install-ncp-iam-authenticator
+  #   image: bitnami/kubectl:latest
+  #   command:
+  #   - sh
+  #   - -c
+  #   - |
+  #     mkdir -p /tmp/jenkins-agent
+  #     curl -f -o /tmp/jenkins-agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || (echo "Download failed" && exit 1)
+  #     chmod +x /tmp/jenkins-agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -122,9 +122,9 @@ spec:
                     ]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh """
-                                export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
-                                export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
-                                /tmp/jenkins-agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
+                                # export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
+                                # export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
+                                # /tmp/jenkins-agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
 
                                 /home/jenkins/agent/kubectl get pods
                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
