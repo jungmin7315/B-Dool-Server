@@ -22,7 +22,7 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.save(session));
     }
 
-    @PutMapping("/{sessionId}")
+    @PatchMapping("/{sessionId}")
     public ResponseEntity<?> update(@PathVariable UUID sessionId,@RequestBody SessionModel session) {
         return ResponseEntity.ok(sessionService.update(sessionId, session));
     }
