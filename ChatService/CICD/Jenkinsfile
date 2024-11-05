@@ -1,16 +1,15 @@
 pipeline {
     agent {
         kubernetes {
-            label 'kubernetes-CICD'
+            label 'buildkit-agent'
             defaultContainer 'jnlp'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    jenkins/label: kubernetes-CICD
+    jenkins/label: buildkit-agent
 spec:
-  ttlSecondsAfterFinished: 600
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
@@ -32,30 +31,17 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  - name: buildkit
-    image: moby/buildkit:latest
-    securityContext:
-      privileged: true
-    args:
-    - --addr=unix:///run/buildkit/buildkitd.sock
-    volumeMounts:
-    - name: workspace-volume
-      mountPath: /home/jenkins/agent
-      mountPath: /run/buildkit
   initContainers:
-  # - name: install-ncp-iam-authenticator
-  #   image: bitnami/kubectl:latest
-  #   command:
-  #   - sh
-  #   - -c
-  #   - |
-  #     mkdir -p /tmp/jenkins-agent
-  #     curl -f -o /tmp/jenkins-agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || (echo "Download failed" && exit 1)
-  #     chmod +x /tmp/jenkins-agent/ncp-iam-authenticator
+  - name: install-ncp-iam-authenticator
+    image: bitnami/kubectl:latest
+    command:
+    - sh
+    - -c
+    - |
+      curl -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64
+      chmod +x /home/jenkins/agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
-    emptyDir: {}
-  - name: buildkit-socket
     emptyDir: {}
 """
         }
@@ -88,23 +74,27 @@ spec:
             steps {
                 dir('ChatService') {
                     container('buildkit') {
-                        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                            sh """
-                            cp Dockerfile copied_Dockerfile
-                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=. \
-                                --opt filename=copied_Dockerfile \
-                                --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
-
-                            buildctl --addr unix:///run/buildkit/buildkitd.sock build \
-                                --frontend dockerfile.v0 \
-                                --local context=. \
-                                --local dockerfile=. \
-                                --opt filename=copied_Dockerfile \
-                                --output type=image,name=${IMAGE_NAME}:latest,push=true
-                            """
+                        script {
+                            withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                                sh """
+                                export DOCKER_CONFIG=/kaniko/.docker/
+                                mkdir -p /kaniko/.docker/
+                                echo '{"auths":{"https://index.docker.io/v1/":{"username":"$DOCKER_USERNAME","password":"$DOCKER_PASSWORD"}}}' > /kaniko/.docker/config.json
+                                cp Dockerfile copied_Dockerfile
+                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                    --frontend dockerfile.v0 \
+                                    --local context=. \
+                                    --local dockerfile=. \
+                                    --opt filename=copied_Dockerfile \
+                                    --output type=image,name=${IMAGE_NAME}:${BUILD_NUMBER},push=true
+                                buildctl --addr unix:///run/buildkit/buildkitd.sock build \
+                                    --frontend dockerfile.v0 \
+                                    --local context=. \
+                                    --local dockerfile=. \
+                                    --opt filename=copied_Dockerfile \
+                                    --output type=image,name=${IMAGE_NAME}:latest,push=true
+                                """
+                            }
                         }
                     }
                 }
@@ -122,10 +112,10 @@ spec:
                     ]) {
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh """
-                                # export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
-                                # export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
-                                # /tmp/jenkins-agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
-
+                                #!/bin/bash
+                                export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
+                                export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
+                                /home/jenkins/agent/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /home/jenkins/agent/token
                                 /home/jenkins/agent/kubectl get pods
                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
                                 /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
@@ -139,10 +129,10 @@ spec:
 
     post {
         success {
-            echo 'ChatService successfully built, pushed, and deployed.'
+            echo 'ChatService가 성공적으로 빌드, 푸시 및 배포되었습니다.'
         }
         failure {
-            echo 'Build or push failed.'
+            echo '빌드 또는 푸시 실패!'
         }
     }
 }
