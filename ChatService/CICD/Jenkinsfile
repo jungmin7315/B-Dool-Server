@@ -80,7 +80,11 @@ spec:
                     container('buildkit') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
+                            # Docker Hub에 로그인
+                            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+                            # Dockerfile 복사
                             cp Dockerfile copied_Dockerfile
+                            # 이미지 빌드 및 푸시
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
