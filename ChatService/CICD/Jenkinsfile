@@ -128,9 +128,16 @@ spec:
                                 chmod +x /var/jenkins_home/ncp-iam-authenticator
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
+                                echo "Starting token generation..."
                                 /var/jenkins_home/ncp-iam-authenticator token --clusterUuid ${CLUSTER_UUID} --region KR > /var/jenkins_home/token
+
+                                echo "Checking pods..."
                                 /var/jenkins_home/kubectl get pods
+
+                                echo "Updating image..."
                                 /var/jenkins_home/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+
+                                echo "Checking rollout status..."
                                 /var/jenkins_home/kubectl rollout status deployment/chat-service -n default
                             '''
                         }
