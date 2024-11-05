@@ -23,17 +23,6 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
-  - name: buildkit
-    image: moby/buildkit:latest
-    securityContext:
-      privileged: true
-    args:
-    - --addr=unix:///run/buildkit/buildkitd.sock
-    volumeMounts:
-    - name: workspace-volume
-      mountPath: /home/jenkins/agent
-    - name: buildkit-socket
-      mountPath: /run/buildkit
   - name: kubectl
     image: bitnami/kubectl:latest
     command:
@@ -42,10 +31,17 @@ spec:
     volumeMounts:
     - mountPath: "/home/jenkins/agent"
       name: workspace-volume
+  initContainers:
+  - name: install-ncp-iam-authenticator
+    image: bitnami/kubectl:latest
+    command:
+    - sh
+    - -c
+    - |
+      curl -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64
+      chmod +x /home/jenkins/agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
-    emptyDir: {}
-  - name: buildkit-socket
     emptyDir: {}
 """
         }
@@ -119,13 +115,6 @@ spec:
                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
                             sh '''
                                 #!/bin/bash
-                                echo "NCLOUD_ACCESS_KEY: ${NCLOUD_ACCESS_KEY}"
-                                echo "NCLOUD_SECRET_KEY: ${NCLOUD_SECRET_KEY}"
-                                echo "CLUSTER_UUID: ${CLUSTER_UUID}"
-                                mv /var/jenkins_home/kubectl /home/jenkins/agent/kubectl
-                                mv /var/jenkins_home/ncp-iam-authenticator /home/jenkins/agent/ncp-iam-authenticator
-                                chmod +x /home/jenkins/agent/kubectl
-                                chmod +x /home/jenkins/agent/ncp-iam-authenticator
                                 export NCLOUD_ACCESS_KEY=${NCLOUD_ACCESS_KEY}
                                 export NCLOUD_SECRET_KEY=${NCLOUD_SECRET_KEY}
                                 echo "Starting token generation..."
