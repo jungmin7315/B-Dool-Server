@@ -43,15 +43,15 @@ spec:
       mountPath: /home/jenkins/agent
       mountPath: /run/buildkit
   initContainers:
-    - name: install-ncp-iam-authenticator
-      image: bitnami/kubectl:latest
-      command:
-        - sh
-        - -c
-        - |
-          mkdir -p /home/jenkins/agent
-          curl -f -o /home/jenkins/agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || (echo "Download failed" && exit 1)
-          chmod +x /home/jenkins/agent/ncp-iam-authenticator
+  - name: install-ncp-iam-authenticator
+    image: bitnami/kubectl:latest
+    command:
+    - sh
+    - -c
+    - |
+      mkdir -p /tmp/jenkins-agent
+      curl -f -o /tmp/jenkins-agent/ncp-iam-authenticator -LO https://github.com/NaverCloudPlatform/ncp-iam-authenticator/releases/latest/download/ncp-iam-authenticator_linux_amd64 || (echo "Download failed" && exit 1)
+      chmod +x /tmp/jenkins-agent/ncp-iam-authenticator
   volumes:
   - name: workspace-volume
     emptyDir: {}
