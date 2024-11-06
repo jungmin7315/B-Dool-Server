@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProfileMemberIdResponse {
     private String nickname;
-    private String profilePictureUrl;
+    private String profileImgUrl;
     private Long workspaceId;
 }
