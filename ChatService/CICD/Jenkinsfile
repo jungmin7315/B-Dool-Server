@@ -81,8 +81,9 @@ spec:
                     container('buildkit') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            # Docker Hub에 로그인
-                            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                            # Docker Hub 로그인
+                            mkdir -p ~/.docker
+                            echo '{ "auths": { "https://index.docker.io/v1/": { "username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'" } } }' > ~/.docker/config.json
 
                             # Dockerfile 복사
                             cp Dockerfile copied_Dockerfile
