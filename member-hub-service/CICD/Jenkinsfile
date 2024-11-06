@@ -73,7 +73,7 @@ spec:
             steps {
                 dir('member-hub-service') {
                     sh 'chmod +x gradlew'
-                    sh './gradlew clean bootajr'
+                    sh './gradlew clean bootjar'
                 }
             }
         }
