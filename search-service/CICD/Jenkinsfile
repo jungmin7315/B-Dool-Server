@@ -67,9 +67,9 @@ spec:
         }
 
         stage('Build') {
-            when {
-                changeset "search-service/**/*"
-            }
+//             when {
+//                 changeset "search-service/**/*"
+//             }
             steps {
                 dir('search-service') {
                     sh 'chmod +x gradlew'
@@ -79,9 +79,9 @@ spec:
         }
 
         stage('Build and Push Docker Image') {
-            when {
-                changeset "search-service/**/*"
-            }
+//             when {
+//                 changeset "search-service/**/*"
+//             }
             steps {
                 dir('search-service') {
                     container('buildkit') {

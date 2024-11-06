@@ -67,9 +67,9 @@ spec:
         }
 
         stage('Build') {
-            when {
-                changeset "ChatService/**/*"
-            }
+//             when {
+//                 changeset "ChatService/**/*"
+//             }
             steps {
                 dir('ChatService') {
                     sh 'chmod +x gradlew'
@@ -79,9 +79,9 @@ spec:
         }
 
         stage('Build and Push Docker Image') {
-            when {
-                changeset "ChatService/**/*"
-            }
+//             when {
+//                 changeset "ChatService/**/*"
+//             }
             steps {
                 dir('ChatService') {
                     container('buildkit') {
