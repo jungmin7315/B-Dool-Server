@@ -56,7 +56,7 @@ spec:
         DOCKER_CREDENTIALS_ID = 'docker-hub'
         REPO_URL = 'https://github.com/B-Dool/B-Dool-Server.git'
         DOCKER_HUB_URL = 'kang1521'
-        IMAGE_NAME = "${DOCKER_HUB_URL}/chat"
+        IMAGE_NAME = "${DOCKER_HUB_URL}/member"
     }
 
     stages {
@@ -68,10 +68,10 @@ spec:
 
         stage('Build') {
             when {
-                changeset "ChatService/**/*"
+                changeset "member-hub-service/**/*"
             }
             steps {
-                dir('ChatService') {
+                dir('member-hub-service') {
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
                 }
@@ -80,10 +80,10 @@ spec:
 
         stage('Build and Push Docker Image') {
             when {
-                changeset "ChatService/**/*"
+                changeset "member-hub-service/**/*"
             }
             steps {
-                dir('ChatService') {
+                dir('member-hub-service') {
                     container('buildkit') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
@@ -117,7 +117,7 @@ spec:
 
 //         stage('Deploy') {
 //             when {
-//                 changeset "ChatService/**/*"
+//                 changeset "member-hub-service/**/*"
 //             }
 //             steps {
 //                 echo 'Deploying ChatService to Kubernetes...'
