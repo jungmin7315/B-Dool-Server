@@ -114,26 +114,6 @@ spec:
                 }
             }
         }
-
-//         stage('Deploy') {
-//             when {
-//                 changeset "ChatService/**/*"
-//             }
-//             steps {
-//                 withCredentials([
-//                     sshUserPrivateKey(credentialsId: 'remote-ssh-key', keyFileVariable: 'SSH_KEY_PATH'),
-//                     string(credentialsId: 'remote-host', variable: 'REMOTE_HOST')
-//                 ]) {
-//                     sh '''
-//                     # YAML 파일을 Bastion 서버로 전송
-//                     scp -i $SSH_KEY_PATH -o StrictHostKeyChecking=no $DEPLOYMENT_FILE root@$REMOTE_HOST:/tmp/chat-deployment.yaml
-//
-//                     # Bastion 서버에서 kubectl 명령어 실행
-//                     ssh -i $SSH_KEY_PATH -o StrictHostKeyChecking=no root@$REMOTE_HOST 'export KUBECONFIG=/root/.kube/config && kubectl apply -f /tmp/chat-deployment.yaml'
-//                     '''
-//                 }
-//             }
-//         }
     }
 
     post {

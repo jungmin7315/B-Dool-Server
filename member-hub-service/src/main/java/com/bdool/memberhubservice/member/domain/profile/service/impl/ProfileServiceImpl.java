@@ -133,7 +133,7 @@ public class ProfileServiceImpl implements ProfileService {
                 findProfile.getWorkspaceId(),
                 findProfile.getNickname());
         sseService.notifyNicknameChange(profileNicknameResponse);
-//        sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
+        sendNicknameToChannelService(webClient, channelServiceUrl, profileId, findProfile.getNickname());
         return fromEntity(findProfile);
     }
 
@@ -161,7 +161,7 @@ public class ProfileServiceImpl implements ProfileService {
         );
 
         sseService.notifyOnlineChange(profileOnlineResponse);
-//        sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
+        sendOnlineStatusToChannelService(webClient, channelServiceUrl, profileId, isOnline);
 
         return save.getIsOnline();
     }
