@@ -1,0 +1,32 @@
+{
+  "mappings": {
+    "properties": {
+      "channel_id": {
+        "type": "keyword"
+      },
+      "content": {
+        "type": "text"
+      },
+      "send_date": {
+        "type": "date"
+      },
+      "file_URL": {
+        "type": "keyword"
+      },
+      "is_deleted": {
+        "type": "long"
+      },
+      "is_edited": {
+        "type": "long"
+      },
+      "message_id": {
+        "type": "keyword"
+      },
+      "profile_id": {
+        "type": "long"
+      },
+      "parent_message_id": {
+        "type": "keyword"}
+    }
+  }
+}
