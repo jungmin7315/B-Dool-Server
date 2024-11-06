@@ -15,6 +15,7 @@ import com.bdool.chatservice.service.ParticipantService;
 import com.bdool.chatservice.sse.ParticipantSSEService;
 import com.bdool.chatservice.sse.model.ParticipantNicknameResponse;
 import com.bdool.chatservice.sse.model.ParticipantOnlineResponse;
+import com.bdool.chatservice.sse.model.ParticipantPorfileUrlResponse;
 import com.bdool.chatservice.util.UUIDUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,20 +39,22 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final ParticipantSSEService sseService;
     private final ChannelRepository channelRepository;
     private final WebClient webClient;
-//    @Value("${notification-service.url}")
+    @Value("${notification-service.url}")
     private String notificationServiceUrl;
 
     @Override
     public ParticipantEntity save(ParticipantModel participant) {
         UUID participantId = UUIDUtil.getOrCreateUUID(participant.getParticipantId());
         ParticipantEntity newParticipant = participantRepository.save(
-                ParticipantEntity.builder()
-                        .participantId(participantId)
-                        .nickname(participant.getNickname())
-                        .favorited(participant.isFavorited())
-                        .joinedAt(LocalDateTime.now())
-                        .channelId(participant.getChannelId())
-                        .build()
+                        ParticipantEntity.builder()
+                                .participantId(participantId)
+                                .channelId(participant.getChannelId())
+                                .isOnline(true)
+                                .joinedAt(LocalDateTime.now())
+                                .nickname(participant.getNickname())
+                                .profileId(participant.getProfileId())
+                                .profileURL(participant.getProfileURL())
+                                .build()
         );
         sendJoinNotificationToChannelParticipants(participant.getChannelId(), participant);
 
@@ -79,8 +81,8 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantEntity update(UUID participantId, ParticipantModel participant) {
         return participantRepository.findById(participantId).map(existingMember -> {
             existingMember.setChannelId(participant.getChannelId());
-            existingMember.setFavorited(participant.isFavorited());
             existingMember.setNickname(participant.getNickname());
+            existingMember.setProfileURL(participant.getProfileURL());
             existingMember.setParticipantId(participant.getParticipantId());
 
             return participantRepository.save(existingMember);
@@ -106,6 +108,12 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public boolean existsById(UUID participantId) {
         return participantRepository.existsById(participantId);
+    }
+
+    @Override
+    public boolean isParticipantInChannel(UUID channelId, Long profileId) {
+        // profileId와 channelId로 참석자가 있는지 확인합니다.
+        return participantRepository.existsByChannelIdAndProfileId(channelId, profileId);
     }
 
     @Override
@@ -147,6 +155,18 @@ public class ParticipantServiceImpl implements ParticipantService {
             sseService.notifyNicknameChange(participantNicknameResponse);
         }
     }
+    @Override
+    public void updatePorfileURL(Long profileId, String profileURL) {
+        List<ParticipantEntity> participants = participantRepository.findParticipantEntitiesByProfileId(profileId);
 
+        for (ParticipantEntity participant : participants) {
+            participant.updateProfileURL(profileURL);
+            participantRepository.save(participant);
 
+            ParticipantPorfileUrlResponse participantPorfileUrlResponse = new ParticipantPorfileUrlResponse(
+                    profileId, participant.getChannelId(), participant.getProfileURL()
+            );
+            sseService.notifyProfileUrlChange(participantPorfileUrlResponse);
+        }
+    }
 }

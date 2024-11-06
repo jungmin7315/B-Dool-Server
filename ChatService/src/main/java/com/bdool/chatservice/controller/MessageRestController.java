@@ -27,7 +27,7 @@ public class MessageRestController {
     }
 
     // 메시지 수정
-    @PutMapping("/{messageId}")
+    @PatchMapping("/{messageId}")
     public ResponseEntity<MessageEntity> update(@PathVariable UUID messageId, @RequestBody MessageModel message) {
         MessageEntity updatedMessage = messageService.update(messageId, message);
         return ResponseEntity.ok(updatedMessage);

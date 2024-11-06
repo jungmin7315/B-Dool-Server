@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+  namespace: default
+  labels:
+    app: chat-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+        - name: chat-service
+          image: jungmin7315/chat-service:latest  # Docker 이미지 이름 (Jenkins 파이프라인에서 버전에 따라 동적으로 업데이트)
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          env:
+            - name: ENV_VAR
+              value: "production"  # 필요한 환경 변수를 여기에 설정
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: default
+spec:
+  selector:
+    app: chat-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: LoadBalancer  # 외부 접근을 위한 LoadBalancer 설정

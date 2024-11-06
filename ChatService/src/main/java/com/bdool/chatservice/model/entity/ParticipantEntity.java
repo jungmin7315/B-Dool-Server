@@ -23,13 +23,13 @@ public class ParticipantEntity {
 
     private String nickname;
 
-    private boolean favorited; // 받아야 하는 필드
-
     private LocalDateTime joinedAt; // LocalDateTime.now()로 처리
 
     private Boolean isOnline;
 
     private Long profileId;
+
+    private String profileURL;
 
     public void updateOnline(Boolean isOnline) {
         this.isOnline = isOnline;
@@ -37,5 +37,9 @@ public class ParticipantEntity {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateProfileURL(String profileURL) {
+        this.profileURL = profileURL;
     }
 }

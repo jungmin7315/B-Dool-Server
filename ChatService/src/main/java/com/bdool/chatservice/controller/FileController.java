@@ -29,12 +29,18 @@ public class FileController {
 
     @PostMapping("/upload")
     public ResponseEntity<FileEntity> uploadFile(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam String entityId,
                                                  @RequestParam EntityType entityType) {
-        FileEntity storedFile = fileService.uploadFile(file, entityId, entityType);
+        FileEntity storedFile = fileService.uploadFile(file, entityType);
         return ResponseEntity.ok(storedFile);
     }
 
+    @PatchMapping("/update/{fileId}")
+    public ResponseEntity<?> updateFile(
+            @PathVariable UUID fileId,
+            @RequestParam("file") MultipartFile newFile) {
+        FileEntity updatedFile = fileService.updateFile(fileId, newFile);
+        return ResponseEntity.ok(updatedFile);
+    }
 
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestParam UUID fileId, HttpServletRequest request) {

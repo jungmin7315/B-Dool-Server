@@ -14,4 +14,5 @@ public interface ChannelRepository extends MongoRepository<ChannelEntity, UUID> 
     ChannelEntity findChannelEntitiesByChannelId(UUID channelId);
     ChannelEntity findByWorkspacesIdAndChannelType(Long workspacesId, String channelType);
     boolean existsByWorkspacesIdAndName(Long workspacesId, String name);
+    boolean existsByWorkspacesIdAndDmRequestId(Long workspacesId, Long dmRequestId);
 }

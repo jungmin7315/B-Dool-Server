@@ -22,6 +22,8 @@ public interface ParticipantService {
 
     boolean existsById(UUID participantId);
 
+    boolean isParticipantInChannel(UUID channelId, Long profileId);
+
     long count();
 
     void deleteById(UUID participantId);
@@ -29,4 +31,6 @@ public interface ParticipantService {
     void updateOnline(Long profileId, Boolean isOnline);
 
     void updateNickname(Long profileId, String nickname);
+
+    void updatePorfileURL(Long profileId, String profileURL);
 }

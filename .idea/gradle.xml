@@ -4,10 +4,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/bdool" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/ChatService" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/bdool" />
+            <option value="$PROJECT_DIR$/ChatService" />
           </set>
         </option>
       </GradleProjectSettings>

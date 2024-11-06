@@ -34,9 +34,7 @@ public class FileEntity {
 
     private LocalDateTime uploadedAt; // 파일 업로드 시간
 
-    private EntityType entityType; // 파일이 속한 엔터티의 타입 (예: PROFILE, CHANNEL, WORKSPACE, MESSAGE)
-
-    private String entityId; // 파일과 연관된 엔터티의 고유 ID (엔터티 타입에 따라 UUID 또는 Long 형식으로 저장 가능)
+    private EntityType entityType; // 파일이 속한 엔터티의 타입 (예: PROFILE, WORKSPACE, MESSAGE)
 
     private FileType fileType; // 파일 유형 (예: IMAGE, DOCUMENT, VIDEO 등)
 

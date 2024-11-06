@@ -30,8 +30,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'io.projectreactor:reactor-test'
-//    implementation 'org.springframework.kafka:spring-kafka'
-//    testImplementation 'org.springframework.kafka:spring-kafka-test'
 
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"

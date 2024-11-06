@@ -22,7 +22,7 @@ public class ParticipantController {
         return ResponseEntity.ok(participantService.save(participant));
     }
 
-    @PutMapping("/{participantId}")
+    @PatchMapping("/{participantId}")
     public ResponseEntity<?> update(@PathVariable UUID participantId, @RequestBody ParticipantModel member) {
         return ResponseEntity.ok(participantService.update(participantId, member));
     }
@@ -54,6 +54,11 @@ public class ParticipantController {
         return ResponseEntity.ok(participantService.existsById(participantId));
     }
 
+    @GetMapping("/isInChannel")
+    public ResponseEntity<?> existsByProfileId(@RequestParam UUID channelId, @RequestParam Long profileId){
+        return ResponseEntity.ok(participantService.isParticipantInChannel(channelId, profileId));
+    }
+
     @GetMapping("/count")
     public ResponseEntity<?> count() {
         return ResponseEntity.ok(participantService.count());
@@ -73,6 +78,13 @@ public class ParticipantController {
 
     @PatchMapping("/{profileId}/nickname")
     public ResponseEntity<Void> updateNickname(@PathVariable Long profileId, @RequestParam String nickname) {
+        participantService.updateNickname(profileId,nickname);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{profileId}/profileUrl")
+    public ResponseEntity<Void> updateProfileUrl(@PathVariable Long profileId, @RequestParam String profileUrl) {
+        participantService.updatePorfileURL(profileId,profileUrl);
         return ResponseEntity.noContent().build();
     }
 }

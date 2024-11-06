@@ -1,8 +1,10 @@
 package com.bdool.chatservice.service.impl;
 
 import com.bdool.chatservice.exception.ChannelNotFoundException;
+import com.bdool.chatservice.model.Enum.ChannelType;
 import com.bdool.chatservice.model.domain.ChannelModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
+import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.model.repository.ChannelRepository;
 import com.bdool.chatservice.model.repository.ParticipantRepository;
 import com.bdool.chatservice.service.ChannelService;
@@ -21,33 +23,58 @@ import java.util.UUID;
 public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
+    private final ParticipantRepository participantRepository;
 
     @Override
     @Transactional
-    public ChannelEntity save(ChannelModel channel) {
-
-        if (channelRepository.existsByWorkspacesIdAndName(channel.getWorkspacesId(), channel.getName())){
-            throw new IllegalArgumentException("Channel name already exists in this workspace.");
+    public ChannelEntity save(ChannelModel channelModel) {
+        // DM 채널일 경우 추가 검증
+        if (channelModel.getChannelType() == ChannelType.DM) {
+            if (channelModel.getDmRequestId() == null) {
+                throw new IllegalArgumentException("DM channels must have a target profile ID (dmRequestId).");
+            }
+            if (channelRepository.existsByWorkspacesIdAndDmRequestId(channelModel.getWorkspacesId(), channelModel.getDmRequestId())) {
+                throw new IllegalArgumentException("A DM channel already exists with this dmRequestId in the workspace.");
+            }
+        } else {
+            // 일반 채널일 경우 dmRequestId를 null로 설정
+            channelModel.setDmRequestId(null);
         }
-        // 채널 엔티티 생성
-        UUID channelId = UUIDUtil.getOrCreateUUID(channel.getChannelId());
+
+        // ChannelEntity 생성
+        UUID channelId = UUIDUtil.getOrCreateUUID(channelModel.getChannelId());
         ChannelEntity channelEntity = ChannelEntity.builder()
                 .channelId(channelId)
-                .name(channel.getName())
-                .description(channel.getDescription())
-                .isPrivate(channel.getIsPrivate())
-                .channelType(channel.getChannelType())
+                .name(channelModel.getName())
+                .description(channelModel.getDescription())
+                .isPrivate(channelModel.getIsPrivate() != null ? channelModel.getIsPrivate() : true) // 기본값 설정
+                .channelType(channelModel.getChannelType())
+                .workspacesId(channelModel.getWorkspacesId())
+                .profileId(channelModel.getProfileId())
+                .dmRequestId(channelModel.getDmRequestId()) // DM일 경우 dmRequestId 설정, 일반 채널은 null
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .workspacesId(channel.getWorkspacesId())
-                .profileId(channel.getProfileId())  // 채널 생성자 정보
                 .build();
 
         // 채널 저장
         ChannelEntity savedChannel = channelRepository.save(channelEntity);
 
+        // DM 또는 일반 채널 모두 생성자 정보를 참석자로 저장
+        participantRepository.save(
+                ParticipantEntity.builder()
+                        .participantId(UUIDUtil.getOrCreateUUID(null))
+                        .channelId(savedChannel.getChannelId())
+                        .isOnline(true)
+                        .joinedAt(LocalDateTime.now())
+                        .nickname(channelModel.getNickname())
+                        .profileId(channelModel.getProfileId())
+                        .profileURL(channelModel.getProfileURl())
+                        .build()
+        );
+
         return savedChannel;
     }
+
 
     @Override
     @Transactional

@@ -1,8 +1,11 @@
 package com.bdool.chatservice.controller;
 
 import com.bdool.chatservice.model.domain.ChannelModel;
+import com.bdool.chatservice.model.domain.ParticipantModel;
 import com.bdool.chatservice.model.entity.ChannelEntity;
+import com.bdool.chatservice.model.entity.ParticipantEntity;
 import com.bdool.chatservice.service.ChannelService;
+import com.bdool.chatservice.service.ParticipantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +27,7 @@ public class ChannelController {
     }
 
     // 채널 업데이트 (profileId와 channelId 모두 경로에서 받음)
-    @PutMapping("/{channelId}/profile/{profileId}")
+    @PatchMapping("/{channelId}/profile/{profileId}")
     public ResponseEntity<?> update(@PathVariable UUID channelId,
                                     @PathVariable UUID profileId,
                                     @RequestBody ChannelModel channel) {

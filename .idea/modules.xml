@@ -3,9 +3,15 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/B-Dool-Server.iml" filepath="$PROJECT_DIR$/.idea/B-Dool-Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChannelService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ChannelService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChannelService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ChannelService.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FileService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/FileService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FileService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/FileService.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bdool.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bdool.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/chatbot-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.bdool.ChatService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.bdool.ChatService.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/document-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/document-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/member-hub-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/notification-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notification-service.main.iml" />

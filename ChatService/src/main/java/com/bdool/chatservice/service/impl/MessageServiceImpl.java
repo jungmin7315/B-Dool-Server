@@ -36,6 +36,7 @@ public class MessageServiceImpl implements MessageService {
                 .isEdited(false)
                 .isDeleted(false)
                 .profileId(message.getProfileId())
+                .fileUrl(message.getFileUrl())
                 .parentMessageId((message.getParentMessageId() == null) ? null : message.getParentMessageId())
                 .build());
     }
