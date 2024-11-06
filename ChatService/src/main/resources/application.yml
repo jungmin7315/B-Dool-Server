@@ -9,7 +9,7 @@ spring:
     name: ChatService
   data:
     mongodb:
-      uri: mongodb://root:1234@211.188.50.55:27017/chat?authSource=admin
+      uri: mongodb://root:1234@211.188.50.55:27017/?ssl=false&directConnection=true
 
 springdoc:
   api-docs:
