@@ -125,7 +125,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("profile not found"));
         findProfile.updateProfile(profileUpdateRequest.getNickname(),
                 profileUpdateRequest.getPosition(),
-                profileUpdateRequest.getProfilePictureUrl());
+                profileUpdateRequest.getProfileImgUrl());
         profileRepository.save(findProfile);
 
         ProfileNicknameResponse profileNicknameResponse = new ProfileNicknameResponse(
