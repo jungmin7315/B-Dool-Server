@@ -109,26 +109,26 @@ spec:
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo 'Deploying ChatService to Kubernetes...'
-                container('kubectl') {
-                    withCredentials([
-                        string(credentialsId: 'ncloud_access_key', variable: 'NCLOUD_ACCESS_KEY'),
-                        string(credentialsId: 'ncloud_secret_key', variable: 'NCLOUD_SECRET_KEY'),
-                        string(credentialsId: 'ncloud_cluster_uuid', variable: 'CLUSTER_UUID')
-                    ]) {
-                        withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
-                            sh """
-                                /home/jenkins/agent/kubectl get pods
-                                /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
-                                /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
-                            """
-                        }
-                    }
-                }
-            }
-        }
+//         stage('Deploy') {
+//             steps {
+//                 echo 'Deploying ChatService to Kubernetes...'
+//                 container('kubectl') {
+//                     withCredentials([
+//                         string(credentialsId: 'ncloud_access_key', variable: 'NCLOUD_ACCESS_KEY'),
+//                         string(credentialsId: 'ncloud_secret_key', variable: 'NCLOUD_SECRET_KEY'),
+//                         string(credentialsId: 'ncloud_cluster_uuid', variable: 'CLUSTER_UUID')
+//                     ]) {
+//                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
+//                             sh """
+//                                 /home/jenkins/agent/kubectl get pods
+//                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+//                                 /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
     }
 
     post {
