@@ -57,7 +57,7 @@ spec:
         REPO_URL = 'https://github.com/B-Dool/B-Dool-Server.git'
         DOCKER_HUB_URL = 'kang1521'
         IMAGE_NAME = "${DOCKER_HUB_URL}/chat"
-        DEPLOYMENT_FILE = 'k8s/search-deployment.yaml' // k8s 폴더 내 YAML 파일 경로
+        DEPLOYMENT_FILE = 'k8s/chat-deployment.yaml' // k8s 폴더 내 YAML 파일 경로
     }
 
     stages {
