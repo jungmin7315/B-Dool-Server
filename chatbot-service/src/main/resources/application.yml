@@ -12,7 +12,8 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
-      host: localhost
+      host: 211.188.50.55
+      port: 6379
       password: password
 openai:
   api-key: "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"

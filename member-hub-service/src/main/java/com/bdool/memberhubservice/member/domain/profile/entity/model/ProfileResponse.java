@@ -11,5 +11,5 @@ public class ProfileResponse {
     private Long id;
     private String nickname;
     private Boolean isOnline;
-    private String profilePictureUrl;
+    private String profileImgUrl;
 }
