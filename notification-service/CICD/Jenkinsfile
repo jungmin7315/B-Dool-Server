@@ -67,21 +67,21 @@ spec:
         }
 
         stage('Build') {
-//             when {
-//                 changeset "notification-service/**/*"
-//             }
+            when {
+                changeset "notification-service/**/*"
+            }
             steps {
                 dir('notification-service') {
                     sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
+                    sh './gradlew clean bootjar'
                 }
             }
         }
 
         stage('Build and Push Docker Image') {
-//             when {
-//                 changeset "notification-service/**/*"
-//             }
+            when {
+                changeset "notification-service/**/*"
+            }
             steps {
                 dir('notification-service') {
                     container('buildkit') {

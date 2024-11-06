@@ -67,21 +67,21 @@ spec:
         }
 
         stage('Build') {
-//             when {
-//                 changeset "chatbot-service/**/*"
-//             }
+            when {
+                changeset "chatbot-service/**/*"
+            }
             steps {
                 dir('chatbot-service') {
                     sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
+                    sh './gradlew clean bootjar'
                 }
             }
         }
 
         stage('Build and Push Docker Image') {
-//             when {
-//                 changeset "chatbot-service/**/*"
-//             }
+            when {
+                changeset "chatbot-service/**/*"
+            }
             steps {
                 dir('chatbot-service') {
                     container('buildkit') {

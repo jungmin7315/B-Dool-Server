@@ -67,21 +67,21 @@ spec:
         }
 
         stage('Build') {
-//             when {
-//                 changeset "member-hub-service/**/*"
-//             }
+            when {
+                changeset "member-hub-service/**/*"
+            }
             steps {
                 dir('member-hub-service') {
                     sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
+                    sh './gradlew clean bootajr'
                 }
             }
         }
 
         stage('Build and Push Docker Image') {
-//             when {
-//                 changeset "member-hub-service/**/*"
-//             }
+            when {
+                changeset "member-hub-service/**/*"
+            }
             steps {
                 dir('member-hub-service') {
                     container('buildkit') {
