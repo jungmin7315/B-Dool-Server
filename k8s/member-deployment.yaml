@@ -1,0 +1,43 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: member-deployment
+  labels:
+    app: member-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: member-service
+  template:
+    metadata:
+      labels:
+        app: member-service
+    spec:
+      containers:
+        - name: member-service
+          image: kang1521/member:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8084 # 컨테이너가 사용하는 포트를 8081로 설정
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: member-service
+spec:
+  selector:
+    app: member-service
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80            # 외부에서 접근할 포트
+      targetPort: 8084   # 컨테이너의 포트를 8081로 설정
