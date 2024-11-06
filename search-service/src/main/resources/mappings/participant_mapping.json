@@ -1,0 +1,9 @@
+{
+  "mappings": {
+    "properties": {
+      "participant_id": { "type": "keyword" },
+      "channel_id": { "type": "keyword" },
+      "profile_id": { "type": "keyword" }
+    }
+  }
+}

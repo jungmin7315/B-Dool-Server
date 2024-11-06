@@ -1,0 +1,46 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "file_analyzer": {
+          "type": "pattern",
+          "pattern": "[_,\\s,.]"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "fname": {
+        "type": "text",
+        "analyzer": "file_analyzer",
+        "fields": {
+          "raw": {
+            "type": "keyword"
+          }
+        }
+      },
+      "extension": {
+        "type": "keyword"
+      },
+      "path": {
+        "type": "text"
+      },
+      "size": {
+        "type": "long"
+      },
+      "uploaded_at": {
+        "type": "date"
+      },
+      "file_id": {
+        "type": "keyword"
+      },
+      "entity_id": {
+        "type": "keyword"
+      },
+      "file_type": {
+        "type": "keyword"
+      }
+    }
+  }
+}
