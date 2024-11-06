@@ -53,10 +53,10 @@ spec:
     }
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'jungmin-docker'
+        DOCKER_CREDENTIALS_ID = 'docker-hub'
         REPO_URL = 'https://github.com/jungmin7315/B-Dool-Server.git'
-        DOCKER_HUB_URL = 'jungmin7315'
-        IMAGE_NAME = "${DOCKER_HUB_URL}/chatservice"
+        DOCKER_HUB_URL = 'kang1521'
+        IMAGE_NAME = "${DOCKER_HUB_URL}/chat"
     }
 
     stages {
