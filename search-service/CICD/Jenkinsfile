@@ -53,14 +53,10 @@ spec:
     }
 
     environment {
-        SSH_KEY_PATH = '/var/jenkins_home/.ssh/id_ed25519'
-        REMOTE_USER = 'root'
-        REMOTE_HOST = '211.188.48.9'
-        DOCKER_CREDENTIALS_ID = 'docker'
+        DOCKER_CREDENTIALS_ID = 'docker-hub'
         REPO_URL = 'https://github.com/B-Dool/B-Dool-Server.git'
         DOCKER_HUB_URL = 'kang1521'
         IMAGE_NAME = "${DOCKER_HUB_URL}/search"
-        DEPLOYMENT_FILE = 'k8s/search-deployment.yaml' // k8s 폴더 내 YAML 파일 경로
     }
 
     stages {
@@ -119,22 +115,34 @@ spec:
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // 원격 서버로 YAML 파일 전송 후 kubectl로 배포
-                    sh """
-                        scp -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${DEPLOYMENT_FILE} ${REMOTE_USER}@${REMOTE_HOST}:/tmp/search-deployment.yaml
-                        ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'export KUBECONFIG=/root/.kube/config && kubectl apply -f /tmp/search-deployment.yaml'
-                    """
-                }
-            }
-        }
+//         stage('Deploy') {
+//             when {
+//                 changeset "search-service/**/*"
+//             }
+//             steps {
+//                 echo 'Deploying ChatService to Kubernetes...'
+//                 container('kubectl') {
+//                     withCredentials([
+//                         string(credentialsId: 'ncloud_access_key', variable: 'NCLOUD_ACCESS_KEY'),
+//                         string(credentialsId: 'ncloud_secret_key', variable: 'NCLOUD_SECRET_KEY'),
+//                         string(credentialsId: 'ncloud_cluster_uuid', variable: 'CLUSTER_UUID')
+//                     ]) {
+//                         withKubeConfig([credentialsId: 'jungmin-kubeconfig']) {
+//                             sh """
+//                                 /home/jenkins/agent/kubectl get pods
+//                                 /home/jenkins/agent/kubectl set image deployment/chat-service chat-service=${IMAGE_NAME}:${BUILD_NUMBER} -n default
+//                                 /home/jenkins/agent/kubectl rollout status deployment/chat-service -n default
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
     }
 
     post {
         success {
-            echo "배포가 성공적으로 완료되었습니다."
+            echo 'notificationService successfully built, pushed, and deployed.'
         }
         failure {
             echo 'Build or push failed.'
