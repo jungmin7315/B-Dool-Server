@@ -81,11 +81,13 @@ spec:
                     container('buildkit') {
                         withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh """
-                            # Docker Hub 인증 정보 설정
-                            mkdir -p /kaniko/.docker
-                            echo '{ "auths": { "https://index.docker.io/v1/": { "username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'" } } }' > /kaniko/.docker/config.json
+                            # Docker Hub에 로그인
+                            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
+                            # Dockerfile 복사
                             cp Dockerfile copied_Dockerfile
+
+                            # BuildKit을 사용하여 이미지 빌드 및 푸시
                             buildctl --addr unix:///run/buildkit/buildkitd.sock build \
                                 --frontend dockerfile.v0 \
                                 --local context=. \
