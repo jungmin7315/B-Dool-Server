@@ -63,7 +63,7 @@ public class ProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{profileId}")
+    @PatchMapping("/{profileId}")
     public ResponseEntity<ProfileFindResponse> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequest profileUpdateRequest) {
         return ResponseEntity.ok(profileService.update(profileId, profileUpdateRequest));
     }
