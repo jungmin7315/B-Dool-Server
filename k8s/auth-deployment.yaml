@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +19,7 @@ spec:
           image: kang1521/auth:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8081 # 컨테이너가 사용하는 포트를 8081로 설정
+            - containerPort: 8080 # 컨테이너가 사용하는 포트를 8081로 설정
           resources:
             requests:
               memory: "128Mi"
@@ -39,5 +38,6 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 80            # 외부에서 접근할 포트
-      targetPort: 8081    # 컨테이너의 포트를 8081로 설정
+      port: 8080            # 외부에서 접근할 포트
+      targetPort: 8080    # 컨테이너의 포트를 8081로 설정
+
