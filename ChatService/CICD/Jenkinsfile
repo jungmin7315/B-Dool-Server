@@ -54,7 +54,7 @@ spec:
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub'
-        REPO_URL = 'https://github.com/jungmin7315/B-Dool-Server.git'
+        REPO_URL = 'https://github.com/B-Dool/B-Dool-Server.git'
         DOCKER_HUB_URL = 'kang1521'
         IMAGE_NAME = "${DOCKER_HUB_URL}/chat"
     }
