@@ -1,4 +1,4 @@
-package com.bdool.bdool;
+package com.bdool.workspaceservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -22,7 +22,7 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
-   # defer-datasource-initialization: true
+    #defer-datasource-initialization: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -33,3 +33,6 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+notification-service:
+  url: http://notification-service:8082/api
