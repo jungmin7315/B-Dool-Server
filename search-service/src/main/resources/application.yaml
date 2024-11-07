@@ -1,7 +1,7 @@
 spring:
   elasticsearch:
-    uris: http://211.188.50.55:9200
-    #uris: elasticsearch:9200
+    #uris: 211.188.50.55:9200
+    uris: elasticsearch:9200
     username: elastic
     password: 6f=NrJX*JuDvuxD6wuux
 
