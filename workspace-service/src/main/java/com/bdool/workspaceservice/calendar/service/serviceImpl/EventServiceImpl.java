@@ -1,13 +1,13 @@
-package com.bdool.bdool.calendar.service.serviceImpl;
+package com.bdool.workspaceservice.calendar.service.serviceImpl;
 
-import com.bdool.bdool.calendar.model.domain.EventRequest;
-import com.bdool.bdool.calendar.model.entity.EventScope;
-import com.bdool.bdool.calendar.model.repository.EventRepository;
-import com.bdool.bdool.calendar.service.EventService;
-import com.bdool.bdool.calendar.service.AttendeeService;
-import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeStatus;
+import com.bdool.workspaceservice.calendar.model.domain.EventRequest;
+import com.bdool.workspaceservice.calendar.model.entity.EventScope;
+import com.bdool.workspaceservice.calendar.model.repository.EventRepository;
+import com.bdool.workspaceservice.calendar.service.EventService;
+import com.bdool.workspaceservice.calendar.service.AttendeeService;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeStatus;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

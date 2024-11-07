@@ -1,7 +1,7 @@
-package com.bdool.bdool.calendar.service;
+package com.bdool.workspaceservice.calendar.service;
 
-import com.bdool.bdool.calendar.model.domain.EventRequest;
-import com.bdool.bdool.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.model.domain.EventRequest;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
 
 import java.util.Optional;
 

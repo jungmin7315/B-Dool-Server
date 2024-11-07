@@ -1,4 +1,4 @@
-package com.bdool.bdool.calendar.model.entity;
+package com.bdool.workspaceservice.calendar.model.entity;
 
 public enum EventScope {
     WORKSPACE,  // 워크스페이스 단위

@@ -1,6 +1,6 @@
-package com.bdool.bdool.notification;
+package com.bdool.workspaceservice.notification;
 
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.bdool.bdool.config;
+package com.bdool.workspaceservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

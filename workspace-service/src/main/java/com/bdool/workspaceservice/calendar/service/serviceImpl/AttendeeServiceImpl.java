@@ -1,13 +1,13 @@
-package com.bdool.bdool.calendar.service.serviceImpl;
+package com.bdool.workspaceservice.calendar.service.serviceImpl;
 
-import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeStatus;
-import com.bdool.bdool.calendar.model.repository.EventRepository;
-import com.bdool.bdool.calendar.model.repository.AttendeeRepository;
-import com.bdool.bdool.calendar.service.AttendeeService;
-import com.bdool.bdool.notification.NotificationModel;
-import com.bdool.bdool.notification.NotificationServiceHelper;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeStatus;
+import com.bdool.workspaceservice.calendar.model.repository.EventRepository;
+import com.bdool.workspaceservice.calendar.model.repository.AttendeeRepository;
+import com.bdool.workspaceservice.calendar.service.AttendeeService;
+import com.bdool.workspaceservice.notification.NotificationModel;
+import com.bdool.workspaceservice.notification.NotificationServiceHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Optional;
 
-import static com.bdool.bdool.notification.NotificationServiceHelper.sendNotification;
+import static com.bdool.workspaceservice.notification.NotificationServiceHelper.sendNotification;
 
 @Service
 @RequiredArgsConstructor

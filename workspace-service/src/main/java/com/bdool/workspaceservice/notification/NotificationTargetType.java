@@ -1,4 +1,4 @@
-package com.bdool.bdool.notification;
+package com.bdool.workspaceservice.notification;
 
 public enum NotificationTargetType {
     CHANNEL,       // 특정 채널에 대한 알림 설정

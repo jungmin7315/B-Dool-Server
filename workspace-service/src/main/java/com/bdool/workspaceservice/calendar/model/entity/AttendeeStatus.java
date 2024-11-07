@@ -1,4 +1,4 @@
-package com.bdool.bdool.calendar.model.entity;
+package com.bdool.workspaceservice.calendar.model.entity;
 
 public enum AttendeeStatus {
     OK,       // 수락됨

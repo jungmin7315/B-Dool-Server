@@ -1,9 +1,9 @@
-package com.bdool.bdool.workspace.controller;
+package com.bdool.workspaceservice.workspace.controller;
 
 
-import com.bdool.bdool.workspace.model.WorkspaceEntity;
-import com.bdool.bdool.workspace.model.domain.WorkspaceRequest;
-import com.bdool.bdool.workspace.service.WorkspaceService;
+import com.bdool.workspaceservice.workspace.model.WorkspaceEntity;
+import com.bdool.workspaceservice.workspace.model.domain.WorkspaceRequest;
+import com.bdool.workspaceservice.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

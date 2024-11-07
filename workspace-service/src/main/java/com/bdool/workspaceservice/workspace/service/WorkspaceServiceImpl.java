@@ -1,8 +1,8 @@
-package com.bdool.bdool.workspace.service;
+package com.bdool.workspaceservice.workspace.service;
 
-import com.bdool.bdool.workspace.model.WorkspaceEntity;
-import com.bdool.bdool.workspace.model.WorkspaceRepository;
-import com.bdool.bdool.workspace.model.domain.WorkspaceRequest;
+import com.bdool.workspaceservice.workspace.model.WorkspaceEntity;
+import com.bdool.workspaceservice.workspace.model.WorkspaceRepository;
+import com.bdool.workspaceservice.workspace.model.domain.WorkspaceRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

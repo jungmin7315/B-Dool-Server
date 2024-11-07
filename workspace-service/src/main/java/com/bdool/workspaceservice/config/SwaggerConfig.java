@@ -1,4 +1,4 @@
-package com.bdool.bdool.config;
+package com.bdool.workspaceservice.config;
 
 
 import io.swagger.v3.oas.models.Components;

@@ -1,8 +1,8 @@
-package com.bdool.bdool.calendar.controller;
+package com.bdool.workspaceservice.calendar.controller;
 
-import com.bdool.bdool.calendar.model.domain.EventRequest;
-import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.service.EventService;
+import com.bdool.workspaceservice.calendar.model.domain.EventRequest;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.service.EventService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

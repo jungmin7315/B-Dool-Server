@@ -1,6 +1,6 @@
-package com.bdool.bdool.calendar.model.repository;
+package com.bdool.workspaceservice.calendar.model.repository;
 
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

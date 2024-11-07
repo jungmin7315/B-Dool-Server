@@ -1,4 +1,4 @@
-package com.bdool.bdool.workspace.model;
+package com.bdool.workspaceservice.workspace.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
