@@ -4,8 +4,8 @@ spring:
       mode: always
 
   datasource:
-    url: jdbc:mysql://211.188.50.55:3306/bdooldb
-    #url: jdbc:mysql://mysql:3306/bdooldb
+    #url: jdbc:mysql://211.188.50.55:3306/bdooldb
+    url: jdbc:mysql://mysql:3306/bdooldb
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -20,9 +20,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
-    defer-datasource-initialization: true
+   # defer-datasource-initialization: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
