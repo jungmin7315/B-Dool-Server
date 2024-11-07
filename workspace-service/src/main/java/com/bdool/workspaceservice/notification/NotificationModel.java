@@ -1,4 +1,4 @@
-package com.bdool.bdool.notification;
+package com.bdool.workspaceservice.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

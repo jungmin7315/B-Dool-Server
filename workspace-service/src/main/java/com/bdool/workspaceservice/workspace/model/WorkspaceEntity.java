@@ -1,4 +1,4 @@
-package com.bdool.bdool.workspace.model;
+package com.bdool.workspaceservice.workspace.model;
 
 import jakarta.persistence.*;
 import lombok.*;

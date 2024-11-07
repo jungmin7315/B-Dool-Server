@@ -1,9 +1,9 @@
-package com.bdool.bdool.calendar.controller;
+package com.bdool.workspaceservice.calendar.controller;
 
-import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeStatus;
-import com.bdool.bdool.calendar.service.AttendeeService;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeStatus;
+import com.bdool.workspaceservice.calendar.service.AttendeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

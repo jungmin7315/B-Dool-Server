@@ -1,8 +1,8 @@
-package com.bdool.bdool.calendar.service;
+package com.bdool.workspaceservice.calendar.service;
 
-import com.bdool.bdool.calendar.model.entity.EventEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeEntity;
-import com.bdool.bdool.calendar.model.entity.AttendeeStatus;
+import com.bdool.workspaceservice.calendar.model.entity.EventEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeEntity;
+import com.bdool.workspaceservice.calendar.model.entity.AttendeeStatus;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,6 @@
-package com.bdool.bdool.workspace.service;
-import com.bdool.bdool.workspace.model.WorkspaceEntity;
-import com.bdool.bdool.workspace.model.domain.WorkspaceRequest;
+package com.bdool.workspaceservice.workspace.service;
+import com.bdool.workspaceservice.workspace.model.WorkspaceEntity;
+import com.bdool.workspaceservice.workspace.model.domain.WorkspaceRequest;
 
 import java.util.List;
 import java.util.Optional;

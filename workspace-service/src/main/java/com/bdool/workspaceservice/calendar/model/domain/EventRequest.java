@@ -1,7 +1,7 @@
-package com.bdool.bdool.calendar.model.domain;
+package com.bdool.workspaceservice.calendar.model.domain;
 
-import com.bdool.bdool.calendar.model.entity.EventScope;
-import com.bdool.bdool.calendar.model.entity.RecurrenceType;
+import com.bdool.workspaceservice.calendar.model.entity.EventScope;
+import com.bdool.workspaceservice.calendar.model.entity.RecurrenceType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

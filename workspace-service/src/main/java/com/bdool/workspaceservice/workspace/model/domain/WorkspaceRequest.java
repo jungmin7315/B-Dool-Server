@@ -1,4 +1,4 @@
-package com.bdool.bdool.workspace.model.domain;
+package com.bdool.workspaceservice.workspace.model.domain;
 
 import lombok.Getter;
 import lombok.Setter;

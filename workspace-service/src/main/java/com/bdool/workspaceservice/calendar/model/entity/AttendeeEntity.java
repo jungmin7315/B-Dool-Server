@@ -1,7 +1,8 @@
-package com.bdool.bdool.calendar.model.entity;
+package com.bdool.workspaceservice.calendar.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Entity
 @Table(name = "attendees")
